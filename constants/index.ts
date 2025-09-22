@@ -10,6 +10,11 @@ export interface SocialLink {
   link: string;
 }
 
+export interface NavItems {
+  name: string;
+  link: string;
+}
+
 export const socialLinks: SocialLink[] = [
   {
     icon: IconBrandFacebook,
@@ -22,5 +27,28 @@ export const socialLinks: SocialLink[] = [
   {
     icon: IconBrandYoutube,
     link: "https://www.youtube.com/c/RightlinksImmigration",
+  },
+];
+
+export const navItems = [
+  {
+    name: "About Us",
+    link: "/",
+  },
+  {
+    name: "Visa",
+    link: "/",
+  },
+  {
+    name: "Countries",
+    link: "/",
+  },
+  {
+    name: "College",
+    link: "/",
+  },
+  {
+    name: "Contact Us",
+    link: "/",
   },
 ];
