@@ -1,7 +1,10 @@
+"use client";
+
 import { navItems } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { motion } from "motion/react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -69,41 +72,83 @@ const Navbar = () => {
 
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="outline" className="cursor-pointer">
-                <Menu />
+              <Button variant="secondary" className="cursor-pointer bg-accent">
+                <Menu className="text-white size-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="bg-accent">
               <SheetHeader>
                 <SheetTitle className="sr-only">Menu</SheetTitle>
-                <Image
-                  src="/logo.png"
-                  alt="Logo"
-                  width={230}
-                  height={230}
-                  draggable={false}
-                />
+                <motion.div
+                  initial={{ y: -30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    width={300}
+                    height={300}
+                    draggable={false}
+                  />
+                </motion.div>
               </SheetHeader>
 
-              <div className="flex flex-col gap-2 items-start justify-center p-2">
-                {navItems.map((item) => (
-                  <Link
-                    href={item.link}
+              <motion.ul
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col gap-5 items-start justify-center p-2"
+              >
+                {navItems.map((item, i) => (
+                  <motion.li
                     key={item.name}
-                    className="text-lg font-semibold"
+                    initial={{ y: 12, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{
+                      duration: 0.35,
+                      ease: [0.22, 1, 0.36, 1],
+                      delay: i * 0.12,
+                    }}
                   >
-                    {item.name}
-                  </Link>
+                    <Link
+                      href={item.link}
+                      className="text-4xl font-semibold text-white"
+                    >
+                      {item.name}
+                      <motion.div
+                        className="h-[3px] bg-primary origin-left will-change-transform"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{
+                          duration: 0.45,
+                          ease: [0.22, 1, 0.36, 1],
+                          delay: i * 0.12 + 0.15,
+                        }}
+                      />
+                    </Link>
+                  </motion.li>
                 ))}
-              </div>
+              </motion.ul>
 
               <SheetFooter>
-                <Button
-                  type="submit"
-                  className="cursor-pointer text-lg font-semibold"
+                <motion.div
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.22, 1, 0.36, 1],
+                    delay: 0.5,
+                  }}
+                  className=" w-full "
                 >
-                  Login
-                </Button>
+                  <Button
+                    type="submit"
+                    className="cursor-pointer text-lg font-semibold w-full"
+                  >
+                    Login
+                  </Button>
+                </motion.div>
               </SheetFooter>
             </SheetContent>
           </Sheet>

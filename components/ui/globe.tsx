@@ -155,7 +155,8 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
     globeRef.current
       .hexPolygonsData(countries.features)
-      .hexPolygonResolution(3)
+      // Lower resolution for fewer polygons -> faster initial build and render
+      .hexPolygonResolution(2)
       .hexPolygonMargin(0.7)
       .showAtmosphere(defaultProps.showAtmosphere)
       .atmosphereColor(defaultProps.atmosphereColor)
@@ -209,13 +210,15 @@ export function Globe({ globeConfig, data }: WorldProps) {
   useEffect(() => {
     if (!globeRef.current || !isInitialized || !data) return;
 
+    // Reduce ring updates to lower animation overhead
     const interval = setInterval(() => {
       if (!globeRef.current) return;
 
       const newNumbersOfRings = genRandomNumbers(
         0,
         data.length,
-        Math.floor((data.length * 4) / 5)
+        // Lower number of rings compared to data size
+        Math.max(1, Math.floor(data.length / 5))
       );
 
       const ringsData = data
@@ -227,7 +230,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
         }));
 
       globeRef.current.ringsData(ringsData);
-    }, 2000);
+    }, 4000);
 
     return () => {
       clearInterval(interval);
@@ -241,7 +244,9 @@ export function WebGLRendererConfig() {
   const { gl, size } = useThree();
 
   useEffect(() => {
-    gl.setPixelRatio(window.devicePixelRatio);
+    // Cap device pixel ratio to reduce GPU load on high-DPI screens
+    const cappedDpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    gl.setPixelRatio(cappedDpr);
     gl.setSize(size.width, size.height);
     gl.setClearColor(0xffaaff, 0);
   }, [gl, size.height, size.width]);
@@ -254,6 +259,9 @@ export function World(props: WorldProps) {
   return (
     <Canvas
       camera={{ fov: 50, near: 180, far: 1800, position: [0, 0, cameraZ] }}
+      // Lower DPR and disable antialiasing for faster render, request high-performance context
+      dpr={[1, 1.5]}
+      gl={{ antialias: false, powerPreference: "high-performance" }}
     >
       {/* Scene config */}
       <fog attach="fog" args={[0xffffff, 400, 2000]} />
@@ -278,7 +286,8 @@ export function World(props: WorldProps) {
         enableZoom={false}
         minDistance={cameraZ}
         maxDistance={cameraZ}
-        autoRotateSpeed={1}
+        // Slightly slower rotation for smoother perception
+        autoRotateSpeed={0.6}
         autoRotate={true}
         minPolarAngle={Math.PI / 3.5}
         maxPolarAngle={Math.PI - Math.PI / 3}

@@ -1,6 +1,10 @@
 "use client";
 import React from "react";
 import dynamic from "next/dynamic";
+import { Highlight } from "./ui/hero-highlight";
+import Image from "next/image";
+import { Button } from "./ui/stateful-button";
+import { motion } from "motion/react";
 
 const World = dynamic(
   () => import("@/components/ui/globe").then((m) => m.World),
@@ -10,6 +14,12 @@ const World = dynamic(
 );
 
 const Hero = () => {
+  // Defer heavy globe mount to avoid competing with initial animations
+  const [showGlobe, setShowGlobe] = React.useState(false);
+  React.useEffect(() => {
+    const t = window.setTimeout(() => setShowGlobe(true), 1200);
+    return () => window.clearTimeout(t);
+  }, []);
   const globeConfig = {
     pointSize: 4,
     globeColor: "#062056",
@@ -410,24 +420,65 @@ const Hero = () => {
       />
       {/* Globe Background Layer */}
       <div className="absolute -bottom-40 -right-1/2 inset-0 z-10 pointer-events-none select-none">
-        <div className="w-full h-full opacity-60">
-          <World data={sampleArcs} globeConfig={globeConfig} />
+        <div className="w-full h-full opacity-40">
+          {showGlobe ? (
+            <World data={sampleArcs} globeConfig={globeConfig} />
+          ) : null}
         </div>
       </div>
+      <motion.div
+        className="absolute sm:block hidden top-20 inset-0 z-10 pointer-events-none select-none"
+        initial={{ x: -40, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <Image
+          src="/hero_plane.png"
+          alt="plane"
+          width={200}
+          height={200}
+          className="-rotate-30"
+        />
+      </motion.div>
 
       {/* Foreground Content */}
-      <div className="relative z-20 max-w-7xl mx-auto w-full grid md:grid-cols-2">
-        <div>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quos
-            consequatur corporis, laudantium assumenda ullam fuga corrupti! Fuga
-            numquam, consequatur odio inventore doloribus sint quaerat at
-            perspiciatis, unde cupiditate incidunt dolorum perferendis possimus?
-            Optio eligendi assumenda nam, et numquam, dolores voluptatem commodi
-            voluptatum quo asperiores officia!
-          </p>
-        </div>
-        {/* Optional right column content can go here */}
+      <div className="relative z-20 max-w-7xl mx-auto flex flex-col items-center justify-center w-full h-full">
+        <motion.h1
+          className="text-center text-primary text-4xl lg:text-7xl leading-12 font-bold"
+          initial={{ y: -40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] }}
+        >
+          Your Dream Country Awaits
+        </motion.h1>
+        <motion.h1
+          className="text-center text-4xl lg:text-7xl font-bold mt-2 sm:mt-6"
+          initial={{ y: -40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 3, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        >
+          <span className="text-primary">Lets</span>{" "}
+          <Highlight className="text-white">Make It Happen.</Highlight>
+        </motion.h1>
+        <motion.p
+          className="text-center text-primary/80 font-bold max-w-xl tracking-wide text-md mt-6"
+          initial={{ y: 24, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 3, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
+        >
+          RightLinks Immigration Pvt. Ltd. is one of the most celebrated team of
+          Immigration service providers in India.
+        </motion.p>
+
+        <motion.div
+          initial={{ y: 24, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 3, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
+        >
+          <Button className="mt-6 bg-primary hover:ring-2 hover:ring-primary font-bold tracking-wide px-6 py-3 text-lg">
+            Get Started
+          </Button>
+        </motion.div>
       </div>
       {/* Bottom Fade Overlay */}
       <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-30" />
