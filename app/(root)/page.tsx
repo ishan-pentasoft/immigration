@@ -1,3 +1,5 @@
+import CollegeMarqee from "@/components/CollegeMarqee";
+import CountryOrbit from "@/components/CountryOrbit";
 import Hero from "@/components/Hero";
 import ServicesCarousel from "@/components/ServicesCarousel";
 import ServicesGrid from "@/components/ServicesGrid";
@@ -9,6 +11,8 @@ const page = () => {
       <Hero />
       <ServicesCarousel />
       <ServicesGrid />
+      <CountryOrbit />
+      <CollegeMarqee />
     </div>
   );
 };
