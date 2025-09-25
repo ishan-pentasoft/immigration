@@ -407,13 +407,13 @@ const Hero = () => {
   ];
 
   return (
-    <div className="h-[calc(100vh-13rem)] w-full bg-white overflow-hidden relative">
+    <div className="h-[calc(100vh-13rem)] w-full overflow-hidden relative">
       {/* Pink Glow Background */}
       <div
         className="absolute inset-0 z-0"
         style={{
           backgroundImage: `
-        radial-gradient(125% 125% at 50% 90%, #ffffff 40%, #ec4848 100%)
+        radial-gradient(125% 125% at 50% 90%, #ffffff 40%, #f07070 100%)
       `,
           backgroundSize: "100% 100%",
         }}
@@ -466,7 +466,7 @@ const Hero = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 3, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
         >
-          RightLinks Immigration Pvt. Ltd. is one of the most celebrated team of
+          Pentasoft Professional is one of the most celebrated team of
           Immigration service providers in India.
         </motion.p>
 

@@ -18,15 +18,15 @@ export interface NavItems {
 export const socialLinks: SocialLink[] = [
   {
     icon: IconBrandFacebook,
-    link: "https://www.facebook.com/Rightlinksimmigration",
+    link: "/",
   },
   {
     icon: IconBrandX,
-    link: "https://x.com/rightlinks",
+    link: "/",
   },
   {
     icon: IconBrandYoutube,
-    link: "https://www.youtube.com/c/RightlinksImmigration",
+    link: "/",
   },
 ];
 

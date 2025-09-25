@@ -23,19 +23,19 @@ const Topbar = () => {
           </li>
 
           <Link
-            href="tel:+918800813814"
+            href="tel:+918283994938"
             className="flex gap-2 items-center justify-center rounded-md px-1 py-1"
           >
             <HandHelping className="h-6 w-6" aria-hidden="true" />
-            <span>+91 8800 813 814</span>
+            <span>+91 8283994938</span>
           </Link>
 
           <Link
-            href="mailto:leads.rightlinks@gmail.com"
+            href="mailto:info@pentasoftprofessional.com"
             className="flex gap-2 items-center justify-center rounded-md px-1 py-1"
           >
             <Mail className="h-5 w-5" aria-hidden="true" />
-            <span>leads.rightlinks@gmail.com</span>
+            <span>info@pentasoftprofessional.com</span>
           </Link>
         </ul>
 
@@ -44,11 +44,11 @@ const Topbar = () => {
           className="flex items-center justify-center gap-2"
           aria-label="Social media links"
         >
-          {socialLinks.map((item) => {
+          {socialLinks.map((item, i) => {
             const Icon = item.icon;
             return (
               <Link
-                key={item.link}
+                key={i}
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
