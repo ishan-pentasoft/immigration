@@ -11,8 +11,8 @@ const page = () => {
       <Hero />
       <ServicesCarousel />
       <ServicesGrid />
-      <CountryOrbit />
       <CollegeMarqee />
+      <CountryOrbit />
     </div>
   );
 };

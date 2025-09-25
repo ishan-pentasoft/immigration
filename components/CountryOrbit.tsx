@@ -13,7 +13,7 @@ const CountryOrbit = () => {
         radial-gradient(
           circle at center,
           rgba(239, 68, 68, 0.12) 0%,
-          rgba(239, 68, 68, 0.09) 20%,
+          rgba(239, 68, 68, 0.1) 20%,
           rgba(0, 0, 0, 0.0) 60%
         )
       `,

@@ -18,11 +18,11 @@ const LogoMarqee = () => {
 
   return (
     <div
-      className="py-16 lg:py-20 bg-slate-200 border-b border-slate-200"
+      className="py-16 lg:py-20 bg-accent/30 border-b border-slate-200"
       aria-label="Logo showcase section"
     >
       <div className="max-w-xl mx-auto text-center tracking-wider">
-        <p className="sm:text-lg text-sm text-[#082448] mx-4 font-bold ">
+        <p className="sm:text-lg text-sm text-primary mx-4 font-bold ">
           Partnered With
         </p>
       </div>
