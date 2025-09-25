@@ -481,7 +481,7 @@ const Hero = () => {
         </motion.div>
       </div>
       {/* Bottom Fade Overlay */}
-      <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-30" />
+      <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent to-background z-30" />
     </div>
   );
 };
