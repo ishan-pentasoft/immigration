@@ -1,9 +1,9 @@
-import CollegeMarqee from "@/components/CollegeMarqee";
 import CountryOrbit from "@/components/CountryOrbit";
 import Hero from "@/components/Hero";
 import ServicesCarousel from "@/components/ServicesCarousel";
 import ServicesGrid from "@/components/ServicesGrid";
 import React from "react";
+import OurTeam from "@/components/OurTeam";
 
 const page = () => {
   return (
@@ -11,8 +11,8 @@ const page = () => {
       <Hero />
       <ServicesCarousel />
       <ServicesGrid />
-      <CollegeMarqee />
       <CountryOrbit />
+      <OurTeam />
     </div>
   );
 };

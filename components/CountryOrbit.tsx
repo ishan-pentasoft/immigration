@@ -20,7 +20,7 @@ const CountryOrbit = () => {
         }}
       />
       <div className="max-w-7xl mx-auto px-3">
-        <h2 className="text-4xl md:text-6xl text-balance text-center md:leading-20 max-w-3xl font-bold text-accent">
+        <h2 className="text-4xl md:text-6xl text-balance text-center md:leading-20 max-w-3xl font-bold text-accent italic">
           Choose Your Country For Immigration.
         </h2>
         <div className="dark relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden">

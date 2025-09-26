@@ -20,6 +20,7 @@
     "dotted-map": "^2.2.3",
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.544.0",
     "mini-svg-data-uri": "^1.4.4",
     "motion": "^12.23.21",
