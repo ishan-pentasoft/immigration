@@ -2,13 +2,6 @@
 
 import React from "react";
 import EmblaCarousel from "./EmblaCarousel";
-// import dynamic from "next/dynamic";
-
-// // Lighthouse: dynamically import the heavy map and disable SSR
-// const WorldMap = dynamic(() => import("./ui/world-map"), {
-//   ssr: false,
-//   loading: () => null,
-// });
 
 const ServicesCarousel = () => {
   const slides = [

@@ -6,6 +6,7 @@ import React from "react";
 import OurTeam from "@/components/OurTeam";
 import PartneredWith from "@/components/PartneredWith";
 import Stats from "@/components/Stats";
+import Footer from "@/components/Footer";
 
 const page = () => {
   return (
@@ -17,6 +18,7 @@ const page = () => {
       <PartneredWith />
       <CountryOrbit />
       <OurTeam />
+      <Footer />
     </div>
   );
 };
