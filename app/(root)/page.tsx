@@ -5,6 +5,7 @@ import ServicesGrid from "@/components/ServicesGrid";
 import React from "react";
 import OurTeam from "@/components/OurTeam";
 import PartneredWith from "@/components/PartneredWith";
+import Stats from "@/components/Stats";
 
 const page = () => {
   return (
@@ -12,6 +13,7 @@ const page = () => {
       <Hero />
       <ServicesCarousel />
       <ServicesGrid />
+      <Stats />
       <PartneredWith />
       <CountryOrbit />
       <OurTeam />
