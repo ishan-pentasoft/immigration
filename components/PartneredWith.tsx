@@ -35,9 +35,9 @@ const PartneredWith = () => {
         </div>
 
         {/* Right Marqee */}
-        <div className="relative flex h-96 w-full flex-row items-center justify-center gap-4 overflow-hidden [perspective:300px]">
+        <div className="relative flex h-96 w-full flex-row items-center justify-end gap-4 overflow-hidden [perspective:300px] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent),linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [mask-composite:intersect] [-webkit-mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent),linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [-webkit-mask-composite:source-in]">
           <div
-            className="flex flex-row items-center gap-4"
+            className="flex flex-row items-center gap-4 "
             style={{
               transform:
                 "translateX(-100px) translateY(0px) translateZ(-100px) rotateX(20deg) rotateY(-10deg) rotateZ(20deg)",
@@ -49,19 +49,8 @@ const PartneredWith = () => {
                   src={college}
                   alt="College"
                   key={college}
-                  width={100}
-                  height={100}
-                />
-              ))}
-            </Marquee>
-            <Marquee reverse pauseOnHover className="[--duration:10s]" vertical>
-              {colleges.map((college) => (
-                <Image
-                  src={college}
-                  alt="College"
-                  key={college}
-                  width={100}
-                  height={100}
+                  width={300}
+                  height={300}
                 />
               ))}
             </Marquee>
@@ -71,8 +60,8 @@ const PartneredWith = () => {
                   src={college}
                   alt="College"
                   key={college}
-                  width={100}
-                  height={100}
+                  width={300}
+                  height={300}
                 />
               ))}
             </Marquee>
@@ -82,15 +71,22 @@ const PartneredWith = () => {
                   src={college}
                   alt="College"
                   key={college}
-                  width={100}
-                  height={100}
+                  width={300}
+                  height={300}
                 />
               ))}
             </Marquee>
-            <div className="from-background pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b"></div>
-            <div className="from-background pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t"></div>
-            <div className="from-background pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r"></div>
-            <div className="from-background pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l"></div>
+            <Marquee pauseOnHover reverse className="[--duration:20s]" vertical>
+              {colleges.map((college) => (
+                <Image
+                  src={college}
+                  alt="College"
+                  key={college}
+                  width={300}
+                  height={300}
+                />
+              ))}
+            </Marquee>
           </div>
         </div>
       </div>
