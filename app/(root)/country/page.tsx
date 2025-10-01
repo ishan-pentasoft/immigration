@@ -54,7 +54,9 @@ const page = () => {
   return (
     <>
       <PageHeader text="Countries" />
-      <FocusCards cards={cards} />
+      <div className="px-3">
+        <FocusCards cards={cards} />
+      </div>
     </>
   );
 };

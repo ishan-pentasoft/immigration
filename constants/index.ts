@@ -49,6 +49,6 @@ export const navItems = [
   },
   {
     name: "Contact Us",
-    link: "/",
+    link: "/contact-us",
   },
 ];
