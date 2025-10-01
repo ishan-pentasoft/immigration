@@ -59,7 +59,7 @@ const Navbar = () => {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <Link href="/" className="hidden md:block">
+          <Link href="/student-login" className="hidden md:block">
             <Button
               variant="default"
               className="cursor-pointer hover:text-white font-extrabold duration-300 border-2 border-accent shadow-2xl hover:scale-110 transition-all"
