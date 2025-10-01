@@ -37,7 +37,7 @@ export const navItems = [
   },
   {
     name: "Visa",
-    link: "/",
+    link: "/visa",
   },
   {
     name: "Countries",
