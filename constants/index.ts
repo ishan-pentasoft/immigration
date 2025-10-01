@@ -33,7 +33,7 @@ export const socialLinks: SocialLink[] = [
 export const navItems = [
   {
     name: "About Us",
-    link: "/",
+    link: "/about-us",
   },
   {
     name: "Visa",

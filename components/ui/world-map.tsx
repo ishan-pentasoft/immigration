@@ -11,15 +11,20 @@ interface MapProps {
     end: { lat: number; lng: number; label?: string };
   }>;
   lineColor?: string;
+  color?: string;
 }
 
-export default function WorldMap({ dots = [], lineColor = "red" }: MapProps) {
+export default function WorldMap({
+  dots = [],
+  lineColor = "red",
+  color = "#000000",
+}: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const map = new DottedMap({ height: 100, grid: "diagonal" });
 
   const svgMap = map.getSVG({
     radius: 0.22,
-    color: "#000000",
+    color,
     shape: "circle",
     backgroundColor: "white",
   });
