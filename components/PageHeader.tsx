@@ -2,7 +2,7 @@
 import React from "react";
 import { TextRoll } from "./ui/text-roll";
 
-const PageHeader = () => {
+const PageHeader = ({ text }: { text: string }) => {
   return (
     <div className="py-20 w-full relative bg-black">
       {/* Crimson Shadow Background with Top Glow */}
@@ -13,10 +13,8 @@ const PageHeader = () => {
             "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255, 80, 120, 0.25), transparent 70%), #000000",
         }}
       />
-      <main className="relative z-10 max-w-7xl mx-auto w-full">
-        <TextRoll className="text-4xl text-center text-white">
-          motion-primitives
-        </TextRoll>
+      <main className="relative z-10 max-w-7xl mx-auto w-full px-3">
+        <TextRoll className="text-4xl text-center text-white">{text}</TextRoll>
       </main>
     </div>
   );
