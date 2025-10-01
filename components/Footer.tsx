@@ -4,6 +4,7 @@ import React from "react";
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
 
 // Lighthouse: dynamically import the heavy map and disable SSR
 const WorldMap = dynamic(() => import("./ui/world-map"), {
@@ -56,7 +57,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="col-span-1">
           <Image
             src="/logo.png"
@@ -74,13 +75,29 @@ const Footer = () => {
           </p>
         </div>
         <div className="col-span-1">
-          <h3 className="text-xl font-bold text-primary">Quick Links</h3>
+          <h3 className="text-xl font-bold text-primary">Pages</h3>
           <hr className="border-accent w-1/2 mb-2" />
           <ul className="list-disc list-inside">
             <li>Home</li>
-            <li>Services</li>
-            <li>Blog</li>
-            <li>Contact</li>
+            <li>Contries</li>
+            <li>Visa</li>
+            <li>Colleges</li>
+            <li>Contact Us</li>
+          </ul>
+        </div>
+        <div className="col-span-1">
+          <h3 className="text-xl font-bold text-primary">Quick Links</h3>
+          <hr className="border-accent w-1/2 mb-2" />
+          <ul className="list-disc list-inside">
+            <li>
+              <Link href="/terms">Terms & Conditions</Link>
+            </li>
+            <li>
+              <Link href="/privacy">Privacy Policy</Link>
+            </li>
+            <li>
+              <Link href="/refund">Refund Policy</Link>
+            </li>
           </ul>
         </div>
         <div className="col-span-1">
