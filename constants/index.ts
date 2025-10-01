@@ -41,7 +41,7 @@ export const navItems = [
   },
   {
     name: "Countries",
-    link: "/",
+    link: "/country",
   },
   {
     name: "College",
