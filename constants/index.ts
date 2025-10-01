@@ -44,8 +44,8 @@ export const navItems = [
     link: "/country",
   },
   {
-    name: "College",
-    link: "/",
+    name: "FAQ",
+    link: "/faq",
   },
   {
     name: "Contact Us",
