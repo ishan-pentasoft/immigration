@@ -50,7 +50,11 @@ const Navbar = () => {
                       " bg-[#f6adad] text-primary text-md hover:text-white duration-300"
                     }
                   >
-                    <Link href={item.link} className="font-semibold">
+                    <Link
+                      href={item.link}
+                      className="font-semibold"
+                      prefetch={false}
+                    >
                       {item.name}
                     </Link>
                   </NavigationMenuLink>
@@ -114,6 +118,7 @@ const Navbar = () => {
                     <Link
                       href={item.link}
                       className="text-4xl font-semibold text-white"
+                      prefetch={false}
                     >
                       {item.name}
                       <motion.div

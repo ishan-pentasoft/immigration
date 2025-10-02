@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 
-// Lighthouse: dynamically import the heavy map and disable SSR
 const WorldMap = dynamic(() => import("./ui/world-map"), {
   ssr: false,
   loading: () => null,
@@ -65,9 +64,8 @@ const Footer = () => {
             width={300}
             height={300}
             className="mb-4"
-            priority
             draggable={false}
-            loading="eager"
+            loading="lazy"
           />
           <p className="text-accent">
             We are a team of experts dedicated to helping you navigate the

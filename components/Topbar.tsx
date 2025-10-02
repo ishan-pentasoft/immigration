@@ -2,11 +2,10 @@ import { socialLinks } from "@/constants";
 import { HandHelping, Hourglass, Mail } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { StickyBanner } from "./ui/sticky-banner";
 
 const Topbar = () => {
   return (
-    <StickyBanner className="w-full md:block hidden font-bold text-white bg-accent p-3 border-b border-primary shadow-2xl">
+    <div className="w-full md:block hidden font-bold text-white bg-accent p-3 border-b border-primary shadow-2xl sticky top-0 z-40">
       <nav
         className="max-w-7xl w-full mx-auto flex items-center justify-between"
         role="navigation"
@@ -67,7 +66,7 @@ const Topbar = () => {
           })}
         </div>
       </nav>
-    </StickyBanner>
+    </div>
   );
 };
 
