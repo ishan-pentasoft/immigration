@@ -15,3 +15,13 @@ model Admin {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model Visa {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  slug        String   @unique
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

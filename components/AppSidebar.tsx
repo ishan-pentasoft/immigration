@@ -46,7 +46,7 @@ const AppSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center justify-center py-2">
             <div className="group-data-[collapsible=icon]:hidden flex  space-y-2 flex-col items-center justify-center">
-              <Image src="/logo.png" alt="Logo" width={250} height={250} />
+              <Image src="/logo.png" alt="Logo" width={200} height={50} />
             </div>
             <div className="group-data-[collapsible=icon]:flex hidden space-y-2 flex-col items-center justify-center">
               <Image src="/fevicon.png" alt="Logo" width={50} height={50} />
@@ -54,7 +54,7 @@ const AppSidebar = () => {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className="mt-5">
+      <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
             Admin Actions
@@ -66,6 +66,16 @@ const AppSidebar = () => {
                   <LayoutDashboard />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Dashboard
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Visas">
+                <Link href="/admin/dashboard/visas">
+                  <LayoutDashboard />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Visas
                   </span>
                 </Link>
               </SidebarMenuButton>
@@ -112,18 +122,6 @@ const AppSidebar = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {/* <DropdownMenuItem>
-                  <Link
-                    href="/admin/dashboard/storage-settings"
-                    className="cursor-pointer flex gap-2 items-center"
-                  >
-                    <Settings />
-                    <span className="group-data-[collapsible=icon]:hidden">
-                      Storage Settings
-                    </span>
-                  </Link>
-                </DropdownMenuItem> 
-                <DropdownMenuSeparator /> */}
                 <DropdownMenuItem onClick={logout} className="cursor-pointer">
                   <LogOut className="stroke-primary" />
                   Log out
