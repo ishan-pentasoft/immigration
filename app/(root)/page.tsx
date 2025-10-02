@@ -1,11 +1,27 @@
-import CountryOrbit from "@/components/CountryOrbit";
-import Hero from "@/components/Hero";
-import ServicesCarousel from "@/components/ServicesCarousel";
-import ServicesGrid from "@/components/ServicesGrid";
 import React from "react";
-import OurTeam from "@/components/OurTeam";
-import PartneredWith from "@/components/PartneredWith";
-import Stats from "@/components/Stats";
+import dynamic from "next/dynamic";
+
+const Hero = dynamic(() => import("@/components/Hero"), {
+  loading: () => null,
+});
+const ServicesCarousel = dynamic(() => import("@/components/ServicesCarousel"), {
+  loading: () => null,
+});
+const ServicesGrid = dynamic(() => import("@/components/ServicesGrid"), {
+  loading: () => null,
+});
+const Stats = dynamic(() => import("@/components/Stats"), {
+  loading: () => null,
+});
+const PartneredWith = dynamic(() => import("@/components/PartneredWith"), {
+  loading: () => null,
+});
+const CountryOrbit = dynamic(() => import("@/components/CountryOrbit"), {
+  loading: () => null,
+});
+const OurTeam = dynamic(() => import("@/components/OurTeam"), {
+  loading: () => null,
+});
 
 const page = () => {
   return (

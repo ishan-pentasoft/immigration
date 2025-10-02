@@ -1,6 +1,12 @@
+"use client";
 import React from "react";
-import CircularGallery from "./ui/CircularGallery";
+import dynamic from "next/dynamic";
 import { Button } from "./ui/stateful-button";
+
+const CircularGallery = dynamic(() => import("./ui/CircularGallery"), {
+  ssr: false,
+  loading: () => null,
+});
 
 const CountryOrbit = () => {
   const items = [
@@ -15,8 +21,28 @@ const CountryOrbit = () => {
     { image: "/country/usa.png", text: "United States Of America" },
   ];
 
+  const [visible, setVisible] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (visible) return; // already mounted
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [visible]);
+
   return (
-    <div className="py-20 w-full bg-black relative overflow-hidden">
+    <div ref={ref} className="py-20 w-full bg-black relative overflow-hidden">
       {/* Crimson Spotlight Background */}
       <div
         className="absolute inset-0 z-0 pointer-events-none"
@@ -37,13 +63,17 @@ const CountryOrbit = () => {
           Choose Your Country For Immigration
         </h2>
         <div className="relative h-[320px] sm:h-[380px] md:h-[420px] lg:h-[460px]">
-          <CircularGallery
-            bend={1}
-            borderRadius={0.05}
-            scrollSpeed={2}
-            scrollEase={0.05}
-            items={items}
-          />
+          {visible ? (
+            <CircularGallery
+              bend={1}
+              borderRadius={0.05}
+              scrollSpeed={2}
+              scrollEase={0.05}
+              items={items}
+            />
+          ) : (
+            <div className="w-full h-full" aria-hidden />
+          )}
         </div>
         <div className="flex items-center justify-center w-full">
           <Button className="mt-6 bg-primary hover:ring-2 hover:ring-primary font-bold tracking-wide px-6 py-3 text-lg">
