@@ -7,12 +7,17 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/useAdminAuth";
+import Loader from "@/components/Loader";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { isLoading } = useAuth();
+
+  if (isLoading) return <Loader />;
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -18,13 +18,14 @@ interface AuthState {
 let verifyInFlight: Promise<boolean> | null = null;
 let lastVerifyAt = 0;
 let lastVerifyResult: boolean | null = null;
+let lastAdmin: Admin | null = null;
 const VERIFY_CACHE_WINDOW_MS = 1000;
 
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
-    admin: null,
-    isLoading: true,
-    isAuthenticated: false,
+    admin: lastAdmin,
+    isLoading: lastVerifyResult === null,
+    isAuthenticated: lastVerifyResult === true,
   });
   const router = useRouter();
 
@@ -34,6 +35,15 @@ export function useAuth() {
       now - lastVerifyAt < VERIFY_CACHE_WINDOW_MS &&
       lastVerifyResult !== null
     ) {
+      if (lastVerifyResult === true) {
+        setAuthState({
+          admin: lastAdmin,
+          isLoading: false,
+          isAuthenticated: true,
+        });
+      } else {
+        setAuthState({ admin: null, isLoading: false, isAuthenticated: false });
+      }
       return lastVerifyResult;
     }
 
@@ -54,6 +64,7 @@ export function useAuth() {
             isLoading: false,
             isAuthenticated: true,
           });
+          lastAdmin = data.admin;
           lastVerifyResult = true;
           return true;
         } else {
@@ -62,12 +73,14 @@ export function useAuth() {
             isLoading: false,
             isAuthenticated: false,
           });
+          lastAdmin = null;
           lastVerifyResult = false;
           return false;
         }
       } catch (error) {
         console.error("Auth verification failed:", error);
         setAuthState({ admin: null, isLoading: false, isAuthenticated: false });
+        lastAdmin = null;
         lastVerifyResult = false;
         return false;
       } finally {
