@@ -45,10 +45,12 @@ const AppSidebar = () => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center justify-center py-2">
-            <div className="group-data-[collapsible=icon]:flex space-y-2 flex-col items-center justify-center">
+            <div className="group-data-[collapsible=icon]:hidden flex  space-y-2 flex-col items-center justify-center">
+              <Image src="/logo.png" alt="Logo" width={250} height={250} />
+            </div>
+            <div className="group-data-[collapsible=icon]:flex hidden space-y-2 flex-col items-center justify-center">
               <Image src="/fevicon.png" alt="Logo" width={50} height={50} />
             </div>
-            <h1 className="group-data-[collapsible=icon]:hidden">Admin</h1>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
