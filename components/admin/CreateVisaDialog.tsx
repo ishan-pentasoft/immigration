@@ -254,7 +254,8 @@ export default function CreateVisaDialog({
                 onModelChange={setDescription}
                 config={{
                   placeholderText: "Write the visa description...",
-                  height: 50,
+                  heightMin: 300,
+                  zIndex: 1000,
                   toolbarButtons: [
                     "bold",
                     "italic",
