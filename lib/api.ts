@@ -48,7 +48,9 @@ export const imagesApi = {
     });
     return res.data;
   },
-  async delete(fileName: string): Promise<{ success: boolean; error?: string }> {
+  async delete(
+    fileName: string
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const res = await api.delete(`/images/${fileName}`);
       return res.data;
@@ -77,8 +79,8 @@ export const adminVisasApi = {
     });
     return res.data;
   },
-  async getById(id: string): Promise<Visa> {
-    const res = await api.get(`/admin/visas/${id}`);
+  async getBySlug(slug: string): Promise<Visa> {
+    const res = await api.get(`/admin/visas/${slug}`);
     return res.data.visa;
   },
   async update(id: string, data: Partial<CreateVisaInput>): Promise<Visa> {

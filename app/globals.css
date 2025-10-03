@@ -201,6 +201,164 @@
   }
 }
 
+.rich-content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.rich-content ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+.rich-content li {
+  margin: 0.25rem 0;
+}
+
+.rich-content {
+  color: inherit;
+  line-height: 1.7;
+  word-break: break-word;
+}
+
+.rich-content p {
+  margin: 0.5rem 0 1rem;
+}
+
+.rich-content h1,
+.rich-content h2,
+.rich-content h3,
+.rich-content h4,
+.rich-content h5,
+.rich-content h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.rich-content h1 {
+  font-size: 1.875rem;
+}
+.rich-content h2 {
+  font-size: 1.5rem;
+}
+.rich-content h3 {
+  font-size: 1.25rem;
+}
+.rich-content h4 {
+  font-size: 1.125rem;
+}
+.rich-content h5 {
+  font-size: 1rem;
+}
+.rich-content h6 {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.rich-content a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rich-content img,
+.rich-content video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.75rem 0;
+  border-radius: 0.25rem;
+}
+
+.rich-content blockquote {
+  margin: 1rem 0;
+  padding-left: 1rem;
+  border-left: 4px solid #e5e7eb; /* gray-200 */
+  color: #374151; /* gray-700 */
+  font-style: italic;
+}
+
+.rich-content pre {
+  background: #0b1220; /* near slate-900 for dark code block */
+  color: #e5e7eb;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.rich-content code {
+  background: #f3f4f6; /* gray-100 */
+  color: #111827; /* gray-900 */
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+.rich-content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.rich-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.rich-content th,
+.rich-content td {
+  border: 1px solid #e5e7eb; /* gray-200 */
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.rich-content thead th {
+  background: #f9fafb; /* gray-50 */
+  font-weight: 600;
+}
+
+.rich-content hr {
+  border: 0;
+  border-top: 1px solid #e5e7eb; /* gray-200 */
+  margin: 1.5rem 0;
+}
+
+.rich-content ul ul,
+.rich-content ol ol,
+.rich-content ul ol,
+.rich-content ol ul {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.rich-content figure {
+  margin: 1rem 0;
+}
+
+.rich-content figcaption {
+  color: #6b7280; /* gray-500 */
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
+.rich-content sup {
+  vertical-align: super;
+  font-size: 0.75em;
+}
+.rich-content sub {
+  vertical-align: sub;
+  font-size: 0.75em;
+}
+
+.rich-content iframe,
+.rich-content embed {
+  max-width: 100%;
+}
+
 /* From Uiverse.io by Pradeepsaranbishnoi */
 .🤚 {
   --skin-color: #e4c560;

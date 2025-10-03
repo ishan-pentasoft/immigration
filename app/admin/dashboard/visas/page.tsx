@@ -22,9 +22,10 @@ import {
 } from "@/components/ui/table";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { toast } from "sonner";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [visas, setVisas] = useState<Visa[]>([]);
@@ -34,6 +35,7 @@ export default function Page() {
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -95,9 +97,9 @@ export default function Page() {
     return pages;
   }, [page, totalPages]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (slug: string) => {
     try {
-      const visa = await apiClient.admin.visas.getById(id);
+      const visa = await apiClient.admin.visas.getBySlug(slug);
 
       if (visa.imageUrl) {
         const fileName = visa.imageUrl.split("/").pop();
@@ -111,7 +113,7 @@ export default function Page() {
       }
 
       // Delete the visa record
-      const res = await apiClient.admin.visas.remove(id);
+      const res = await apiClient.admin.visas.remove(slug);
       if (res.success) {
         fetchVisas();
         toast.success("Visa deleted successfully");
@@ -193,8 +195,14 @@ export default function Page() {
                     <TableCell className="truncate">{visa.title}</TableCell>
                     <TableCell className="truncate">{visa.slug}</TableCell>
                     <TableCell className="flex items-center justify-center gap-2">
+                      <IconEye
+                        onClick={() =>
+                          router.push(`/admin/dashboard/visas/${visa.slug}`)
+                        }
+                        className="cursor-pointer stroke-primary"
+                      />
                       <CreateVisaDialog
-                        visaId={visa.id}
+                        visaId={visa.slug}
                         trigger={
                           <IconEdit className="cursor-pointer stroke-primary" />
                         }
@@ -209,7 +217,7 @@ export default function Page() {
                           <IconTrash className="cursor-pointer stroke-primary" />
                         }
                         confirmText="Delete"
-                        onConfirm={() => handleDelete(visa.id)}
+                        onConfirm={() => handleDelete(visa.slug)}
                       />
                     </TableCell>
                   </TableRow>

@@ -27,6 +27,7 @@ import "froala-editor/js/plugins/lists.min.js";
 import "froala-editor/js/plugins/link.min.js";
 import "froala-editor/js/plugins/image.min.js";
 import "froala-editor/js/plugins/fullscreen.min.js";
+import "froala-editor/js/plugins/table.min.js";
 
 export default function CreateVisaDialog({
   trigger,
@@ -66,7 +67,7 @@ export default function CreateVisaDialog({
 
     try {
       setLoadingVisa(true);
-      const response = await apiClient.admin.visas.getById(visaId);
+      const response = await apiClient.admin.visas.getBySlug(visaId);
 
       const visa = response;
 
@@ -282,6 +283,7 @@ export default function CreateVisaDialog({
                     "lists",
                     "link",
                     "image",
+                    "table",
                     "fullscreen",
                   ],
                 }}
