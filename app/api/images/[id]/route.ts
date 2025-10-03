@@ -2,9 +2,6 @@ import { NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-
 type RouteContext = { params: Promise<{ id: string }> };
 
 function getFilePath(fileName: string) {
@@ -37,7 +34,10 @@ export async function GET(_req: Request, ctx: RouteContext) {
         : ext === "svg"
         ? "image/svg+xml"
         : "application/octet-stream";
-    const body = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+    const body = new ArrayBuffer(data.byteLength);
+    new Uint8Array(body).set(
+      new Uint8Array(data.buffer, data.byteOffset, data.byteLength)
+    );
     return new Response(body, {
       status: 200,
       headers: {

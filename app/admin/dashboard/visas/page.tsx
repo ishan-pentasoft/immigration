@@ -1,122 +1,276 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import CreateVisaDialog from "@/components/admin/CreateVisaDialog";
+import apiClient, { ListVisasResponse, Visa } from "@/lib/api";
+import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { toast } from "sonner";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
-export default function AdminVisasPage() {
+export default function Page() {
+  const [visas, setVisas] = useState<Visa[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const fd = new FormData(form);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setPage(1);
+      setSearch(searchInput.trim());
+    }, 400);
+    return () => clearTimeout(t);
+  }, [searchInput]);
 
-    try {
+  const fetchVisas = useCallback(() => {
+    let cancelled = false;
+    const controller = new AbortController();
+    async function run() {
       setLoading(true);
-      let imageUrl = fd.get("imageUrl") as string | null;
-      const file = (fd.get("image") as File | null) || null;
-      if (file) {
-        const imgFd = new FormData();
-        imgFd.append("file", file);
-        const upRes = await fetch("/api/images", {
-          method: "POST",
-          body: imgFd,
+      setError(null);
+      try {
+        const data: ListVisasResponse = await apiClient.admin.visas.list({
+          page,
+          limit: 10,
+          search,
+          signal: controller.signal,
         });
-        const upJson = (await upRes.json()) as {
-          url?: string;
-          fileName?: string;
-          error?: string;
-        };
-        if (!upRes.ok) throw new Error(upJson?.error || "Image upload failed");
-        imageUrl = upJson?.url || null;
+        if (cancelled) return;
+        setVisas(data.visas);
+        setTotalPages(Math.max(1, data.totalPages));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        if (err?.name === "CanceledError") return;
+        if (cancelled) return;
+        setError(err?.response?.data?.error || "Failed to load visas");
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      const payload = {
-        title: fd.get("title"),
-        description: fd.get("description"),
-        slug: fd.get("slug"),
-        imageUrl,
-      };
-
-      const res = await fetch("/api/admin/visas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || "Create failed");
-
-      alert("Visa created");
-      form.reset();
-      setImagePreview(null);
-    } catch (err) {
-      console.error(err);
-      alert(String(err));
-    } finally {
-      setLoading(false);
     }
-  }
+    run();
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [page, search]);
 
-  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (f) {
-      setImagePreview(URL.createObjectURL(f));
-    } else {
-      setImagePreview(null);
+  useEffect(() => {
+    const cleanup = fetchVisas();
+    return cleanup;
+  }, [fetchVisas]);
+
+  const goToPage = (p: number) => {
+    if (p < 1 || p > totalPages || p === page) return;
+    setPage(p);
+  };
+
+  const pageNumbers = useMemo(() => {
+    const pages: number[] = [];
+    const maxToShow = 5;
+    let start = Math.max(1, page - Math.floor(maxToShow / 2));
+    const end = Math.min(totalPages, start + maxToShow - 1);
+    start = Math.max(1, Math.min(start, Math.max(1, end - maxToShow + 1)));
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  }, [page, totalPages]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const visa = await apiClient.admin.visas.getById(id);
+
+      if (visa.imageUrl) {
+        const fileName = visa.imageUrl.split("/").pop();
+        if (fileName) {
+          try {
+            await apiClient.images.delete(fileName);
+          } catch (imageErr) {
+            console.warn("Failed to delete image:", imageErr);
+          }
+        }
+      }
+
+      // Delete the visa record
+      const res = await apiClient.admin.visas.remove(id);
+      if (res.success) {
+        fetchVisas();
+        toast.success("Visa deleted successfully");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || "Failed to delete visa");
     }
-  }
+  };
 
   return (
-    <main className="container mx-auto max-w-2xl p-6 space-y-4">
-      <h1 className="text-2xl font-semibold">Create Visa</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Title</label>
-          <input name="title" className="border p-2 w-full" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Slug</label>
-          <input
-            name="slug"
-            className="border p-2 w-full"
-            required
-            placeholder="study-in-canada"
+    <>
+      <header className="px-5 py-2 border-b flex items-center justify-between">
+        <h1 className="text-2xl font-semibold ml-7">Visas</h1>
+        <CreateVisaDialog
+          trigger={
+            <Button className="font-bold shadow-lg cursor-pointer text-md">
+              Add Visa
+            </Button>
+          }
+          onSaved={() => {
+            fetchVisas();
+          }}
+        />
+      </header>
+
+      <section className="px-5 py-4 space-y-4">
+        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+          <Input
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search by title or slug..."
+            className="max-w-md"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium">Description</label>
-          <textarea
-            name="description"
-            className="border p-2 w-full min-h-[120px]"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={onFileChange}
-          />
-          {imagePreview && (
-            <Image
-              src={imagePreview}
-              alt="preview"
-              className="mt-2 max-h-48"
-              width={200}
-              height={200}
-            />
+
+        {/* Placeholder list view until table is added */}
+        <div className="border rounded-md divide-y">
+          {loading && (
+            <div className=" flex items-center justify-center h-[calc(100vh-200px)]">
+              <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-purple-500"></div>
+              <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-red-500 ml-3"></div>
+              <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-blue-500 ml-3"></div>
+            </div>
+          )}
+          {error && !loading && (
+            <div className="text-sm flex items-center justify-center h-[calc(100vh-200px)] text-red-600">
+              {error}
+            </div>
+          )}
+          {!loading && !error && visas.length === 0 && (
+            <div className="text-sm text-muted-foreground flex items-center justify-center h-[calc(100vh-200px)]">
+              No Visa Created Yet.
+            </div>
+          )}
+          {!loading && !error && visas.length > 0 && (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Id</TableHead>
+                  <TableHead>Image</TableHead>
+                  <TableHead className="max-w-[250px]">Title</TableHead>
+                  <TableHead className="max-w-[250px]">Slug</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {visas.map((visa, i) => (
+                  <TableRow key={visa.id}>
+                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>
+                      <Image
+                        src={visa.imageUrl || ""}
+                        alt={visa.title}
+                        width={50}
+                        height={50}
+                      />
+                    </TableCell>
+                    <TableCell className="truncate">{visa.title}</TableCell>
+                    <TableCell className="truncate">{visa.slug}</TableCell>
+                    <TableCell className="flex items-center justify-center gap-2">
+                      <CreateVisaDialog
+                        visaId={visa.id}
+                        trigger={
+                          <IconEdit className="cursor-pointer stroke-primary" />
+                        }
+                        onSaved={() => {
+                          fetchVisas();
+                        }}
+                      />
+                      <ConfirmDialog
+                        title="Delete Visa"
+                        description="Are you sure you want to delete this visa?"
+                        trigger={
+                          <IconTrash className="cursor-pointer stroke-primary" />
+                        }
+                        confirmText="Delete"
+                        onConfirm={() => handleDelete(visa.id)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          {loading ? "Saving..." : "Create"}
-        </button>
-      </form>
-    </main>
+
+        {/* Pagination */}
+        <Pagination className="mt-2">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToPage(page - 1);
+                }}
+                aria-disabled={page <= 1}
+                className={
+                  page <= 1
+                    ? "pointer-events-none opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
+                }
+              />
+            </PaginationItem>
+
+            {pageNumbers.map((n) => (
+              <PaginationItem key={n}>
+                <PaginationLink
+                  href="#"
+                  isActive={n === page}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goToPage(n);
+                  }}
+                >
+                  {n}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToPage(page + 1);
+                }}
+                aria-disabled={page >= totalPages}
+                className={
+                  page >= totalPages
+                    ? "pointer-events-none opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </section>
+    </>
   );
 }

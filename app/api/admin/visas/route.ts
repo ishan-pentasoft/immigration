@@ -1,12 +1,49 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const visas = await prisma.visa.findMany({
-      orderBy: { createdAt: "desc" },
+    const { searchParams } = new URL(req.url);
+    const pageParam = searchParams.get("page");
+    const limitParam = searchParams.get("limit");
+    const search = searchParams.get("search")?.trim() || "";
+
+    const page = Math.max(1, Number(pageParam) || 1);
+    const limit = Math.min(100, Math.max(1, Number(limitParam) || 10));
+    const skip = (page - 1) * limit;
+
+    const where: NonNullable<
+      Parameters<typeof prisma.visa.findMany>[0]
+    >["where"] = search
+      ? {
+          OR: [
+            { title: { contains: search, mode: "insensitive" as const } },
+            { slug: { contains: search, mode: "insensitive" as const } },
+          ],
+        }
+      : undefined;
+
+    const [visas, total] = await Promise.all([
+      prisma.visa.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.visa.count({ where }),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+    return NextResponse.json({
+      visas,
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      search: search || undefined,
     });
-    return NextResponse.json({ visas });
   } catch (err) {
     console.error("GET /api/admin/visas error", err);
     return NextResponse.json(

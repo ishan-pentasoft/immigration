@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-
 function sanitizeFileName(name: string) {
-  // remove path separators and unsafe chars
   return name.replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
@@ -14,9 +10,7 @@ async function ensureUploadsDir() {
   const uploadDir = path.join(process.cwd(), "public", "uploads");
   try {
     await fs.mkdir(uploadDir, { recursive: true });
-  } catch {
-    // ignore if exists
-  }
+  } catch {}
   return uploadDir;
 }
 
@@ -25,7 +19,6 @@ export async function GET() {
     const uploadsDir = await ensureUploadsDir();
     const entries = await fs.readdir(uploadsDir, { withFileTypes: true });
     const files = entries.filter((e) => e.isFile()).map((e) => e.name);
-    // Optional: sort by mtime desc
     const stats = await Promise.all(
       files.map(async (name) => {
         const full = path.join(uploadsDir, name);

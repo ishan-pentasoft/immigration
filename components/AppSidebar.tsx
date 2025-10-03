@@ -26,6 +26,7 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAdminAuth";
 import { useEffect, useState } from "react";
+import { IconTicket } from "@tabler/icons-react";
 
 const AppSidebar = () => {
   const isMobile = useIsMobile();
@@ -73,7 +74,7 @@ const AppSidebar = () => {
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Visas">
                 <Link href="/admin/dashboard/visas">
-                  <LayoutDashboard />
+                  <IconTicket />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Visas
                   </span>
