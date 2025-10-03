@@ -8,6 +8,19 @@ export type CreateVisaInput = {
   imageUrl?: string | null;
 };
 
+export type UpdateAboutUsInput = {
+  description: string;
+  imageUrl?: string | null;
+};
+
+export type AboutUs = {
+  id: string;
+  description: string;
+  imageUrl?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type Visa = {
   id: string;
   title: string;
@@ -93,11 +106,31 @@ export const adminVisasApi = {
   },
 };
 
+// Admin About Us API
+export const adminAboutUsApi = {
+  async create(data: Partial<UpdateAboutUsInput>): Promise<AboutUs> {
+    const res = await api.post(`/admin/about-us`, data);
+    return res.data.aboutUs;
+  },
+  async update(
+    id: string,
+    data: Partial<UpdateAboutUsInput>
+  ): Promise<AboutUs> {
+    const res = await api.put(`/admin/about-us/${id}`, data);
+    return res.data.aboutUs;
+  },
+  async get(): Promise<AboutUs> {
+    const res = await api.get(`/admin/about-us`);
+    return res.data.aboutUs;
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
   admin: {
     visas: adminVisasApi,
+    aboutUs: adminAboutUsApi,
   },
 };
 

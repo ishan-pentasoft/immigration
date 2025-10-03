@@ -26,7 +26,7 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAdminAuth";
 import { useEffect, useState } from "react";
-import { IconTicket } from "@tabler/icons-react";
+import { IconInfoHexagonFilled, IconTicket } from "@tabler/icons-react";
 
 const AppSidebar = () => {
   const isMobile = useIsMobile();
@@ -77,6 +77,16 @@ const AppSidebar = () => {
                   <IconTicket />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Visas
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="About Us">
+                <Link href="/admin/dashboard/about-us">
+                  <IconInfoHexagonFilled />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    About Us
                   </span>
                 </Link>
               </SidebarMenuButton>
