@@ -17,6 +17,16 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
+import "froala-editor/css/froala_style.min.css";
+import "froala-editor/css/froala_editor.pkgd.min.css";
+import FroalaEditorComponent from "react-froala-wysiwyg";
+import "froala-editor/js/plugins/align.min.js";
+import "froala-editor/js/plugins/char_counter.min.js";
+import "froala-editor/js/plugins/colors.min.js";
+import "froala-editor/js/plugins/lists.min.js";
+import "froala-editor/js/plugins/link.min.js";
+import "froala-editor/js/plugins/image.min.js";
+import "froala-editor/js/plugins/fullscreen.min.js";
 
 export default function CreateVisaDialog({
   trigger,
@@ -130,7 +140,7 @@ export default function CreateVisaDialog({
 
       const payload = {
         title: String(fd.get("title") || ""),
-        description: String(fd.get("description") || ""),
+        description: description, // Use state value instead of form data for Froala content
         slug: String(fd.get("slug") || ""),
         imageUrl,
       };
@@ -237,14 +247,46 @@ export default function CreateVisaDialog({
             </div>
             <div>
               <label className="block text-sm font-medium">Description</label>
-              <textarea
-                name="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Write the visa description..."
-                required
-                className="border p-2 w-full"
+              <FroalaEditorComponent
+                tag="textarea"
+                model={description}
+                onModelChange={setDescription}
+                config={{
+                  placeholderText: "Write the visa description...",
+                  height: 50,
+                  toolbarButtons: [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "textColor",
+                    "backgroundColor",
+                    "alignLeft",
+                    "alignCenter",
+                    "alignRight",
+                    "formatUL",
+                    "formatOL",
+                    "outdent",
+                    "indent",
+                    "insertLink",
+                    "insertImage",
+                    "fullscreen",
+                    "undo",
+                    "redo",
+                    "clearFormatting",
+                  ],
+                  quickInsertEnabled: false,
+                  pluginsEnabled: [
+                    "align",
+                    "charCounter",
+                    "colors",
+                    "lists",
+                    "link",
+                    "image",
+                    "fullscreen",
+                  ],
+                }}
               />
+              <input type="hidden" name="description" value={description} />
             </div>
             <div>
               <label className="block text-sm font-medium">Image</label>

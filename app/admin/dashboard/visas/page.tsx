@@ -220,56 +220,58 @@ export default function Page() {
         </div>
 
         {/* Pagination */}
-        <Pagination className="mt-2">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  goToPage(page - 1);
-                }}
-                aria-disabled={page <= 1}
-                className={
-                  page <= 1
-                    ? "pointer-events-none opacity-50 cursor-not-allowed"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-
-            {pageNumbers.map((n) => (
-              <PaginationItem key={n}>
-                <PaginationLink
+        {!loading && !error && visas.length > 0 && (
+          <Pagination className="mt-2">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
                   href="#"
-                  isActive={n === page}
                   onClick={(e) => {
                     e.preventDefault();
-                    goToPage(n);
+                    goToPage(page - 1);
                   }}
-                >
-                  {n}
-                </PaginationLink>
+                  aria-disabled={page <= 1}
+                  className={
+                    page <= 1
+                      ? "pointer-events-none opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }
+                />
               </PaginationItem>
-            ))}
 
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  goToPage(page + 1);
-                }}
-                aria-disabled={page >= totalPages}
-                className={
-                  page >= totalPages
-                    ? "pointer-events-none opacity-50 cursor-not-allowed"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+              {pageNumbers.map((n) => (
+                <PaginationItem key={n}>
+                  <PaginationLink
+                    href="#"
+                    isActive={n === page}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToPage(n);
+                    }}
+                  >
+                    {n}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goToPage(page + 1);
+                  }}
+                  aria-disabled={page >= totalPages}
+                  className={
+                    page >= totalPages
+                      ? "pointer-events-none opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </section>
     </>
   );
