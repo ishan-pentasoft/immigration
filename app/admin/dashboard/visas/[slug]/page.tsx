@@ -58,7 +58,7 @@ export default function Page() {
           <h2 className="text-2xl font-bold text-primary">{visa?.title}</h2>
           {visa && (
             <div
-              className="rich-content w-full mt-5"
+              className="ql-editor w-full mt-5"
               dangerouslySetInnerHTML={{
                 __html: visa?.description || "",
               }}
