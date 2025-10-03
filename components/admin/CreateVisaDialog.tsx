@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
+import RichTextEditor from "../ui/rich-text-editor";
+// Removed FormControl import since we are not using react-hook-form context in this dialog
 
 export default function CreateVisaDialog({
   trigger,
@@ -237,13 +239,13 @@ export default function CreateVisaDialog({
             </div>
             <div>
               <label className="block text-sm font-medium">Description</label>
-              <textarea
-                name="description"
-                className="w-full border p-2 rounded min-h-[300px]"
-                placeholder="Write the visa description..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+              <div>
+                <RichTextEditor
+                  placeholder="Write the visa description..."
+                  value={description}
+                  onChange={(e) => setDescription(e)}
+                />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium">Image</label>
