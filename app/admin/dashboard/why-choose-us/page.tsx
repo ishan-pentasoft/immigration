@@ -11,17 +11,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { toast } from "sonner";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
-import { useRouter } from "next/navigation";
 import CreateWhyChooseUsDialog from "@/components/admin/CreateWhyChooseUsDialog";
 
 export default function Page() {
   const [whyChooseUs, setWhyChooseUs] = useState<WhyChooseUs[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   const fetchWhyChooseUs = async () => {
     const res = await apiClient.admin.whyChooseUs.getAll();
@@ -107,15 +105,7 @@ export default function Page() {
                       {whyChoose.title}
                     </TableCell>
                     <TableCell className="truncate">{whyChoose.link}</TableCell>
-                    <TableCell className="flex items-center justify-center gap-2">
-                      <IconEye
-                        onClick={() =>
-                          router.push(
-                            `/admin/dashboard/why-choose-us/${whyChoose.id}`
-                          )
-                        }
-                        className="cursor-pointer stroke-primary"
-                      />
+                    <TableCell className="flex gap-2">
                       <CreateWhyChooseUsDialog
                         whyChooseUsId={whyChoose.id}
                         trigger={
