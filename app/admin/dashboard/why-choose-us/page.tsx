@@ -22,19 +22,19 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchWhyChooseUs = async () => {
-    const res = await apiClient.admin.whyChooseUs.getAll();
-    setWhyChooseUs(res);
-  };
-
-  useEffect(() => {
     try {
       setLoading(true);
-      fetchWhyChooseUs();
+      const res = await apiClient.admin.whyChooseUs.getAll();
+      setWhyChooseUs(res);
     } catch (error) {
       setError(error as string);
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchWhyChooseUs();
   }, []);
 
   const handleDelete = async (id: string) => {
