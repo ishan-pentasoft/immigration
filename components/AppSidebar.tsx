@@ -41,7 +41,8 @@ import { useAuth } from "@/hooks/useAdminAuth";
 import { useEffect, useState } from "react";
 import {
   IconCircleCheck,
-  IconInfoHexagonFilled,
+  IconInfoHexagon,
+  IconMap2,
   IconTicket,
 } from "@tabler/icons-react";
 
@@ -98,11 +99,21 @@ const AppSidebar = () => {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Countries">
+                <Link href="/admin/dashboard/countries">
+                  <IconMap2 />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Countries
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <Collapsible asChild className="group/collapsible">
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton>
-                    <IconInfoHexagonFilled />
+                    <IconInfoHexagon />
                     <span className="group-data-[collapsible=icon]:hidden flex items-center justify-between w-full">
                       About Us
                       <ChevronsDown className="ml-auto size-4" />
@@ -114,7 +125,7 @@ const AppSidebar = () => {
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton asChild>
                         <Link href="/admin/dashboard/about-us">
-                          <IconInfoHexagonFilled />
+                          <IconInfoHexagon />
                           <span className="group-data-[collapsible=icon]:hidden">
                             About Us
                           </span>

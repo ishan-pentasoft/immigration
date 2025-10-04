@@ -46,6 +46,27 @@ export type Visa = {
   updatedAt?: string;
 };
 
+export type Country = {
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  imageUrl?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type College = {
+  id: string;
+  name: string;
+  description: string;
+  slug: string;
+  imageUrl?: string | null;
+  countryId: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type ListVisasParams = {
   page?: number;
   limit?: number;
@@ -62,6 +83,44 @@ export type ListVisasResponse = {
   hasNextPage: boolean;
   hasPrevPage: boolean;
   search?: string;
+};
+
+export type ListCountriesParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  signal?: AbortSignal;
+};
+
+export type ListCountriesResponse = {
+  countries: Country[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  search?: string;
+};
+
+export type ListCollegesParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  countryId?: string;
+  signal?: AbortSignal;
+};
+
+export type ListCollegesResponse = {
+  colleges: (College & { country?: Country })[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  search?: string;
+  countryId?: string;
 };
 
 // Images API
@@ -121,6 +180,92 @@ export const adminVisasApi = {
   },
 };
 
+// Admin Countries API
+export type CreateCountryInput = {
+  title: string;
+  description: string;
+  slug: string;
+  imageUrl?: string | null;
+};
+
+export const adminCountriesApi = {
+  async create(data: CreateCountryInput): Promise<Country> {
+    const res = await api.post("/admin/countries", data);
+    return res.data.country;
+  },
+  async list(params?: ListCountriesParams): Promise<ListCountriesResponse> {
+    const { page, limit, search, signal } = params || {};
+    const res = await api.get("/admin/countries", {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+      },
+      signal,
+    });
+    return res.data;
+  },
+  async getBySlug(slug: string): Promise<Country> {
+    const res = await api.get(`/admin/countries/${slug}`);
+    return res.data.country;
+  },
+  async update(
+    slug: string,
+    data: Partial<CreateCountryInput>
+  ): Promise<Country> {
+    const res = await api.put(`/admin/countries/${slug}`, data);
+    return res.data.country;
+  },
+  async remove(slug: string): Promise<{ success: boolean }> {
+    const res = await api.delete(`/admin/countries/${slug}`);
+    return res.data;
+  },
+};
+
+// Admin Colleges API
+export type CreateCollegeInput = {
+  name: string;
+  description: string;
+  slug: string;
+  imageUrl?: string | null;
+  countryId: string;
+};
+
+export const adminCollegesApi = {
+  async create(data: CreateCollegeInput): Promise<College> {
+    const res = await api.post("/admin/colleges", data);
+    return res.data.college;
+  },
+  async list(params?: ListCollegesParams): Promise<ListCollegesResponse> {
+    const { page, limit, search, countryId, signal } = params || {};
+    const res = await api.get("/admin/colleges", {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+        countryId,
+      },
+      signal,
+    });
+    return res.data;
+  },
+  async getBySlug(slug: string): Promise<College> {
+    const res = await api.get(`/admin/colleges/${slug}`);
+    return res.data.college;
+  },
+  async update(
+    slug: string,
+    data: Partial<Omit<CreateCollegeInput, "slug">> & { slug?: string }
+  ): Promise<College> {
+    const res = await api.put(`/admin/colleges/${slug}`, data);
+    return res.data.college;
+  },
+  async remove(slug: string): Promise<{ success: boolean }> {
+    const res = await api.delete(`/admin/colleges/${slug}`);
+    return res.data;
+  },
+};
+
 // Admin About Us API
 export const adminAboutUsApi = {
   async create(data: Partial<UpdateAboutUsInput>): Promise<AboutUs> {
@@ -172,6 +317,8 @@ const apiClient = {
   images: imagesApi,
   admin: {
     visas: adminVisasApi,
+    countries: adminCountriesApi,
+    colleges: adminCollegesApi,
     aboutUs: adminAboutUsApi,
     whyChooseUs: adminWhyChooseUsApi,
   },
