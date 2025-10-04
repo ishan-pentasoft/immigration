@@ -19,6 +19,19 @@ export type UpdateWhyChooseUsInput = {
   link: string;
 };
 
+export type UpdateFaqInput = {
+  question: string;
+  answer: string;
+};
+
+export type Faq = {
+  id: string;
+  question: string;
+  answer: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type WhyChooseUs = {
   id: string;
   title: string;
@@ -312,6 +325,30 @@ export const adminWhyChooseUsApi = {
   },
 };
 
+// Admin faq API
+export const adminFaqApi = {
+  async create(data: UpdateFaqInput): Promise<Faq> {
+    const res = await api.post(`/admin/faq`, data);
+    return res.data.faq;
+  },
+  async update(id: string, data: Partial<UpdateFaqInput>): Promise<Faq> {
+    const res = await api.put(`/admin/faq/${id}`, data);
+    return res.data.faq;
+  },
+  async getAll(): Promise<Faq[]> {
+    const res = await api.get(`/admin/faq`);
+    return res.data.faq;
+  },
+  async getById(id: string): Promise<Faq> {
+    const res = await api.get(`/admin/faq/${id}`);
+    return res.data.faq;
+  },
+  async remove(id: string): Promise<{ success: boolean }> {
+    const res = await api.delete(`/admin/faq/${id}`);
+    return res.data;
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
@@ -321,6 +358,7 @@ const apiClient = {
     colleges: adminCollegesApi,
     aboutUs: adminAboutUsApi,
     whyChooseUs: adminWhyChooseUsApi,
+    faq: adminFaqApi,
   },
 };
 
