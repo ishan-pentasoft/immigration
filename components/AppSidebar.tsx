@@ -10,10 +10,23 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "./ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronsUpDown, LogOut, LayoutDashboard } from "lucide-react";
+import {
+  ChevronsUpDown,
+  LogOut,
+  LayoutDashboard,
+  ChevronsDown,
+} from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,7 +39,11 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAdminAuth";
 import { useEffect, useState } from "react";
-import { IconInfoHexagonFilled, IconTicket } from "@tabler/icons-react";
+import {
+  IconCircleCheck,
+  IconInfoHexagonFilled,
+  IconTicket,
+} from "@tabler/icons-react";
 
 const AppSidebar = () => {
   const isMobile = useIsMobile();
@@ -81,16 +98,43 @@ const AppSidebar = () => {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="About Us">
-                <Link href="/admin/dashboard/about-us">
-                  <IconInfoHexagonFilled />
-                  <span className="group-data-[collapsible=icon]:hidden">
-                    About Us
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <Collapsible asChild className="group/collapsible">
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton>
+                    <IconInfoHexagonFilled />
+                    <span className="group-data-[collapsible=icon]:hidden flex items-center justify-between w-full">
+                      About Us
+                      <ChevronsDown className="ml-auto size-4" />
+                    </span>
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/admin/dashboard/about-us">
+                          <IconInfoHexagonFilled />
+                          <span className="group-data-[collapsible=icon]:hidden">
+                            About Us
+                          </span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/admin/dashboard/why-choose-us">
+                          <IconCircleCheck />
+                          <span className="group-data-[collapsible=icon]:hidden">
+                            Why Choose Us
+                          </span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

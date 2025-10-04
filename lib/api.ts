@@ -13,6 +13,21 @@ export type UpdateAboutUsInput = {
   imageUrl?: string | null;
 };
 
+export type UpdateWhyChooseUsInput = {
+  title: string;
+  description: string;
+  link: string;
+};
+
+export type WhyChooseUs = {
+  id: string;
+  title: string;
+  description: string;
+  link: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type AboutUs = {
   id: string;
   description: string;
@@ -125,12 +140,40 @@ export const adminAboutUsApi = {
   },
 };
 
+// Admin Why Choose Us API
+export const adminWhyChooseUsApi = {
+  async create(data: UpdateWhyChooseUsInput): Promise<WhyChooseUs> {
+    const res = await api.post(`/admin/why-choose-us`, data);
+    return res.data.whyChooseUs;
+  },
+  async update(
+    id: string,
+    data: Partial<UpdateWhyChooseUsInput>
+  ): Promise<WhyChooseUs> {
+    const res = await api.put(`/admin/why-choose-us/${id}`, data);
+    return res.data.whyChooseUs;
+  },
+  async getAll(): Promise<WhyChooseUs[]> {
+    const res = await api.get(`/admin/why-choose-us`);
+    return res.data.whyChooseUs;
+  },
+  async getById(id: string): Promise<WhyChooseUs> {
+    const res = await api.get(`/admin/why-choose-us/${id}`);
+    return res.data.whyChooseUs;
+  },
+  async remove(id: string): Promise<{ success: boolean }> {
+    const res = await api.delete(`/admin/why-choose-us/${id}`);
+    return res.data;
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
   admin: {
     visas: adminVisasApi,
     aboutUs: adminAboutUsApi,
+    whyChooseUs: adminWhyChooseUsApi,
   },
 };
 
