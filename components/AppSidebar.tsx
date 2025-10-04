@@ -40,6 +40,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAdminAuth";
 import { useEffect, useState } from "react";
 import {
+  IconBuildingFortress,
   IconCircleCheck,
   IconInfoHexagon,
   IconMap2,
@@ -105,6 +106,16 @@ const AppSidebar = () => {
                   <IconMap2 />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Countries
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Colleges">
+                <Link href="/admin/dashboard/colleges">
+                  <IconBuildingFortress />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Colleges
                   </span>
                 </Link>
               </SidebarMenuButton>
