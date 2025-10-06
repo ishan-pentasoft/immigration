@@ -131,6 +131,16 @@ const AppSidebar = () => {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Site Details">
+                <Link href="/admin/dashboard/site-details">
+                  <IconInfoHexagon />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Site Details
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <Collapsible asChild className="group/collapsible">
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>

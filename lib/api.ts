@@ -32,6 +32,22 @@ export type Faq = {
   updatedAt?: string;
 };
 
+export type SiteDetails = {
+  id: string;
+  phone?: string | null;
+  email?: string | null;
+  facebook?: string | null;
+  twitter?: string | null;
+  youtube?: string | null;
+  address?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UpdateSiteDetailsInput = Partial<
+  Pick<SiteDetails, "phone" | "email" | "facebook" | "twitter" | "youtube" | "address">
+>;
+
 export type WhyChooseUs = {
   id: string;
   title: string;
@@ -349,6 +365,18 @@ export const adminFaqApi = {
   },
 };
 
+// Admin Site Details API
+export const adminSiteDetailsApi = {
+  async get(): Promise<SiteDetails> {
+    const res = await api.get(`/admin/site-details`);
+    return res.data.siteDetails;
+  },
+  async update(data: UpdateSiteDetailsInput): Promise<SiteDetails> {
+    const res = await api.put(`/admin/site-details`, data);
+    return res.data.siteDetails;
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
@@ -359,6 +387,7 @@ const apiClient = {
     aboutUs: adminAboutUsApi,
     whyChooseUs: adminWhyChooseUsApi,
     faq: adminFaqApi,
+    siteDetails: adminSiteDetailsApi,
   },
 };
 
