@@ -298,6 +298,10 @@ export const userCountriesApi = {
     const res = await api.get("/user/countries");
     return res.data;
   },
+  async getBySlug(slug: string): Promise<Country> {
+    const res = await api.get(`/user/countries/${slug}`);
+    return res.data.country;
+  },
 };
 
 // Admin Colleges API

@@ -1,64 +1,59 @@
+"use client";
+
 import PageHeader from "@/components/PageHeader";
 import { FocusCards } from "@/components/ui/focus-cards";
-import React from "react";
+import apiClient, { Country } from "@/lib/api";
+import React, { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const page = () => {
-  const cards = [
-    {
-      title: "Australia",
-      src: "/country/australia.png",
-      href: "/country/australia",
-    },
-    {
-      title: "Canada",
-      src: "/country/canada.png",
-      href: "/country/canada",
-    },
-    {
-      title: "Denmark",
-      src: "/country/denmark.png",
-      href: "/country/denmark",
-    },
-    {
-      title: "Germany",
-      src: "/country/germany.png",
-      href: "/country/germany",
-    },
-    {
-      title: "Poland",
-      src: "/country/poland.png",
-      href: "/country/poland",
-    },
-    {
-      title: "Sweden",
-      src: "/country/sweden.png",
-      href: "/country/sweden",
-    },
-    {
-      title: "Switzerland",
-      src: "/country/switzerland.png",
-      href: "/country/switzerland",
-    },
-    {
-      title: "United Kingdom",
-      src: "/country/uk.png",
-      href: "/country/uk",
-    },
-    {
-      title: "United States",
-      src: "/country/usa.png",
-      href: "/country/usa",
-    },
-  ];
+const Page = () => {
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        setLoading(true);
+        const res = await apiClient.user.countries.list();
+        setCountries(res?.countries ?? []);
+      } catch (err) {
+        console.error("Failed to fetch countries", err);
+        setCountries([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  const cards = countries.map((country) => {
+    return {
+      title: country.title,
+      src: country.imageUrl || " ",
+      href: `/country/${country.slug}`,
+    };
+  });
 
   return (
     <>
       <PageHeader text="Countries" />
       <div className="px-3">
-        <FocusCards cards={cards} />
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-10">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-40 w-full rounded-xl" />
+            ))}
+          </div>
+        ) : countries.length > 0 ? (
+          <FocusCards cards={cards} />
+        ) : (
+          <div className="text-muted-foreground text-center py-10">
+            No countries available.
+          </div>
+        )}
       </div>
     </>
   );
 };
 
-export default page;
+export default Page;
