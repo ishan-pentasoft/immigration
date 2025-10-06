@@ -359,6 +359,14 @@ export const adminAboutUsApi = {
   },
 };
 
+//User About Us API
+export const userAboutUsApi = {
+  async get(): Promise<AboutUs> {
+    const res = await api.get(`/user/about-us`);
+    return res.data.aboutUs;
+  },
+};
+
 // Admin Why Choose Us API
 export const adminWhyChooseUsApi = {
   async create(data: UpdateWhyChooseUsInput): Promise<WhyChooseUs> {
@@ -383,6 +391,14 @@ export const adminWhyChooseUsApi = {
   async remove(id: string): Promise<{ success: boolean }> {
     const res = await api.delete(`/admin/why-choose-us/${id}`);
     return res.data;
+  },
+};
+
+//User Why Choose us API
+export const userWhyChooseUsApi = {
+  async getAll(): Promise<WhyChooseUs[]> {
+    const res = await api.get(`/user/why-choose-us`);
+    return res.data.whyChooseUs;
   },
 };
 
@@ -535,6 +551,8 @@ const apiClient = {
     visas: userVisasApi,
     countries: userCountriesApi,
     team: userTeamApi,
+    aboutUs: userAboutUsApi,
+    whyChooseUs: userWhyChooseUsApi,
   },
 };
 
