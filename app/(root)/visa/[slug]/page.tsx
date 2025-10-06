@@ -1,19 +1,22 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
 import Image from "next/image";
 import {
   Card,
-  CardAction,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/stateful-button";
-import apiClient from "@/lib/api";
+import apiClient, { Visa } from "@/lib/api";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Page = () => {
+  const { slug } = useParams();
+
   const [form, setForm] = React.useState({
     name: "",
     phone: "",
@@ -22,6 +25,8 @@ const Page = () => {
     message: "",
   });
   const [submitting, setSubmitting] = React.useState(false);
+  const [visa, setVisa] = React.useState<Visa | null>(null);
+  const [loading, setLoading] = React.useState(true);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -70,42 +75,62 @@ const Page = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchVisa = async () => {
+      try {
+        setLoading(true);
+        const res = await apiClient.user.visas.getBySlug(slug as string);
+        if (res) setVisa(res);
+      } catch (err) {
+        console.error("Failed to fetch visa:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVisa();
+  }, [slug]);
+
   return (
     <>
       <PageHeader text="Visa" />
       <section className="py-10 px-3 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-5">
         <Card className="pt-0 overflow-hidden col-span-2">
           <CardHeader className="p-0">
-            <Image
-              src={"/visa/Study in Canada.png"}
-              alt="Study in Canada"
-              width={500}
-              height={500}
-              className="h-full w-full object-cover"
-            />
+            {loading ? (
+              <Skeleton className="h-full w-full aspect-[16/9]" />
+            ) : visa?.imageUrl ? (
+              <Image
+                src={visa.imageUrl}
+                alt={visa.title || "Visa"}
+                width={500}
+                height={500}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="h-full w-full aspect-[16/9] bg-muted flex items-center justify-center text-muted-foreground">
+                No image available
+              </div>
+            )}
           </CardHeader>
-          <CardTitle className="px-2 md:text-4xl text-2xl truncate text-primary font-semibold">
-            {"Study in Canada"}
+          <CardTitle className="px-5 md:text-4xl text-2xl truncate text-primary font-semibold">
+            {loading ? <Skeleton className="h-8 w-2/3" /> : visa?.title || ""}
           </CardTitle>
-          <CardDescription className="px-2 text-sm">
-            <p className="text-justify">
-              Study in Canada is a dream for many international students. Canada
-              is known for its high-quality education, diversity, and friendly
-              people. From undergraduate to graduate studies, Canada offers a
-              wide range of programs for international students. Moreover,
-              Canada is a popular destination for international students because
-              of its affordable tuition fees, excellent scholarship
-              opportunities, and a wide range of programs to choose from.
-            </p>
+          <CardDescription className="px-2">
+            {loading ? (
+              <div className="ql-editor w-full max-w-5xl mx-auto space-y-3 py-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-4 w-4/5" />
+              </div>
+            ) : (
+              <div
+                className="ql-editor w-full max-w-5xl mx-auto"
+                dangerouslySetInnerHTML={{ __html: visa?.description || "" }}
+              />
+            )}
           </CardDescription>
-          <CardAction className="flex flex-col md:flex-row items-stretch md:items-center justify-center w-full gap-4 md:gap-10 px-2">
-            <Button className="mt-2 md:mt-6 bg-primary hover:ring-2 hover:ring-primary font-bold tracking-wide px-6 py-3 text-lg w-full md:w-auto">
-              Know More
-            </Button>
-            <Button className="mt-2 md:mt-6 bg-yellow-500 hover:ring-2 hover:ring-yellow-500 font-bold tracking-wide px-6 py-3 text-lg w-full md:w-auto">
-              Apply Now
-            </Button>
-          </CardAction>
         </Card>
         <div className="col-span-1">
           <Card className="p-4 md:p-6 md:sticky md:top-24">

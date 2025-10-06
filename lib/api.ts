@@ -244,6 +244,10 @@ export const userVisasApi = {
     const res = await api.get("/user/visas");
     return res.data;
   },
+  async getBySlug(slug: string): Promise<Visa> {
+    const res = await api.get(`/user/visas/${slug}`);
+    return res.data.visa;
+  },
 };
 
 // Admin Countries API
