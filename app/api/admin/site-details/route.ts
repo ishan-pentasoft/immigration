@@ -36,11 +36,13 @@ export async function PUT(req: NextRequest) {
     });
 
     return NextResponse.json({ siteDetails: updated });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err?.code === "P2025") {
       try {
         const body = await req.json();
-        const { phone, email, facebook, twitter, youtube, address } = body ?? {};
+        const { phone, email, facebook, twitter, youtube, address } =
+          body ?? {};
         const created = await prisma.siteDetails.create({
           data: {
             id: "site",

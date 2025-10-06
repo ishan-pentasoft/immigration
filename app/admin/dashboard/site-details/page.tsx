@@ -7,16 +7,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 const schema = z.object({
   phone: z.string().optional().nullable(),
   email: z.email("Invalid email").optional().nullable(),
-  facebook: z.url("Invalid URL").optional().nullable(),
-  twitter: z.string().url("Invalid URL").optional().nullable(),
-  youtube: z.string().url("Invalid URL").optional().nullable(),
+  facebook: z.string().optional().nullable(),
+  twitter: z.string().optional().nullable(),
+  youtube: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
 });
 
@@ -87,8 +94,10 @@ export default function SiteDetailsPage() {
 
   if (loading) {
     return (
-      <div className="p-6">
-        <span className="loading loading-dots loading-lg" />
+      <div className=" flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-purple-500"></div>
+        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-red-500 ml-3"></div>
+        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-blue-500 ml-3"></div>
       </div>
     );
   }
@@ -230,7 +239,11 @@ export default function SiteDetailsPage() {
               />
 
               <div className="pt-2">
-                <Button type="submit" className="cursor-pointer" disabled={saving}>
+                <Button
+                  type="submit"
+                  className="cursor-pointer"
+                  disabled={saving}
+                >
                   {saving ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
