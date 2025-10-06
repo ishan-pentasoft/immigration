@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/stateful-button";
+import apiClient, { Country } from "@/lib/api";
 
 const CircularGallery = dynamic(() => import("./ui/CircularGallery"), {
   ssr: false,
@@ -9,17 +10,20 @@ const CircularGallery = dynamic(() => import("./ui/CircularGallery"), {
 });
 
 const CountryOrbit = () => {
-  const items = [
-    { image: "/country/australia.png", text: "Australia" },
-    { image: "/country/canada.png", text: "Canada" },
-    { image: "/country/denmark.png", text: "Denmark" },
-    { image: "/country/germany.png", text: "Germany" },
-    { image: "/country/poland.png", text: "Poland" },
-    { image: "/country/sweden.png", text: "Sweden" },
-    { image: "/country/switzerland.png", text: "Switzerland" },
-    { image: "/country/uk.png", text: "United Kingdom" },
-    { image: "/country/usa.png", text: "United States Of America" },
-  ];
+  const [countries, setCountries] = useState<Country[]>([]);
+
+  useEffect(() => {
+    apiClient.user.countries.list().then((res) => {
+      setCountries(res?.countries);
+    });
+  }, []);
+
+  const items = countries.map((country) => {
+    return {
+      image: country.imageUrl || " ",
+      text: country.title,
+    };
+  });
 
   const [visible, setVisible] = React.useState(false);
   const ref = React.useRef<HTMLDivElement | null>(null);

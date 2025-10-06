@@ -288,6 +288,14 @@ export const adminCountriesApi = {
   },
 };
 
+// User Countries API
+export const userCountriesApi = {
+  async list(): Promise<{ countries: Country[] }> {
+    const res = await api.get("/user/countries");
+    return res.data;
+  },
+};
+
 // Admin Colleges API
 export type CreateCollegeInput = {
   name: string;
@@ -516,6 +524,7 @@ const apiClient = {
   user: {
     siteDetails: userSiteDetailsApi,
     visas: userVisasApi,
+    countries: userCountriesApi,
   },
 };
 
