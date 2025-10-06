@@ -304,6 +304,27 @@ export const userCountriesApi = {
   },
 };
 
+// User Colleges API
+export const userCollegesApi = {
+  async list(params?: ListCollegesParams): Promise<ListCollegesResponse> {
+    const { page, limit, search, countryId, signal } = params || {};
+    const res = await api.get("/user/colleges", {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+        countryId,
+      },
+      signal,
+    });
+    return res.data;
+  },
+  async getBySlug(slug: string): Promise<College & { country?: Country }> {
+    const res = await api.get(`/user/colleges/${slug}`);
+    return res.data.college as College & { country?: Country };
+  },
+};
+
 // Admin Colleges API
 export type CreateCollegeInput = {
   name: string;
@@ -558,6 +579,7 @@ const apiClient = {
     siteDetails: userSiteDetailsApi,
     visas: userVisasApi,
     countries: userCountriesApi,
+    colleges: userCollegesApi,
     team: userTeamApi,
     aboutUs: userAboutUsApi,
     whyChooseUs: userWhyChooseUsApi,
