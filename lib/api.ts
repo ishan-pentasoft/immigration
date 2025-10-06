@@ -406,6 +406,14 @@ export const adminSiteDetailsApi = {
   },
 };
 
+//User Site Details API
+export const userSiteDetailsApi = {
+  async get(): Promise<SiteDetails> {
+    const res = await api.get(`/user/site-details`);
+    return res.data.siteDetails;
+  },
+};
+
 // Admin Team API
 export const adminTeamApi = {
   async create(data: UpdateTeamInput): Promise<Team> {
@@ -497,6 +505,9 @@ const apiClient = {
     contacts: adminContactsApi,
   },
   contact: contactApi,
+  user: {
+    siteDetails: userSiteDetailsApi,
+  },
 };
 
 export default apiClient;
