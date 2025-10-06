@@ -26,16 +26,6 @@ const ServicesGrid = () => {
             alt="signup"
             className="pointer-events-none absolute inset-0 object-cover w-full h-full -z-1 opacity-30 grayscale filter rounded-2xl"
           />
-
-          <Link
-            href="/"
-            target="_blank"
-            className="flex items-center justify-center"
-          >
-            <Button className="mt-6 bg-red-200 hover:ring-4 text-primary hover:ring-red-200 font-bold tracking-wide px-6 py-3 text-lg z-50">
-              Start Now
-            </Button>
-          </Link>
         </WobbleCard>
         <WobbleCard containerClassName="col-span-1 h-full bg-blue-900">
           <div className="w-full">
@@ -53,16 +43,6 @@ const ServicesGrid = () => {
             alt="signup"
             className="pointer-events-none absolute inset-0 object-cover w-full h-full -z-1 opacity-30 grayscale filter rounded-2xl"
           />
-
-          <Link
-            href="/"
-            target="_blank"
-            className="flex items-center justify-center"
-          >
-            <Button className="mt-6 bg-blue-200 hover:ring-4 text-blue-900 hover:ring-blue-200 font-bold tracking-wide px-6 py-3 text-lg z-50">
-              Click Here
-            </Button>
-          </Link>
         </WobbleCard>
         <WobbleCard containerClassName="col-span-1 lg:col-span-3 h-full bg-indigo-900">
           <div className="w-full">
@@ -81,16 +61,6 @@ const ServicesGrid = () => {
             alt="signup"
             className="pointer-events-none absolute inset-0 object-cover w-full h-full -z-1 opacity-30 grayscale filter rounded-2xl"
           />
-
-          <Link
-            href="/"
-            target="_blank"
-            className="flex items-center justify-center"
-          >
-            <Button className="mt-6 bg-indigo-200 hover:ring-4 text-indigo-900 hover:ring-indigo-200 font-bold tracking-wide px-6 py-3 text-lg z-50">
-              Schedule Now
-            </Button>
-          </Link>
         </WobbleCard>
       </div>
     </div>

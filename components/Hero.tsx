@@ -5,6 +5,7 @@ import { Highlight } from "./ui/hero-highlight";
 import Image from "next/image";
 import { Button } from "./ui/stateful-button";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 const World = dynamic(
   () => import("@/components/ui/globe").then((m) => m.World),
@@ -475,9 +476,11 @@ const Hero = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 3, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
         >
-          <Button className="mt-6 bg-primary hover:ring-2 hover:ring-primary font-bold tracking-wide px-6 py-3 text-lg">
-            Get Started
-          </Button>
+          <Link href="/contact-us">
+            <Button className="mt-6 bg-primary hover:ring-2 hover:ring-primary font-bold tracking-wide px-6 py-3 text-lg">
+              Get Started
+            </Button>
+          </Link>
         </motion.div>
       </div>
       {/* Bottom Fade Overlay */}

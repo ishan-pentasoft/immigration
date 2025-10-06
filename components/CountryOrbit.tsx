@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/stateful-button";
 import apiClient, { Country } from "@/lib/api";
+import Link from "next/link";
 
 const CircularGallery = dynamic(() => import("./ui/CircularGallery"), {
   ssr: false,
@@ -80,9 +81,11 @@ const CountryOrbit = () => {
           )}
         </div>
         <div className="flex items-center justify-center w-full">
-          <Button className="mt-6 bg-primary hover:ring-2 hover:ring-primary font-bold tracking-wide px-6 py-3 text-lg">
-            Book Now
-          </Button>
+          <Link href="/contact-us">
+            <Button className="mt-6 bg-primary hover:ring-2 hover:ring-primary font-bold tracking-wide px-6 py-3 text-lg">
+              Book Now
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

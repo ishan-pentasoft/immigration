@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import apiClient, { SiteDetails } from "@/lib/api";
+import { Mail, PhoneCall } from "lucide-react";
 
 const WorldMap = dynamic(() => import("./ui/world-map"), {
   ssr: false,
@@ -12,10 +14,11 @@ const WorldMap = dynamic(() => import("./ui/world-map"), {
 });
 
 const Footer = () => {
-  const [visible, setVisible] = React.useState(false);
-  const ref = React.useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = useState(false);
+  const [siteDetails, setSiteDetails] = useState<SiteDetails | null>(null);
+  const ref = useRef<HTMLElement | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (visible) return;
@@ -32,13 +35,19 @@ const Footer = () => {
     return () => io.disconnect();
   }, [visible]);
 
+  useEffect(() => {
+    apiClient.user.siteDetails.get().then((res) => {
+      setSiteDetails(res);
+    });
+  }, []);
+
   return (
     <section
       ref={ref}
       className="px-3 pt-10 relative overflow-hidden border-t border-border"
     >
       <div
-        className="absolute inset-0 -z-1 pointer-events-none select-none hidden md:block"
+        className="absolute inset-0 -z-1 pointer-events-none select-none "
         aria-hidden
       >
         <div className="w-full h-full opacity-20">
@@ -92,26 +101,36 @@ const Footer = () => {
             draggable={false}
             loading="lazy"
           />
-          <p className="text-accent">
+          <p className="text-accent font-semibold">
             We are a team of experts dedicated to helping you navigate the
             complexities of immigration.
           </p>
         </div>
-        <div className="col-span-1">
+        <div className="col-span-1 px-5">
           <h3 className="text-xl font-bold text-primary">Pages</h3>
           <hr className="border-accent w-1/2 mb-2" />
-          <ul className="list-disc list-inside">
-            <li>Home</li>
-            <li>Contries</li>
-            <li>Visa</li>
-            <li>Colleges</li>
-            <li>Contact Us</li>
+          <ul className="list-inside font-semibold">
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            <li>
+              <Link href="/country">Countries</Link>
+            </li>
+            <li>
+              <Link href="/visa">Visa</Link>
+            </li>
+            <li>
+              <Link href="/colleges">Colleges</Link>
+            </li>
+            <li>
+              <Link href="/contact-us">Contact Us</Link>
+            </li>
           </ul>
         </div>
-        <div className="col-span-1">
+        <div className="col-span-1 px-5">
           <h3 className="text-xl font-bold text-primary">Quick Links</h3>
           <hr className="border-accent w-1/2 mb-2" />
-          <ul className="list-disc list-inside">
+          <ul className="list-inside font-semibold">
             <li>
               <Link href="/terms">Terms & Conditions</Link>
             </li>
@@ -123,19 +142,26 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-        <div className="col-span-1">
+        <div className="col-span-1 px-5">
           <h3 className="text-xl font-bold text-primary">Contact Us</h3>
           <hr className="border-accent w-1/2 mb-2" />
-          <p>
-            123 Main Street, Anytown, USA <br />
-            Phone: +91 8283994938
-            <br />
-            Email: info@pentasoftprofessional.com
-          </p>
+          <p className="font-semibold mt-2"> {siteDetails?.address}</p>
+          <Link
+            href={`tel:${siteDetails?.phone}`}
+            className="font-semibold mt-2 text-[14px] flex items-center gap-2"
+          >
+            <PhoneCall className="h-5 w-5" /> {siteDetails?.phone}
+          </Link>
+          <Link
+            href={`mailto:${siteDetails?.email}`}
+            className="font-semibold mt-2 text-[14px] flex items-center gap-2"
+          >
+            <Mail className="h-5 w-5" /> {siteDetails?.email}
+          </Link>
         </div>
       </div>
       <hr className="border-accent mt-5" />
-      <div className="text-center my-4">
+      <div className="text-center my-4 font-semibold">
         <p>© {new Date().getFullYear()} Pentasoft. All rights reserved.</p>
       </div>
     </section>
