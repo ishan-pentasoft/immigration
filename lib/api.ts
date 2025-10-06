@@ -454,6 +454,15 @@ export const adminTeamApi = {
   },
 };
 
+//User Team API
+
+export const userTeamApi = {
+  async getAll(): Promise<Team[]> {
+    const res = await api.get(`/user/team`);
+    return res.data.team;
+  },
+};
+
 // Admin Contacts API
 export type ListContactsParams = {
   page?: number;
@@ -525,6 +534,7 @@ const apiClient = {
     siteDetails: userSiteDetailsApi,
     visas: userVisasApi,
     countries: userCountriesApi,
+    team: userTeamApi,
   },
 };
 
