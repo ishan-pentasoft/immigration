@@ -21,6 +21,7 @@ import {
   LogOut,
   LayoutDashboard,
   ChevronsDown,
+  NotebookTabs,
 } from "lucide-react";
 import {
   Collapsible,
@@ -134,7 +135,7 @@ const AppSidebar = () => {
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Site Details">
                 <Link href="/admin/dashboard/site-details">
-                  <IconInfoHexagon />
+                  <NotebookTabs />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Site Details
                   </span>
