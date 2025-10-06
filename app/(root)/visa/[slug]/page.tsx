@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import PageHeader from "@/components/PageHeader";
 import Image from "next/image";
@@ -9,8 +10,66 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/stateful-button";
+import apiClient from "@/lib/api";
+import { toast } from "sonner";
 
-const page = () => {
+const Page = () => {
+  const [form, setForm] = React.useState({
+    name: "",
+    phone: "",
+    email: "",
+    visaType: "",
+    message: "",
+  });
+  const [submitting, setSubmitting] = React.useState(false);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (
+      !form.name ||
+      !form.phone ||
+      !form.email ||
+      !form.visaType ||
+      !form.message
+    ) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    try {
+      setSubmitting(true);
+      await apiClient.contact.submit({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        visaType: form.visaType,
+        message: form.message,
+      });
+      toast.success("Your enquiry has been submitted. We'll contact you soon.");
+      setForm({ name: "", phone: "", email: "", visaType: "", message: "" });
+    } catch (err: unknown) {
+      const msg =
+        (typeof err === "object" &&
+          err &&
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (err as any)?.response?.data?.error) ||
+        (err instanceof Error
+          ? err.message
+          : "Failed to submit. Please try again.");
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <>
       <PageHeader text="Visa" />
@@ -57,7 +116,7 @@ const page = () => {
               The Destination To
               <br className="hidden md:block" /> Fly!
             </h3>
-            <form className="mt-6 space-y-4" action="#" method="post">
+            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
               <div className="relative">
                 <label className="absolute -top-2 left-3 bg-white px-2 text-primary text-xs font-semibold">
                   Name
@@ -65,6 +124,8 @@ const page = () => {
                 <input
                   type="text"
                   name="name"
+                  value={form.name}
+                  onChange={handleChange}
                   className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white"
                 />
               </div>
@@ -76,6 +137,8 @@ const page = () => {
                 <input
                   type="tel"
                   name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
                   className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white"
                 />
               </div>
@@ -87,6 +150,8 @@ const page = () => {
                 <input
                   type="email"
                   name="email"
+                  value={form.email}
+                  onChange={handleChange}
                   className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white"
                 />
               </div>
@@ -96,9 +161,10 @@ const page = () => {
                   Select Visa
                 </label>
                 <select
-                  name="visa"
+                  name="visaType"
+                  value={form.visaType}
+                  onChange={handleChange}
                   className="w-full appearance-none rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white"
-                  defaultValue=""
                 >
                   <option value="" disabled>
                     --Select Visa--
@@ -117,15 +183,18 @@ const page = () => {
                 <textarea
                   name="message"
                   rows={4}
+                  value={form.message}
+                  onChange={handleChange}
                   className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white resize-y"
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-red-600 hover:ring-2 hover:ring-red-600 font-bold tracking-wide px-6 py-3 text-lg"
+                disabled={submitting}
+                className="w-full bg-red-600 hover:ring-2 hover:ring-red-600 font-bold tracking-wide px-6 py-3 text-lg cursor-pointer"
               >
-                Apply Now
+                {submitting ? "Submitting..." : "Apply Now"}
               </Button>
             </form>
           </Card>
@@ -135,4 +204,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

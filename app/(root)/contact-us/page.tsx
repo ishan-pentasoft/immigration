@@ -1,15 +1,20 @@
 "use client";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import React from "react";
+import { Card } from "@/components/ui/card";
+import apiClient from "@/lib/api";
+import { toast } from "sonner";
+import React, { useState } from "react";
 
 const Page = () => {
-  const [form, setForm] = React.useState({
+  const [form, setForm] = useState({
     name: "",
+    phone: "",
     email: "",
-    topic: "",
+    visaType: "",
     message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -20,85 +25,140 @@ const Page = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: wire up to API/Email service
-    console.log("Contact form submitted:", form);
+    if (
+      !form.name ||
+      !form.phone ||
+      !form.email ||
+      !form.visaType ||
+      !form.message
+    ) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    try {
+      setSubmitting(true);
+      await apiClient.contact.submit({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        visaType: form.visaType,
+        message: form.message,
+      });
+      toast.success("Your enquiry has been submitted. We'll contact you soon.");
+      setForm({ name: "", phone: "", email: "", visaType: "", message: "" });
+    } catch (err: unknown) {
+      const msg =
+        (typeof err === "object" &&
+          err &&
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (err as any)?.response?.data?.error) ||
+        (err instanceof Error
+          ? err.message
+          : "Failed to submit. Please try again.");
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <div className="w-full">
       <PageHeader text="Get in Touch" />
 
-      <section className="py-10 px-3 max-w-7xl mx-auto w-full">
-        <div className="max-w-3xl mx-auto flex flex-col items-center text-center gap-3">
-          <p className="text-muted-foreground text-balance">
-            Feel free to get in touch with us. We&apos;re open to discussing new
-            projects, creative ideas, or opportunities to be part of your
-            vision.
+      <section className="py-10 px-3 max-w-5xl mx-auto w-full">
+        <Card className="p-4 md:p-6 md:sticky md:top-24">
+          <p className="text-xs uppercase text-primary font-semibold">
+            You Select Now
           </p>
-        </div>
+          <h3 className="text-2xl md:text-3xl font-extrabold leading-tight">
+            The destination To Fly!
+          </h3>
+          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+            <div className="relative">
+              <label className="absolute -top-2 left-3 bg-white px-2 text-primary text-xs font-semibold">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white"
+              />
+            </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 max-w-3xl mx-auto flex flex-col gap-4"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-full rounded-md border border-input bg-background px-4 py-3 text-base shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full rounded-md border border-input bg-background px-4 py-3 text-base shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-              required
-            />
-          </div>
+            <div className="relative">
+              <label className="absolute -top-2 left-3 bg-white px-2 text-primary text-xs font-semibold">
+                Phone
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white"
+              />
+            </div>
 
-          <select
-            name="topic"
-            value={form.topic}
-            onChange={handleChange}
-            className="w-full rounded-md border border-input bg-background px-4 py-3 text-base shadow-sm text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-          >
-            <option value="" disabled>
-              Your Question About..
-            </option>
-            <option value="study">Study Abroad</option>
-            <option value="visa">Visa/Visitor</option>
-            <option value="work">Work/Permit</option>
-            <option value="pr">PR Guidance</option>
-            <option value="other">Other</option>
-          </select>
+            <div className="relative">
+              <label className="absolute -top-2 left-3 bg-white px-2 text-primary text-xs font-semibold">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white"
+              />
+            </div>
 
-          <textarea
-            name="message"
-            placeholder="Message"
-            rows={6}
-            value={form.message}
-            onChange={handleChange}
-            className="w-full rounded-md border border-input bg-background px-4 py-3 text-base shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            required
-          />
+            <div className="relative">
+              <label className="absolute -top-2 left-3 bg-white px-2 text-primary text-xs font-semibold">
+                Select Visa
+              </label>
+              <select
+                name="visaType"
+                value={form.visaType}
+                onChange={handleChange}
+                className="w-full appearance-none rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white"
+              >
+                <option value="" disabled>
+                  --Select Visa--
+                </option>
+                <option value="study">Study Visa</option>
+                <option value="work">Work Visa</option>
+                <option value="tourist">Tourist Visa</option>
+                <option value="pr">Permanent Residency</option>
+              </select>
+            </div>
 
-          <div className="flex justify-center pt-2">
-            <Button
-              type="submit"
-              className="bg-primary hover:bg-primary/90 font-semibold px-6 py-2 rounded-md cursor-pointer"
-            >
-              Submit
-            </Button>
-          </div>
-        </form>
+            <div className="relative">
+              <label className="absolute -top-2 left-3 bg-white px-2 text-primary text-xs font-semibold">
+                Message
+              </label>
+              <textarea
+                name="message"
+                rows={4}
+                value={form.message}
+                onChange={handleChange}
+                className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:outline-none px-4 py-3 bg-white resize-y"
+              />
+            </div>
+
+            <div className="flex items-end w-full justify-end">
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="w-fit bg-red-600 hover:ring-2 hover:ring-red-600 font-bold tracking-wide px-6 py-3 text-lg cursor-pointer"
+              >
+                {submitting ? "Submitting..." : "Apply Now"}
+              </Button>
+            </div>
+          </form>
+        </Card>
       </section>
     </div>
   );

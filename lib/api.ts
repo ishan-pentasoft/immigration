@@ -164,6 +164,17 @@ export type Team = {
   updatedAt?: string;
 };
 
+export type Contact = {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  visaType: string;
+  message: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type UpdateTeamInput = {
   name: string;
   title: string;
@@ -419,6 +430,16 @@ export const adminTeamApi = {
   },
 };
 
+// Public Contact API
+export const contactApi = {
+  async submit(
+    data: Omit<Contact, "id" | "createdAt" | "updatedAt">
+  ): Promise<Contact> {
+    const res = await api.post(`/contact`, data);
+    return res.data.contact;
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
@@ -432,6 +453,7 @@ const apiClient = {
     siteDetails: adminSiteDetailsApi,
     team: adminTeamApi,
   },
+  contact: contactApi,
 };
 
 export default apiClient;

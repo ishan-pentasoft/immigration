@@ -96,3 +96,14 @@ model Team {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  email     String
+  visaType  String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
