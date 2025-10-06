@@ -45,7 +45,10 @@ export type SiteDetails = {
 };
 
 export type UpdateSiteDetailsInput = Partial<
-  Pick<SiteDetails, "phone" | "email" | "facebook" | "twitter" | "youtube" | "address">
+  Pick<
+    SiteDetails,
+    "phone" | "email" | "facebook" | "twitter" | "youtube" | "address"
+  >
 >;
 
 export type WhyChooseUs = {
@@ -150,6 +153,21 @@ export type ListCollegesResponse = {
   hasPrevPage: boolean;
   search?: string;
   countryId?: string;
+};
+
+export type Team = {
+  id: string;
+  name: string;
+  title: string;
+  imageUrl?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UpdateTeamInput = {
+  name: string;
+  title: string;
+  imageUrl?: string | null;
 };
 
 // Images API
@@ -377,6 +395,30 @@ export const adminSiteDetailsApi = {
   },
 };
 
+// Admin Team API
+export const adminTeamApi = {
+  async create(data: UpdateTeamInput): Promise<Team> {
+    const res = await api.post(`/admin/team`, data);
+    return res.data.team;
+  },
+  async update(id: string, data: Partial<UpdateTeamInput>): Promise<Team> {
+    const res = await api.put(`/admin/team/${id}`, data);
+    return res.data.team;
+  },
+  async getAll(): Promise<Team[]> {
+    const res = await api.get(`/admin/team`);
+    return res.data.team;
+  },
+  async getById(id: string): Promise<Team> {
+    const res = await api.get(`/admin/team/${id}`);
+    return res.data.team;
+  },
+  async remove(id: string): Promise<{ success: boolean }> {
+    const res = await api.delete(`/admin/team/${id}`);
+    return res.data;
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
@@ -388,6 +430,7 @@ const apiClient = {
     whyChooseUs: adminWhyChooseUsApi,
     faq: adminFaqApi,
     siteDetails: adminSiteDetailsApi,
+    team: adminTeamApi,
   },
 };
 

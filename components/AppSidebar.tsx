@@ -47,6 +47,7 @@ import {
   IconInfoHexagon,
   IconMap2,
   IconTicket,
+  IconUsersGroup,
 } from "@tabler/icons-react";
 
 const AppSidebar = () => {
@@ -128,6 +129,16 @@ const AppSidebar = () => {
                   <IconBubbleText />
                   <span className="group-data-[collapsible=icon]:hidden">
                     FAQ
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Teams">
+                <Link href="/admin/dashboard/team">
+                  <IconUsersGroup />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Teams
                   </span>
                 </Link>
               </SidebarMenuButton>
