@@ -238,6 +238,14 @@ export const adminVisasApi = {
   },
 };
 
+// User Visas Api
+export const userVisasApi = {
+  async list(): Promise<{ visas: Visa[] }> {
+    const res = await api.get("/user/visas");
+    return res.data;
+  },
+};
+
 // Admin Countries API
 export type CreateCountryInput = {
   title: string;
@@ -507,6 +515,7 @@ const apiClient = {
   contact: contactApi,
   user: {
     siteDetails: userSiteDetailsApi,
+    visas: userVisasApi,
   },
 };
 

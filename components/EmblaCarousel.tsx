@@ -25,7 +25,6 @@ const numberWithinRange = (number: number, min: number, max: number): number =>
 export type EmblaCarouselProps = {
   slides: {
     title: string;
-    description: string;
     image: string;
     link: string;
   }[];
@@ -145,19 +144,12 @@ const EmblaCarousel: React.FC<EmblaCarouselProps> = ({ slides, options }) => {
                     >
                       {slide.title}
                     </CardItem>
-                    <CardItem
-                      as="p"
-                      translateZ="60"
-                      className="text-muted-foreground text-sm max-w-sm mt-2"
-                    >
-                      {slide.description}
-                    </CardItem>
                     <CardItem translateZ="100" className="w-full mt-4">
                       <Image
                         src={slide.image}
                         height="1000"
                         width="1000"
-                        className="h-60 w-full border-border border shadow-sm object-cover rounded-xl group-hover/card:shadow-xl"
+                        className="aspect-[16/9] border-border border shadow-sm object-cover rounded-xl group-hover/card:shadow-xl"
                         loading="lazy"
                         sizes="(min-width: 1024px) 40vw, (min-width: 768px) 55vw, 90vw"
                         alt="thumbnail"

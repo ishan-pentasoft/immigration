@@ -1,35 +1,34 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import EmblaCarousel from "./EmblaCarousel";
+import apiClient, { Visa } from "@/lib/api";
 
 const ServicesCarousel = () => {
-  const slides = [
-    {
-      title: "Service 1",
-      description: "Description 1",
-      image: "/usastudyvisa.jpg",
-      link: "/service-1",
-    },
-    {
-      title: "Service 2",
-      description: "Description 1",
-      image: "/usastudyvisa.jpg",
-      link: "/service-1",
-    },
-    {
-      title: "Service 3",
-      description: "Description 1",
-      image: "/usastudyvisa.jpg",
-      link: "/service-1",
-    },
-    {
-      title: "Service 4",
-      description: "Description 1",
-      image: "/usastudyvisa.jpg",
-      link: "/service-1",
-    },
-  ];
+  const [services, setServices] = useState<Visa[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const res = await apiClient.user.visas.list();
+        if (isMounted) setServices(res.visas);
+      } catch (err) {
+        console.error("Failed to fetch visas:", err);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const slides = services.map((service) => ({
+    title: service.title,
+    image: service.imageUrl ?? "",
+    link: `/visa/${service.slug}`,
+  }));
+
+  const newSlides = slides.slice(0, 6);
   const options = { loop: true, align: "center" } as const;
 
   return (
@@ -49,54 +48,11 @@ const ServicesCarousel = () => {
               "radial-gradient(ellipse 80% 80% at 0% 0%, #000 50%, transparent 90%)",
           }}
         />
-
-        {/* Decorative background map - hidden on mobile for performance */}
-        {/* <div
-          className="absolute inset-0 -z-1 pointer-events-none select-none hidden md:block"
-          aria-hidden
-        >
-          <div className="w-full h-full opacity-40">
-            <WorldMap
-              dots={[
-                {
-                  start: {
-                    lat: 64.2008,
-                    lng: -149.4937,
-                  }, // Alaska (Fairbanks)
-                  end: {
-                    lat: 34.0522,
-                    lng: -118.2437,
-                  }, // Los Angeles
-                },
-                {
-                  start: { lat: 64.2008, lng: -149.4937 }, // Alaska (Fairbanks)
-                  end: { lat: -15.7975, lng: -47.8919 }, // Brazil (Brasília)
-                },
-                {
-                  start: { lat: -15.7975, lng: -47.8919 }, // Brazil (Brasília)
-                  end: { lat: 38.7223, lng: -9.1393 }, // Lisbon
-                },
-                {
-                  start: { lat: 51.5074, lng: -0.1278 }, // London
-                  end: { lat: 28.6139, lng: 77.209 }, // New Delhi
-                },
-                {
-                  start: { lat: 28.6139, lng: 77.209 }, // New Delhi
-                  end: { lat: 43.1332, lng: 131.9113 }, // Vladivostok
-                },
-                {
-                  start: { lat: 28.6139, lng: 77.209 }, // New Delhi
-                  end: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-                },
-              ]}
-            />
-          </div>
-        </div> */}
         <h2 className="text-3xl sm:text-5xl mt-5 font-bold text-primary italic text-center">
           Our Services
         </h2>
         <div className="relative w-full overflow-hidden">
-          <EmblaCarousel slides={slides} options={options} />
+          <EmblaCarousel slides={newSlides} options={options} />
         </div>
       </div>
     </section>
