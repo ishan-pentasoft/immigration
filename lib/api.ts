@@ -430,6 +430,48 @@ export const adminTeamApi = {
   },
 };
 
+// Admin Contacts API
+export type ListContactsParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  signal?: AbortSignal;
+};
+
+export type ListContactsResponse = {
+  contacts: Contact[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  search?: string;
+};
+
+export const adminContactsApi = {
+  async list(params?: ListContactsParams): Promise<ListContactsResponse> {
+    const { page, limit, search, signal } = params || {};
+    const res = await api.get(`/admin/contact`, {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+      },
+      signal,
+    });
+    return res.data;
+  },
+  async getById(id: string): Promise<Contact> {
+    const res = await api.get(`/admin/contact/${id}`);
+    return res.data.contact;
+  },
+  async remove(id: string): Promise<{ success: boolean; message?: string }> {
+    const res = await api.delete(`/admin/contact/${id}`);
+    return res.data;
+  },
+};
+
 // Public Contact API
 export const contactApi = {
   async submit(
@@ -452,6 +494,7 @@ const apiClient = {
     faq: adminFaqApi,
     siteDetails: adminSiteDetailsApi,
     team: adminTeamApi,
+    contacts: adminContactsApi,
   },
   contact: contactApi,
 };
