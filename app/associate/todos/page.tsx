@@ -38,6 +38,7 @@ import { IconCancel } from "@tabler/icons-react";
 const formSchema = z.object({
   title: z.string(),
   date: z.date(),
+  time: z.string(),
 });
 
 export default function Page() {
@@ -46,6 +47,7 @@ export default function Page() {
     defaultValues: {
       date: new Date(),
       title: "",
+      time: format(new Date(), "HH:mm"),
     },
   });
 
@@ -68,12 +70,14 @@ export default function Page() {
   }
 
   const handleDelete = async (id: string) => {
+    const prev = todos;
+    setTodos((t) => t.filter((x) => x.id !== id));
     try {
       await apiClient.associate.todo.remove(id);
-      fetchTodos();
       toast.success("Todo deleted successfully");
     } catch (error) {
       console.error("Failed to delete todo", error);
+      setTodos(prev);
       toast.error("Failed to delete todo");
     }
   };
@@ -84,12 +88,16 @@ export default function Page() {
   }, []);
 
   const handleToggle = async (id: string) => {
+    const prev = todos;
+    setTodos((t) =>
+      t.map((x) => (x.id === id ? { ...x, status: !x.status } : x))
+    );
     try {
       await apiClient.associate.todo.update(id);
-      fetchTodos();
       toast.success("Status Updated");
     } catch (error) {
       console.error("Failed to update todo", error);
+      setTodos(prev);
       toast.error("Failed to update todo");
     }
   };
@@ -99,21 +107,47 @@ export default function Page() {
       return;
     }
 
+    const dateTime = new Date(values.date);
+    if (values.time) {
+      const [hh, mm] = values.time.split(":").map((n) => parseInt(n, 10));
+      if (!isNaN(hh) && !isNaN(mm)) {
+        dateTime.setHours(hh, mm, 0, 0);
+      }
+    }
+
     const payload: CreateTodoInput = {
       title: values.title,
-      date: values.date,
+      date: dateTime,
       status: false,
       associateId: associate.id,
     };
 
+    const tempId = `temp-${Date.now()}`;
+    const tempTodo = {
+      id: tempId,
+      title: values.title,
+      date: dateTime as unknown as Date, // aligns with formatter usage
+      status: false,
+      associateId: associate.id,
+    } as unknown as Todo;
+
+    setTodos((t) => [tempTodo, ...t]);
+
     try {
       setIsCreating(true);
-      await apiClient.associate.todo.create(payload);
-      form.reset({ title: "", date: new Date() });
-      fetchTodos();
+      const created = await apiClient.associate.todo.create(payload);
+      setTodos((t) =>
+        t.map((x) => (x.id === tempId ? (created as unknown as Todo) : x))
+      );
+      form.reset({
+        title: "",
+        date: new Date(),
+        time: format(new Date(), "HH:mm"),
+      });
       toast.success("Todo created successfully");
     } catch (error) {
       console.error("Failed to create todo", error);
+      setTodos((t) => t.filter((x) => x.id !== tempId));
       toast.error("Failed to create todo");
     } finally {
       setIsCreating(false);
@@ -151,7 +185,7 @@ export default function Page() {
               control={form.control}
               name="date"
               render={({ field }) => (
-                <FormItem className="col-span-12 md:col-span-5 w-full">
+                <FormItem className="col-span-12 md:col-span-3 w-full">
                   <FormLabel>Date</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -189,6 +223,20 @@ export default function Page() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="time"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-2 w-full">
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" className="bg-white w-full" {...field} />
+                  </FormControl>
+                  <FormDescription />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="col-span-12 md:col-span-2 flex items-end mb-2.5 w-full">
               <Button
                 type="submit"
@@ -211,6 +259,7 @@ export default function Page() {
                 <TableRow>
                   <TableHead>Status</TableHead>
                   <TableHead className="max-w-[250px]">Title</TableHead>
+                  <TableHead>Time</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -235,6 +284,9 @@ export default function Page() {
                     </TableCell>
                     <TableCell className="max-w-[250px] truncate">
                       {todo.title}
+                    </TableCell>
+                    <TableCell>
+                      {format(new Date(todo.date as unknown as Date), "p")}
                     </TableCell>
                     <TableCell>
                       <Button
