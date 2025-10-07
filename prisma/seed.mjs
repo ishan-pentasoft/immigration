@@ -7,11 +7,22 @@ async function main() {
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
 
+  const associateEmail = process.env.DIRECTOR_EMAIL;
+  const associatePassword = process.env.DIRECTOR_PASSWORD;
+  const associateRole = process.env.DIRECTOR_ROLE;
+
   if (!email || !password) {
     throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must be provided");
   }
 
+  if (!associateEmail || !associatePassword || !associateRole) {
+    throw new Error(
+      "DIRECTOR_EMAIL, DIRECTOR_PASSWORD, and DIRECTOR_ROLE must be provided"
+    );
+  }
+
   const passwordHash = await bcrypt.hash(password, 12);
+  const associatePasswordHash = await bcrypt.hash(associatePassword, 12);
 
   await prisma.admin.upsert({
     where: { email },
@@ -19,7 +30,18 @@ async function main() {
     create: { email, passwordHash },
   });
 
+  await prisma.associate.upsert({
+    where: { email: associateEmail },
+    update: { passwordHash: associatePasswordHash, role: associateRole },
+    create: {
+      email: associateEmail,
+      passwordHash: associatePasswordHash,
+      role: associateRole,
+    },
+  });
+
   console.log("✅ Admin user seeded:", email);
+  console.log("✅ Associate user seeded:", associateEmail);
 }
 
 main()

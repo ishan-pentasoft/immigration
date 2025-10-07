@@ -16,10 +16,27 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname.startsWith("/api/associate/auth")) {
+    return NextResponse.next();
+  }
+
   // 🔒 Protect /api/admin routes
   if (pathname.startsWith("/api/admin")) {
     const token =
       request.cookies.get("adminToken")?.value ||
+      request.headers.get("authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    return NextResponse.next();
+  }
+
+  // 🔒 Protect /api/associate routes
+  if (pathname.startsWith("/api/associate")) {
+    const token =
+      request.cookies.get("associateToken")?.value ||
       request.headers.get("authorization")?.replace("Bearer ", "");
 
     if (!token) {
@@ -49,6 +66,33 @@ export function middleware(request: NextRequest) {
 
     if (pathname !== "/admin/login" && !token) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+  }
+
+  // 🔒 Protect /associate dashboard routes
+  if (pathname.startsWith("/associate")) {
+    const token =
+      request.cookies.get("associateToken")?.value ||
+      request.headers.get("authorization")?.replace("Bearer ", "");
+
+    if (pathname === "/associate") {
+      if (token) {
+        return NextResponse.redirect(
+          new URL("/associate/dashboard", request.url)
+        );
+      } else {
+        return NextResponse.redirect(new URL("/associate-login", request.url));
+      }
+    }
+
+    if (pathname === "/associate-login" && token) {
+      return NextResponse.redirect(
+        new URL("/associate/dashboard", request.url)
+      );
+    }
+
+    if (pathname !== "/associate-login" && !token) {
+      return NextResponse.redirect(new URL("/associate-login", request.url));
     }
   }
 

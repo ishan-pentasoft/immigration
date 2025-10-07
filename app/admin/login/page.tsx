@@ -68,9 +68,9 @@ export default function AdminLoginPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center">
-          <span className="loading loading-dots loading-xl"></span>
-        </div>
+        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-purple-500"></div>
+        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-red-500 ml-3"></div>
+        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-blue-500 ml-3"></div>
       </div>
     );
   }
