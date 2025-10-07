@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 type Ctx = { params: Promise<{ slug: string }> };
 
-export async function GET(_req: Request, ctx: Ctx) {
+export async function GET(_req: NextRequest, ctx: Ctx) {
   try {
     const country = await prisma.country.findUnique({
       where: { slug: (await ctx.params).slug },

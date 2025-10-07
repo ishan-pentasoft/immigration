@@ -1,8 +1,6 @@
 import React from "react";
 import { WobbleCard } from "./ui/wobble-card";
 import Image from "next/image";
-import { Button } from "./ui/stateful-button";
-import Link from "next/link";
 
 const ServicesGrid = () => {
   return (
