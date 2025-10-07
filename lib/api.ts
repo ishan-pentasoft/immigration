@@ -86,6 +86,7 @@ export type Country = {
   imageUrl?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  colleges?: (College & { country?: Country })[];
 };
 
 export type College = {
@@ -455,6 +456,14 @@ export const adminFaqApi = {
   },
 };
 
+//User faq API
+export const userFaqApi = {
+  async getAll(): Promise<Faq[]> {
+    const res = await api.get(`/user/faq`);
+    return res.data.faq;
+  },
+};
+
 // Admin Site Details API
 export const adminSiteDetailsApi = {
   async get(): Promise<SiteDetails> {
@@ -583,6 +592,7 @@ const apiClient = {
     team: userTeamApi,
     aboutUs: userAboutUsApi,
     whyChooseUs: userWhyChooseUsApi,
+    faq: userFaqApi,
   },
 };
 

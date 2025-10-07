@@ -10,8 +10,10 @@ import Link from "next/link";
 const Page = () => {
   const { slug } = useParams();
 
-  const [loading, setLoading] = useState(false);
-  const [colleges, setColleges] = useState<ListCollegesResponse["colleges"]>([]);
+  const [loading, setLoading] = useState(true);
+  const [colleges, setColleges] = useState<ListCollegesResponse["colleges"]>(
+    []
+  );
 
   useEffect(() => {
     const fetchCountry = async () => {
@@ -20,11 +22,8 @@ const Page = () => {
         const country = await apiClient.user.countries.getBySlug(
           slug as string
         );
-        if (!country?.id) return;
-        const res = await apiClient.user.colleges.list({
-          countryId: country.id,
-        });
-        setColleges(res.colleges || []);
+
+        setColleges(country?.colleges || []);
       } catch (err) {
         console.error("Failed to fetch country:", err);
       } finally {
@@ -34,13 +33,44 @@ const Page = () => {
     fetchCountry();
   }, [slug]);
 
+  if (loading) {
+    return (
+      <>
+        <PageHeader text="Colleges" />
+        <section className="max-w-7xl mx-auto p-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card className="pt-0 overflow-hidden" key={i}>
+                <div className="w-full aspect-[16/9] bg-muted animate-pulse" />
+                <div className="px-2 py-3">
+                  <div className="h-6 w-3/4 bg-muted rounded animate-pulse" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  if (!colleges.length) {
+    return (
+      <>
+        <PageHeader text="Colleges" />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-muted-foreground">No colleges found</div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <PageHeader text="Colleges" />
       <section className="max-w-7xl mx-auto p-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {colleges.map((college, i) => (
-            <Link href={`/colleges/${college.country?.slug}/${college.slug}`} key={i}>
+            <Link href={`/college-details/${college.slug}`} key={i}>
               <Card className="pt-0 overflow-hidden group cursor-pointer">
                 <CardHeader className="p-0">
                   {college.imageUrl ? (
