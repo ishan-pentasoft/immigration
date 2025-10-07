@@ -1,3 +1,4 @@
+import { CreateTodoInput, Todo } from "@/types";
 import api from "./axios";
 
 // Types
@@ -569,6 +570,26 @@ export const contactApi = {
   },
 };
 
+//Associate Todo API
+export const associateTodoApi = {
+  async create(data: CreateTodoInput): Promise<Todo> {
+    const res = await api.post(`/associate/todo`, data);
+    return res.data.todo;
+  },
+  async list(): Promise<Todo[]> {
+    const res = await api.get(`/associate/todo`);
+    return res.data.todos;
+  },
+  async remove(id: string): Promise<{ success: boolean }> {
+    await api.delete(`/associate/todo/${id}`);
+    return { success: true };
+  },
+  async update(id: string): Promise<Todo> {
+    const res = await api.patch(`/associate/todo/${id}`);
+    return res.data.todo;
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
@@ -593,6 +614,9 @@ const apiClient = {
     aboutUs: userAboutUsApi,
     whyChooseUs: userWhyChooseUsApi,
     faq: userFaqApi,
+  },
+  associate: {
+    todo: associateTodoApi,
   },
 };
 

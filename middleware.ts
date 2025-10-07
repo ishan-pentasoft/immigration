@@ -43,7 +43,27 @@ export function middleware(request: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    return NextResponse.next();
+    let associateId: string | undefined;
+    try {
+      const base64Url = token.split(".")[1];
+      if (base64Url) {
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const payloadJson = atob(base64);
+        const payload = JSON.parse(payloadJson);
+        associateId = payload?.associateId as string | undefined;
+      }
+    } catch {}
+
+    const requestHeaders = new Headers(request.headers);
+    if (associateId) {
+      requestHeaders.set("x-associate-id", associateId);
+    }
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
   // 🔒 Protect /admin dashboard routes
