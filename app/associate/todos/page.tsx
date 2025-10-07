@@ -258,7 +258,7 @@ export default function Page() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Status</TableHead>
-                  <TableHead className="max-w-[250px]">Title</TableHead>
+                  <TableHead className="max-w-[250px]">Tasks</TableHead>
                   <TableHead>Time</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
