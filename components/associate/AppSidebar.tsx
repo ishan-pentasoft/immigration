@@ -91,41 +91,43 @@ const AppSidebar = () => {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <Collapsible asChild className="group/collapsible">
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton>
-                    <IconUserCog />
-                    <span className="group-data-[collapsible=icon]:hidden flex items-center justify-between w-full">
-                      Staff
-                      <ChevronsDown className="ml-auto size-4" />
-                    </span>
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href="/associate/staff/create-staff">
-                          <span className="group-data-[collapsible=icon]:hidden">
-                            Create Staff
-                          </span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href="/associate/staff">
-                          <span className="group-data-[collapsible=icon]:hidden">
-                            Staff List
-                          </span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </SidebarMenuItem>
-            </Collapsible>
+            {associate?.role === "DIRECTOR" && (
+              <Collapsible asChild className="group/collapsible">
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton>
+                      <IconUserCog />
+                      <span className="group-data-[collapsible=icon]:hidden flex items-center justify-between w-full">
+                        Staff
+                        <ChevronsDown className="ml-auto size-4" />
+                      </span>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild>
+                          <Link href="/associate/staff/create-staff">
+                            <span className="group-data-[collapsible=icon]:hidden">
+                              Create Staff
+                            </span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild>
+                          <Link href="/associate/staff">
+                            <span className="group-data-[collapsible=icon]:hidden">
+                              Staff List
+                            </span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            )}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

@@ -121,6 +121,32 @@ export function middleware(request: NextRequest) {
     if (pathname !== "/associate-login" && !token) {
       return NextResponse.redirect(new URL("/associate-login", request.url));
     }
+
+    // 🔒 Role-based guard: only DIRECTOR can access staff pages
+    if (token && pathname.startsWith("/associate/staff")) {
+      try {
+        const base64Url = token.split(".")[1];
+        if (base64Url) {
+          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+          const payloadJson = atob(base64);
+          const payload = JSON.parse(payloadJson);
+          const role = payload?.role as string | undefined;
+          if (role !== "DIRECTOR") {
+            return NextResponse.redirect(
+              new URL("/associate/dashboard", request.url)
+            );
+          }
+        } else {
+          return NextResponse.redirect(
+            new URL("/associate/dashboard", request.url)
+          );
+        }
+      } catch {
+        return NextResponse.redirect(
+          new URL("/associate/dashboard", request.url)
+        );
+      }
+    }
   }
 
   return NextResponse.next();
