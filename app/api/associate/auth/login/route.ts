@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     const token = jwt.sign(
       {
         associateId: associate.id,
+        role: associate.role,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "8h" }

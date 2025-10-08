@@ -128,7 +128,11 @@ export function middleware(request: NextRequest) {
         const base64Url = token.split(".")[1];
         if (base64Url) {
           const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-          const payloadJson = atob(base64);
+          const padded = base64.padEnd(
+            base64.length + ((4 - (base64.length % 4)) % 4),
+            "="
+          );
+          const payloadJson = atob(padded);
           const payload = JSON.parse(payloadJson);
           const role = payload?.role as string | undefined;
           if (role !== "DIRECTOR") {

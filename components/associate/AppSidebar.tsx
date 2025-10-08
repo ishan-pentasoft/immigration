@@ -21,6 +21,7 @@ import {
   LayoutDashboard,
   ListTodo,
   ChevronsDown,
+  Users,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -87,6 +88,16 @@ const AppSidebar = () => {
                   <ListTodo />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Todos
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="User Details">
+                <Link href="/associate/user-details">
+                  <Users />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    User Details
                   </span>
                 </Link>
               </SidebarMenuButton>

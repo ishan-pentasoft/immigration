@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import apiClient from "@/lib/api";
 import { Associate } from "@/types";
-import { Edit2, Trash, Trash2 } from "lucide-react";
+import { Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";

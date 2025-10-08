@@ -194,6 +194,22 @@ export type CreateUserDetailsInput = {
   countryPreference: string;
 };
 
+export type UserDetails = {
+  id: string;
+  name: string;
+  gender: string;
+  dob: string;
+  pob: string;
+  nationality: string;
+  citizenship: string;
+  occupation: string;
+  appointment: boolean;
+  countryPreference: string;
+  associateId: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type UpdateTeamInput = {
   name: string;
   title: string;
@@ -591,13 +607,13 @@ export const publicUserDetailsApi = {
   async submit(
     associateId: string,
     data: CreateUserDetailsInput
-  ): Promise<unknown> {
+  ): Promise<UserDetails> {
     const res = await api.post(`/associate/user-details/${associateId}`, data);
-    return res.data?.data;
+    return res.data?.data as UserDetails;
   },
-  async listByAssociate(associateId: string): Promise<unknown[]> {
+  async listByAssociate(associateId: string): Promise<UserDetails[]> {
     const res = await api.get(`/associate/user-details/${associateId}`);
-    return res.data?.data || [];
+    return (res.data?.data as UserDetails[]) || [];
   },
 };
 
