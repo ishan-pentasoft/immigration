@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Table,
@@ -22,6 +23,24 @@ import { toast } from "sonner";
 const Page = () => {
   const { associate } = useAssociateAuth();
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [copied, setCopied] = useState(false);
+
+  const shareUrl = React.useMemo(() => {
+    if (!associate?.id) return "";
+    if (typeof window === "undefined") return "";
+    return `${window.location.origin}/user-details/${associate.id}`;
+  }, [associate?.id]);
+
+  const handleCopy = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (e) {
+      console.error("Failed to copy link", e);
+    }
+  };
 
   async function fetchTodos() {
     if (!associate?.id) {
@@ -59,6 +78,20 @@ const Page = () => {
 
   return (
     <main className="px-4 pt-8 pb-4">
+      <Card className="p-4 w-full mb-6">
+        <CardHeader>
+          <h1 className="text-lg font-semibold text-primary">Share user details form</h1>
+          <p className="text-sm text-muted-foreground">Copy and share this link with users to fill their details.</p>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Input value={shareUrl} readOnly placeholder="Link will appear here" />
+            <Button type="button" onClick={handleCopy} disabled={!shareUrl}>
+              {copied ? "Copied" : "Copy link"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
       {todos.length > 0 && (
         <Card className="p-4 w-full">
           <CardHeader>

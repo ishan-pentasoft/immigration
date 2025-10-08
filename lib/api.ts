@@ -182,6 +182,18 @@ export type Contact = {
   updatedAt?: string;
 };
 
+export type CreateUserDetailsInput = {
+  name: string;
+  gender: string;
+  dob: string | Date;
+  pob: string;
+  nationality: string;
+  citizenship: string;
+  occupation: string;
+  appointment: boolean;
+  countryPreference: string;
+};
+
 export type UpdateTeamInput = {
   name: string;
   title: string;
@@ -575,6 +587,20 @@ export const contactApi = {
   },
 };
 
+export const publicUserDetailsApi = {
+  async submit(
+    associateId: string,
+    data: CreateUserDetailsInput
+  ): Promise<unknown> {
+    const res = await api.post(`/associate/user-details/${associateId}`, data);
+    return res.data?.data;
+  },
+  async listByAssociate(associateId: string): Promise<unknown[]> {
+    const res = await api.get(`/associate/user-details/${associateId}`);
+    return res.data?.data || [];
+  },
+};
+
 //Associate Todo API
 export const associateTodoApi = {
   async create(data: CreateTodoInput): Promise<Todo> {
@@ -656,6 +682,7 @@ const apiClient = {
     todo: associateTodoApi,
     staff: associateStaffApi,
   },
+  userDetails: publicUserDetailsApi,
 };
 
 export default apiClient;
