@@ -5,9 +5,9 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const { username, password } = await request.json();
 
-    if (!email || !password) {
+    if (!username || !password) {
       return NextResponse.json(
         { message: "Email and password are required" },
         { status: 400 }
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const associate = await prisma.associate.findUnique({
-      where: { email },
+      where: { username },
     });
 
     if (!associate) {
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         token,
         associate: {
           id: associate.id,
-          email: associate.email,
+          username: associate.username,
           role: associate.role,
         },
       },

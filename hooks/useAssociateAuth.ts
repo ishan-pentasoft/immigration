@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 interface Associate {
   id: string;
+  username: string;
   email: string;
   role: string;
 }
@@ -101,14 +102,14 @@ export function useAssociateAuth() {
     return verifyInFlight;
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (username: string, password: string) => {
     try {
       const response = await fetch("/api/associate/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
         credentials: "include",
       });
 

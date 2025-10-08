@@ -7,6 +7,7 @@ async function main() {
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
 
+  const associateUsername = process.env.DIRECTOR_USERNAME;
   const associateEmail = process.env.DIRECTOR_EMAIL;
   const associatePassword = process.env.DIRECTOR_PASSWORD;
   const associateRole = process.env.DIRECTOR_ROLE;
@@ -32,8 +33,13 @@ async function main() {
 
   await prisma.associate.upsert({
     where: { email: associateEmail },
-    update: { passwordHash: associatePasswordHash, role: associateRole },
+    update: {
+      passwordHash: associatePasswordHash,
+      role: associateRole,
+      username: associateUsername,
+    },
     create: {
+      username: associateUsername,
       email: associateEmail,
       passwordHash: associatePasswordHash,
       role: associateRole,

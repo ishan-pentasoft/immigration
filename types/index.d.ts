@@ -13,3 +13,18 @@ export type Todo = {
   associateId: string;
   associate: Associate;
 };
+
+export type CreateAssociateInput = {
+  username: string;
+  email: string;
+  role: string;
+  password: string;
+};
+
+export type Associate = {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  password: string;
+};

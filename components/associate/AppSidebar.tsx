@@ -30,6 +30,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAssociateAuth } from "@/hooks/useAssociateAuth";
 import { useEffect, useState } from "react";
+import { IconUserCog } from "@tabler/icons-react";
 
 const AppSidebar = () => {
   const isMobile = useIsMobile();
@@ -77,6 +78,16 @@ const AppSidebar = () => {
                   <ListTodo />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Todos
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Staff">
+                <Link href="/associate/staff">
+                  <IconUserCog />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Staff
                   </span>
                 </Link>
               </SidebarMenuButton>

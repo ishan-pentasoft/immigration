@@ -29,3 +29,6 @@ export const navItems = [
     link: "/contact-us",
   },
 ];
+
+export const ROLES = ["DIRECTOR", "STAFF", "ADVISOR"] as const;
+export type Role = (typeof ROLES)[number];

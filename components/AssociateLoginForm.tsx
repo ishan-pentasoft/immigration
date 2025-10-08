@@ -15,7 +15,7 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,7 +25,7 @@ export function LoginForm({
     e.preventDefault();
     try {
       setIsLoading(true);
-      await login(email, password);
+      await login(username, password);
       toast.success("Login successful");
       router.push("/associate/dashboard");
     } catch (error) {
@@ -54,13 +54,13 @@ export function LoginForm({
           </h1>
           <div className="flex flex-col gap-6">
             <div className="grid gap-3">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                placeholder="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>

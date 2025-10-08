@@ -1,4 +1,9 @@
-import { CreateTodoInput, Todo } from "@/types";
+import {
+  Associate,
+  CreateAssociateInput,
+  CreateTodoInput,
+  Todo,
+} from "@/types";
 import api from "./axios";
 
 // Types
@@ -590,6 +595,16 @@ export const associateTodoApi = {
   },
 };
 
+//Associate Staff API
+export const associateStaffApi = {
+  async create(
+    data: CreateAssociateInput
+  ): Promise<{ associate: Associate; message?: string }> {
+    const res = await api.post(`/associate/staff`, data);
+    return { associate: res.data.user as Associate, message: res.data.message };
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
@@ -617,6 +632,7 @@ const apiClient = {
   },
   associate: {
     todo: associateTodoApi,
+    staff: associateStaffApi,
   },
 };
 

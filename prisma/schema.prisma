@@ -11,6 +11,7 @@ datasource db {
 enum Role {
   DIRECTOR
   STAFF
+  ADVISOR
 }
 
 model Admin {
@@ -23,6 +24,7 @@ model Admin {
 
 model Associate {
   id           String @id @default(uuid())
+  username     String @unique
   email        String @unique
   passwordHash String
   role         Role   @default(STAFF)

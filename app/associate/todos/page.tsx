@@ -156,7 +156,7 @@ export default function Page() {
 
   return (
     <section className="p-4 md:p-10 min-h-screen w-full">
-      <div className="bg-muted p-4 md:p-10 rounded-xl h-full w-full">
+      <div className="bg-muted border border-border shadow-2xl p-4 md:p-10 rounded-xl h-full w-full">
         <h1 className="text-xl font-bold text-primary">Create Task</h1>
         <Form {...form}>
           <form
