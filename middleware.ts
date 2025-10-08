@@ -20,6 +20,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (
+    pathname.startsWith("/api/associate/user-details/") &&
+    request.method === "POST"
+  ) {
+    return NextResponse.next();
+  }
+
   // 🔒 Protect /api/admin routes
   if (pathname.startsWith("/api/admin")) {
     const token =

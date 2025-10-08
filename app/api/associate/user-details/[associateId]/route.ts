@@ -122,6 +122,14 @@ export async function GET(
       );
     }
 
+    if (associate.role.toUpperCase() === "DIRECTOR") {
+      const details = await prisma.userDetails.findMany();
+      return NextResponse.json(
+        { data: details, message: "User details fetched successfully." },
+        { status: 200 }
+      );
+    }
+
     const details = await prisma.userDetails.findMany({
       where: { associateId },
       orderBy: { createdAt: "desc" },
