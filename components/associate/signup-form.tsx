@@ -52,6 +52,7 @@ export function SignupForm({
     password: "",
     confirmPassword: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -63,6 +64,7 @@ export function SignupForm({
     const { username, email, role, password } = data.data;
 
     try {
+      setLoading(true);
       const res = await apiClient.associate.staff.create({
         username,
         email,
@@ -87,6 +89,8 @@ export function SignupForm({
         apiMessage = err.message;
       }
       toast.error(apiMessage || "Failed to create staff account");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -224,8 +228,12 @@ export function SignupForm({
                 </Field>
               </Field>
               <Field>
-                <Button type="submit" className="cursor-pointer font-bold">
-                  Create Account
+                <Button
+                  type="submit"
+                  className="cursor-pointer font-bold"
+                  disabled={loading}
+                >
+                  {loading ? "Creating..." : "Create Account"}
                 </Button>
               </Field>
             </FieldGroup>

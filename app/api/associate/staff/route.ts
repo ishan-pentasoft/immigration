@@ -1,28 +1,56 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { username, email, role, password } = body;
 
-    const user = await prisma.associate.create({
+    const existingStaff = await prisma.associate.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (existingStaff) {
+      return NextResponse.json(
+        { error: "Staff with this email already exists" },
+        { status: 400 }
+      );
+    }
+    const existingStaffUsername = await prisma.associate.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    if (existingStaffUsername) {
+      return NextResponse.json(
+        { error: "Staff with this username already exists" },
+        { status: 400 }
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const staff = await prisma.associate.create({
       data: {
         username,
         email,
         role,
-        passwordHash: password,
+        passwordHash,
       },
     });
 
     return NextResponse.json(
-      { user, message: "User created successfully" },
+      { staff, message: "Staff created successfully" },
       { status: 201 }
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to create user" },
+      { error: "Failed to create staff" },
       { status: 500 }
     );
   }
@@ -30,15 +58,15 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const users = await prisma.associate.findMany();
+    const staff = await prisma.associate.findMany();
     return NextResponse.json(
-      { users, message: "Users fetched successfully" },
+      { staff, message: "Staff fetched successfully" },
       { status: 200 }
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to fetch users" },
+      { error: "Failed to fetch staff" },
       { status: 500 }
     );
   }

@@ -10,6 +10,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import {
@@ -17,6 +20,7 @@ import {
   LogOut,
   LayoutDashboard,
   ListTodo,
+  ChevronsDown,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -31,6 +35,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAssociateAuth } from "@/hooks/useAssociateAuth";
 import { useEffect, useState } from "react";
 import { IconUserCog } from "@tabler/icons-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
 
 const AppSidebar = () => {
   const isMobile = useIsMobile();
@@ -82,16 +91,32 @@ const AppSidebar = () => {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Staff">
-                <Link href="/associate/staff">
-                  <IconUserCog />
-                  <span className="group-data-[collapsible=icon]:hidden">
-                    Staff
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <Collapsible asChild className="group/collapsible">
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton>
+                    <IconUserCog />
+                    <span className="group-data-[collapsible=icon]:hidden flex items-center justify-between w-full">
+                      Staff
+                      <ChevronsDown className="ml-auto size-4" />
+                    </span>
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/associate/staff">
+                          <span className="group-data-[collapsible=icon]:hidden">
+                            Create Staff
+                          </span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
