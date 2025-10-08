@@ -607,6 +607,24 @@ export const associateStaffApi = {
     const res = await api.get(`/associate/staff`);
     return res.data.staff;
   },
+  async getById(id: string): Promise<Associate> {
+    const res = await api.get(`/associate/staff/${id}`);
+    return res.data.staff;
+  },
+  async remove(id: string): Promise<{ success: boolean }> {
+    const res = await api.delete(`/associate/staff/${id}`);
+    return res.data;
+  },
+  async update(
+    id: string,
+    data: Partial<CreateAssociateInput>
+  ): Promise<{ associate: Associate; message?: string }> {
+    const res = await api.patch(`/associate/staff/${id}`, data);
+    return {
+      associate: res.data.staff as Associate,
+      message: res.data.message,
+    };
+  },
 };
 
 // Aggregated export for convenience

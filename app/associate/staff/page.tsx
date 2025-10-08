@@ -1,4 +1,6 @@
 "use client";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,7 +11,10 @@ import {
 } from "@/components/ui/table";
 import apiClient from "@/lib/api";
 import { Associate } from "@/types";
+import { Edit2, Trash, Trash2 } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const Page = () => {
   const [staff, setStaff] = useState<Associate[]>([]);
@@ -29,6 +34,18 @@ const Page = () => {
     };
     fetchData();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await apiClient.associate.staff.remove(id);
+      const data = await apiClient.associate.staff.list();
+      toast.success("Staff deleted successfully");
+      setStaff(data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete staff");
+    }
+  };
 
   if (loading)
     return (
@@ -53,6 +70,7 @@ const Page = () => {
                 <TableHead className="font-bold">UserName</TableHead>
                 <TableHead className="font-bold">Email</TableHead>
                 <TableHead className="font-bold">Role</TableHead>
+                <TableHead className="font-bold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -62,6 +80,29 @@ const Page = () => {
                   <TableCell>{associate.username}</TableCell>
                   <TableCell>{associate.email}</TableCell>
                   <TableCell>{associate.role}</TableCell>
+                  <TableCell className="flex gap-2">
+                    <Button variant={"link"}>
+                      <Link
+                        href={`/associate/staff/edit-staff/${associate.id}`}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <ConfirmDialog
+                      trigger={
+                        <Button
+                          variant={"link"}
+                          className="cursor-pointer p-0 h-auto"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      }
+                      confirmText="Delete"
+                      title="Delete Staff"
+                      description="Are you sure you want to delete this staff?"
+                      onConfirm={() => handleDelete(associate.id)}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
