@@ -603,6 +603,10 @@ export const associateStaffApi = {
     const res = await api.post(`/associate/staff`, data);
     return { associate: res.data.user as Associate, message: res.data.message };
   },
+  async list(): Promise<Associate[]> {
+    const res = await api.get(`/associate/staff`);
+    return res.data.staff;
+  },
 };
 
 // Aggregated export for convenience

@@ -106,9 +106,18 @@ const AppSidebar = () => {
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton asChild>
-                        <Link href="/associate/staff">
+                        <Link href="/associate/staff/create-staff">
                           <span className="group-data-[collapsible=icon]:hidden">
                             Create Staff
+                          </span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/associate/staff">
+                          <span className="group-data-[collapsible=icon]:hidden">
+                            Staff List
                           </span>
                         </Link>
                       </SidebarMenuSubButton>

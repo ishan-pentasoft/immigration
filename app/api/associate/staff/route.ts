@@ -58,7 +58,14 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const staff = await prisma.associate.findMany();
+    const staff = await prisma.associate.findMany({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+      },
+    });
     return NextResponse.json(
       { staff, message: "Staff fetched successfully" },
       { status: 200 }
