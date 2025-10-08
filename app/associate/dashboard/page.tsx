@@ -80,13 +80,26 @@ const Page = () => {
     <main className="px-4 pt-8 pb-4">
       <Card className="p-4 w-full mb-6">
         <CardHeader>
-          <h1 className="text-lg font-semibold text-primary">Share user details form</h1>
-          <p className="text-sm text-muted-foreground">Copy and share this link with users to fill their details.</p>
+          <h1 className="text-lg font-semibold text-primary">
+            Share user details form
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Copy and share this link with users to fill their details.
+          </p>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Input value={shareUrl} readOnly placeholder="Link will appear here" />
-            <Button type="button" onClick={handleCopy} disabled={!shareUrl}>
+            <Input
+              value={shareUrl}
+              readOnly
+              placeholder="Link will appear here"
+            />
+            <Button
+              type="button"
+              onClick={handleCopy}
+              disabled={!shareUrl}
+              className="cursor-pointer font-bold"
+            >
               {copied ? "Copied" : "Copy link"}
             </Button>
           </div>

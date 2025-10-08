@@ -62,7 +62,7 @@ const Page = () => {
         appointment: false,
         countryPreference: "",
       });
-      router.refresh();
+      router.push("/");
     } catch (error: unknown) {
       console.error("Failed to submit details", error);
       type AxiosLike = { response?: { data?: { message?: string } } };
