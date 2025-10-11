@@ -25,9 +25,18 @@ export function LoginForm({
     e.preventDefault();
     try {
       setIsLoading(true);
-      await login(username, password);
-      toast.success("Login successful");
-      router.push("/associate/dashboard");
+      const result = await login(username, password);
+      if (result && result.success) {
+        toast.success("Login successful");
+        router.push("/associate/dashboard");
+      } else {
+        const message =
+          (result as any)?.error ||
+          (result as any)?.message ||
+          "Invalid username or password";
+        toast.error(message);
+        return;
+      }
     } catch (error) {
       console.error("Login failed:", error);
       if (error instanceof Error) {

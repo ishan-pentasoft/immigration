@@ -120,6 +120,9 @@ export function useAssociateAuth() {
           isLoading: false,
           isAuthenticated: true,
         });
+        lastAssociate = data.associate;
+        lastVerifyResult = true;
+        lastVerifyAt = Date.now();
         return { success: true };
       } else {
         const error = await response.json();

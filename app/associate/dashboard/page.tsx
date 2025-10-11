@@ -59,7 +59,7 @@ const Page = () => {
   useEffect(() => {
     fetchTodos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [associate?.id]);
 
   const handleToggle = async (id: string) => {
     const prev = todos;
