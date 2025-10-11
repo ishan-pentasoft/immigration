@@ -10,33 +10,69 @@ import {
 import { useAssociateAuth } from "@/hooks/useAssociateAuth";
 import apiClient, { type UserDetails } from "@/lib/api";
 import React, { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
   const [users, setUsers] = useState<UserDetails[]>([]);
-  const [loading, setLoading] = useState(true);
   const { associate } = useAssociateAuth();
+  const [staff, setStaff] = useState<Array<{ id: string; username: string }>>(
+    []
+  );
+  const [selectedAssociateId, setSelectedAssociateId] = useState<string>("ALL");
+  const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
-    setLoading(true);
+    if (!associate?.id) return;
     const fetchUsers = async () => {
-      const data = await apiClient.userDetails.listByAssociate(
-        associate?.id as string
-      );
+      const { data, total, totalPages } =
+        await apiClient.userDetails.listByAssociate(associate.id, {
+          page,
+          limit: pageSize,
+          search,
+          associateId:
+            associate.role?.toUpperCase() === "DIRECTOR" &&
+            selectedAssociateId !== "ALL"
+              ? selectedAssociateId
+              : undefined,
+        });
       setUsers(data);
-      setLoading(false);
+      setTotal(total);
+      setTotalPages(totalPages);
     };
     fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    associate?.id,
+    associate?.role,
+    page,
+    pageSize,
+    search,
+    selectedAssociateId,
+  ]);
 
-  if (loading)
-    return (
-      <div className=" flex items-center justify-center h-[calc(100vh-200px)]">
-        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-purple-500"></div>
-        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-red-500 ml-3"></div>
-        <div className="animate-spin ease-linear rounded-full w-10 h-10 border-t-2 border-b-2 border-blue-500 ml-3"></div>
-      </div>
-    );
+  useEffect(() => {
+    if (!associate?.id) return;
+    if (associate.role?.toUpperCase() !== "DIRECTOR") return;
+    (async () => {
+      try {
+        const list = await apiClient.associate.staff.list();
+        setStaff(list.map((s) => ({ id: s.id, username: s.username })));
+      } catch {
+        // ignore
+      }
+    })();
+  }, [associate?.id, associate?.role]);
 
   return (
     <div className="p-4 md:p-10 min-h-screen">
@@ -44,6 +80,42 @@ export default function Page() {
         <h1 className="text-primary font-bold text-2xl tracking-wider">
           User Details
         </h1>
+        <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center">
+          {associate?.role?.toUpperCase() === "DIRECTOR" && (
+            <Select
+              value={selectedAssociateId}
+              onValueChange={(v) => setSelectedAssociateId(v)}
+            >
+              <SelectTrigger className="w-full md:w-64 cursor-pointer">
+                <SelectValue placeholder="Filter by associate" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL" className="cursor-pointer">
+                  All Associates
+                </SelectItem>
+                {staff.map((s) => (
+                  <SelectItem
+                    key={s.id}
+                    value={s.id}
+                    className="cursor-pointer"
+                  >
+                    {s.username}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          <Input
+            placeholder="Search by name, nationality, citizenship, occupation"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <p className="mt-3 font-medium text-sm text-muted-foreground">
+          Total Users - {total}
+        </p>
+
         <div className="border border-border shadow-2xl bg-background mt-5 rounded-xl overflow-hidden">
           <Table>
             <TableHeader className="bg-accent">
@@ -83,6 +155,53 @@ export default function Page() {
               ))}
             </TableBody>
           </Table>
+        </div>
+        <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Rows per page:</span>
+            <Select
+              value={String(pageSize)}
+              onValueChange={(v) => setPageSize(Number(v))}
+            >
+              <SelectTrigger className="w-24 cursor-pointer">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10" className="cursor-pointer">
+                  10
+                </SelectItem>
+                <SelectItem value="20" className="cursor-pointer">
+                  20
+                </SelectItem>
+                <SelectItem value="50" className="cursor-pointer">
+                  50
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+            >
+              Previous
+            </Button>
+            <div className="text-sm text-muted-foreground">
+              {page} of {totalPages}
+            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
     </div>

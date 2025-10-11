@@ -611,9 +611,33 @@ export const publicUserDetailsApi = {
     const res = await api.post(`/associate/user-details/${associateId}`, data);
     return res.data?.data as UserDetails;
   },
-  async listByAssociate(associateId: string): Promise<UserDetails[]> {
-    const res = await api.get(`/associate/user-details/${associateId}`);
-    return (res.data?.data as UserDetails[]) || [];
+  async listByAssociate(
+    associateId: string,
+    params?: { page?: number; limit?: number; search?: string; associateId?: string }
+  ): Promise<{
+    data: UserDetails[];
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  }> {
+    const { page, limit, search, associateId: filterAssociateId } = params || {};
+    const res = await api.get(`/associate/user-details/${associateId}` as const, {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+        associateId: filterAssociateId,
+      },
+    });
+    const { data, page: p, limit: l, total, totalPages } = res.data || {};
+    return {
+      data: (data as UserDetails[]) || [],
+      page: Number(p) || 1,
+      limit: Number(l) || (limit || 10),
+      total: Number(total) || 0,
+      totalPages: Number(totalPages) || 1,
+    };
   },
 };
 
@@ -643,7 +667,7 @@ export const associateStaffApi = {
     data: CreateAssociateInput
   ): Promise<{ associate: Associate; message?: string }> {
     const res = await api.post(`/associate/staff`, data);
-    return { associate: res.data.user as Associate, message: res.data.message };
+    return { associate: res.data.staff as Associate, message: res.data.message };
   },
   async list(): Promise<Associate[]> {
     const res = await api.get(`/associate/staff`);

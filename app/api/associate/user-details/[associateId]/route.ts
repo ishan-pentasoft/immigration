@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma";
 
 export async function POST(
   req: NextRequest,
@@ -122,21 +123,58 @@ export async function GET(
       );
     }
 
-    if (associate.role.toUpperCase() === "DIRECTOR") {
-      const details = await prisma.userDetails.findMany();
-      return NextResponse.json(
-        { data: details, message: "User details fetched successfully." },
-        { status: 200 }
-      );
+    const url = new URL(_req.url);
+    const pageParam = parseInt(url.searchParams.get("page") || "1", 10);
+    const limitParam = parseInt(url.searchParams.get("limit") || "10", 10);
+    const search = (url.searchParams.get("search") || "").trim();
+    const filterAssociateId = url.searchParams.get("associateId") || undefined;
+
+    const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+    const limit =
+      Number.isFinite(limitParam) && limitParam > 0 ? limitParam : 10;
+
+    const isDirector = associate.role.toUpperCase() === "DIRECTOR";
+
+    const where: Prisma.UserDetailsWhereInput = {};
+    if (isDirector) {
+      if (filterAssociateId) {
+        where.associateId = filterAssociateId;
+      }
+    } else {
+      where.associateId = associateId;
     }
 
+    if (search) {
+      const q = search;
+      where.OR = [
+        { name: { contains: q, mode: "insensitive" } },
+        { nationality: { contains: q, mode: "insensitive" } },
+        { citizenship: { contains: q, mode: "insensitive" } },
+        { occupation: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
+    const total = await prisma.userDetails.count({ where });
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+    const currentPage = Math.min(page, totalPages);
+    const skip = (currentPage - 1) * limit;
+
     const details = await prisma.userDetails.findMany({
-      where: { associateId },
+      where,
       orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
     });
 
     return NextResponse.json(
-      { data: details, message: "User details fetched successfully." },
+      {
+        data: details,
+        page: currentPage,
+        limit,
+        total,
+        totalPages,
+        message: "User details fetched successfully.",
+      },
       { status: 200 }
     );
   } catch (error) {
