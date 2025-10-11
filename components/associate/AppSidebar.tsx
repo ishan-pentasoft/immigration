@@ -55,6 +55,9 @@ const AppSidebar = () => {
     return null;
   }
 
+  const displayEmail = associate?.email || associate?.username;
+  const initial = (associate?.email || associate?.username || "")[0]?.toUpperCase();
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -153,11 +156,11 @@ const AppSidebar = () => {
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarFallback className="rounded-lg">
-                      {associate?.email?.[0]?.toUpperCase()}
+                      {initial}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate text-xs">{associate?.email}</span>
+                    <span className="truncate text-xs">{displayEmail}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -172,13 +175,11 @@ const AppSidebar = () => {
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarFallback className="rounded-lg">
-                        {associate?.email?.[0]?.toUpperCase()}
+                        {initial}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate text-xs">
-                        {associate?.email}
-                      </span>
+                      <span className="truncate text-xs">{displayEmail}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>

@@ -123,6 +123,26 @@ export function useAssociateAuth() {
         lastAssociate = data.associate;
         lastVerifyResult = true;
         lastVerifyAt = Date.now();
+
+        try {
+          const verifyRes = await fetch("/api/associate/auth/verify", {
+            credentials: "include",
+          });
+          if (verifyRes.ok) {
+            const vdata = await verifyRes.json();
+            setAuthState({
+              associate: vdata.associate,
+              isLoading: false,
+              isAuthenticated: true,
+            });
+            lastAssociate = vdata.associate;
+            lastVerifyResult = true;
+            lastVerifyAt = Date.now();
+          }
+        } catch {
+          // ignore verify hydration errors
+        }
+
         return { success: true };
       } else {
         const error = await response.json();
