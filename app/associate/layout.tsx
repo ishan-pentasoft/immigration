@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAssociateAuth } from "@/hooks/useAssociateAuth";
 import Loader from "@/components/Loader";
+import Banner from "@/components/associate/Banner";
 
 export default function AssociateLayout({
   children,
@@ -22,6 +23,7 @@ export default function AssociateLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
+        <Banner />
         <div className="relative">
           <SidebarTrigger className="absolute left-2 top-2 cursor-pointer" />
         </div>
