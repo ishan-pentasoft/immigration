@@ -123,9 +123,12 @@ export function middleware(request: NextRequest) {
     }
 
     // 🔒 Role-based guard: only DIRECTOR can access staff pages
-    if (token && pathname.startsWith("/associate/staff")) {
+    if (
+      (token && pathname.startsWith("/associate/staff")) ||
+      pathname.startsWith("/associate/logs")
+    ) {
       try {
-        const base64Url = token.split(".")[1];
+        const base64Url = token?.split(".")[1];
         if (base64Url) {
           const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
           const padded = base64.padEnd(

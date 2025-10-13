@@ -3,9 +3,27 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 
+function normalizeIp(raw?: string | null): string | undefined {
+  if (!raw) return undefined;
+  const first = raw.split(",")[0].trim();
+  if (first === "::1") return "127.0.0.1";
+  const mapped = first.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
+  if (mapped) return mapped[1];
+  return first;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { username, password } = await request.json();
+
+    const xfwd = request.headers.get("x-forwarded-for");
+    const xreal = request.headers.get("x-real-ip");
+    const cfip = request.headers.get("cf-connecting-ip");
+    const rawIp = (xfwd?.split(",")[0].trim() || xreal || cfip || undefined) as
+      | string
+      | undefined;
+    const ip = normalizeIp(rawIp);
+    const userAgent = request.headers.get("user-agent") || undefined;
 
     if (!username || !password) {
       return NextResponse.json(
@@ -31,6 +49,16 @@ export async function POST(request: NextRequest) {
     );
 
     if (!isValidPassword) {
+      await prisma.associateLoginLog.create({
+        data: {
+          associateId: associate.id,
+          username: associate.username,
+          ip,
+          userAgent,
+          success: false,
+          message: "Invalid password",
+        },
+      });
       return NextResponse.json(
         { message: "Invalid credentials" },
         { status: 401 }
@@ -45,6 +73,17 @@ export async function POST(request: NextRequest) {
       process.env.JWT_SECRET!,
       { expiresIn: "8h" }
     );
+
+    await prisma.associateLoginLog.create({
+      data: {
+        associateId: associate.id,
+        username: associate.username,
+        ip,
+        userAgent,
+        success: true,
+        message: "Login successful",
+      },
+    });
 
     const response = NextResponse.json(
       {

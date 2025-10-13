@@ -22,6 +22,7 @@ import {
   ListTodo,
   ChevronsDown,
   Users,
+  FileText,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -56,7 +57,9 @@ const AppSidebar = () => {
   }
 
   const displayEmail = associate?.email || associate?.username;
-  const initial = (associate?.email || associate?.username || "")[0]?.toUpperCase();
+  const initial = (associate?.email ||
+    associate?.username ||
+    "")[0]?.toUpperCase();
 
   return (
     <Sidebar collapsible="icon">
@@ -95,6 +98,18 @@ const AppSidebar = () => {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            {associate?.role === "DIRECTOR" && (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Logs">
+                  <Link href="/associate/logs">
+                    <FileText />
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      Logs
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="User Details">
                 <Link href="/associate/user-details">

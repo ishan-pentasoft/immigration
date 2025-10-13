@@ -31,6 +31,7 @@ model Associate {
 
   todos       Todo[]
   userDetails UserDetails[]
+  loginLogs   AssociateLoginLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -157,4 +158,16 @@ model UserDetails {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model AssociateLoginLog {
+  id          String     @id @default(uuid())
+  associateId String?
+  associate   Associate? @relation(fields: [associateId], references: [id], onDelete: SetNull)
+  username    String
+  ip          String?
+  userAgent   String?
+  success     Boolean
+  message     String?
+  createdAt   DateTime   @default(now())
 }

@@ -14,6 +14,36 @@ export type CreateVisaInput = {
   imageUrl?: string | null;
 };
 
+export type AssociateLoginLog = {
+  id: string;
+  associateId?: string | null;
+  username: string;
+  ip?: string | null;
+  userAgent?: string | null;
+  success: boolean;
+  message?: string | null;
+  createdAt?: string;
+  associate?: Associate | null;
+};
+
+export type ListAssociateLogsParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  signal?: AbortSignal;
+};
+
+export type ListAssociateLogsResponse = {
+  logs: AssociateLoginLog[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  search?: string;
+};
+
 export type UpdateAboutUsInput = {
   description: string;
   imageUrl?: string | null;
@@ -613,7 +643,12 @@ export const publicUserDetailsApi = {
   },
   async listByAssociate(
     associateId: string,
-    params?: { page?: number; limit?: number; search?: string; associateId?: string }
+    params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      associateId?: string;
+    }
   ): Promise<{
     data: UserDetails[];
     page: number;
@@ -621,20 +656,28 @@ export const publicUserDetailsApi = {
     total: number;
     totalPages: number;
   }> {
-    const { page, limit, search, associateId: filterAssociateId } = params || {};
-    const res = await api.get(`/associate/user-details/${associateId}` as const, {
-      params: {
-        page,
-        limit,
-        search: search?.trim() || undefined,
-        associateId: filterAssociateId,
-      },
-    });
+    const {
+      page,
+      limit,
+      search,
+      associateId: filterAssociateId,
+    } = params || {};
+    const res = await api.get(
+      `/associate/user-details/${associateId}` as const,
+      {
+        params: {
+          page,
+          limit,
+          search: search?.trim() || undefined,
+          associateId: filterAssociateId,
+        },
+      }
+    );
     const { data, page: p, limit: l, total, totalPages } = res.data || {};
     return {
       data: (data as UserDetails[]) || [],
       page: Number(p) || 1,
-      limit: Number(l) || (limit || 10),
+      limit: Number(l) || limit || 10,
       total: Number(total) || 0,
       totalPages: Number(totalPages) || 1,
     };
@@ -667,7 +710,10 @@ export const associateStaffApi = {
     data: CreateAssociateInput
   ): Promise<{ associate: Associate; message?: string }> {
     const res = await api.post(`/associate/staff`, data);
-    return { associate: res.data.staff as Associate, message: res.data.message };
+    return {
+      associate: res.data.staff as Associate,
+      message: res.data.message,
+    };
   },
   async list(): Promise<Associate[]> {
     const res = await api.get(`/associate/staff`);
@@ -690,6 +736,23 @@ export const associateStaffApi = {
       associate: res.data.staff as Associate,
       message: res.data.message,
     };
+  },
+};
+
+export const associateLogsApi = {
+  async list(
+    params?: ListAssociateLogsParams
+  ): Promise<ListAssociateLogsResponse> {
+    const { page, limit, search, signal } = params || {};
+    const res = await api.get(`/associate/logs`, {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+      },
+      signal,
+    });
+    return res.data as ListAssociateLogsResponse;
   },
 };
 
@@ -721,6 +784,7 @@ const apiClient = {
   associate: {
     todo: associateTodoApi,
     staff: associateStaffApi,
+    logs: associateLogsApi,
   },
   userDetails: publicUserDetailsApi,
 };
