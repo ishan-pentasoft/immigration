@@ -99,16 +99,28 @@ const AppSidebar = () => {
               </SidebarMenuButton>
             </SidebarMenuItem>
             {associate?.role === "DIRECTOR" && (
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Logs">
-                  <Link href="/associate/logs">
-                    <FileText />
-                    <span className="group-data-[collapsible=icon]:hidden">
-                      Logs
-                    </span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Logs">
+                    <Link href="/associate/logs">
+                      <FileText />
+                      <span className="group-data-[collapsible=icon]:hidden">
+                        Logs
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Notice">
+                    <Link href="/associate/notice">
+                      <FileText />
+                      <span className="group-data-[collapsible=icon]:hidden">
+                        Notice
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </>
             )}
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="User Details">

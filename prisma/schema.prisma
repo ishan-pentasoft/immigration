@@ -171,3 +171,11 @@ model AssociateLoginLog {
   message     String?
   createdAt   DateTime   @default(now())
 }
+
+model Notice {
+  id          String   @id @default("notice")
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

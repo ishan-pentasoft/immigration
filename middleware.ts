@@ -122,10 +122,11 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/associate-login", request.url));
     }
 
-    // 🔒 Role-based guard: only DIRECTOR can access staff pages
+    // 🔒 Role-based guard: only DIRECTOR can access staff, logs, and notice pages
     if (
       (token && pathname.startsWith("/associate/staff")) ||
-      pathname.startsWith("/associate/logs")
+      pathname.startsWith("/associate/logs") ||
+      pathname.startsWith("/associate/notice")
     ) {
       try {
         const base64Url = token?.split(".")[1];

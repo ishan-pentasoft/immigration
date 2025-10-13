@@ -114,6 +114,14 @@ export type Visa = {
   updatedAt?: string;
 };
 
+export type Notice = {
+  id: string;
+  title: string;
+  description: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type Country = {
   id: string;
   title: string;
@@ -756,6 +764,20 @@ export const associateLogsApi = {
   },
 };
 
+// Associate Notice API (DIRECTOR only)
+export const associateNoticeApi = {
+  async get(): Promise<Notice> {
+    const res = await api.get(`/associate/notice`);
+    return res.data.notice as Notice;
+  },
+  async update(
+    data: Partial<Pick<Notice, "title" | "description">>
+  ): Promise<Notice> {
+    const res = await api.put(`/associate/notice`, data);
+    return res.data.notice as Notice;
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
@@ -785,6 +807,7 @@ const apiClient = {
     todo: associateTodoApi,
     staff: associateStaffApi,
     logs: associateLogsApi,
+    notice: associateNoticeApi,
   },
   userDetails: publicUserDetailsApi,
 };
