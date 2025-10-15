@@ -14,6 +14,38 @@ export type CreateVisaInput = {
   imageUrl?: string | null;
 };
 
+// Associate Staff Tasks API (DIRECTOR only for create)
+export const associateStaffTasksApi = {
+  async create(
+    associateId: string,
+    data: CreateStaffTaskInput
+  ): Promise<StaffTask> {
+    const res = await api.post(`/associate/staff-tasks/${associateId}`, data);
+    return res.data.task as StaffTask;
+  },
+};
+
+
+export type StaffTask = {
+  id: string;
+  date: string;
+  title: string;
+  description: string;
+  file?: string | null;
+  status: boolean;
+  associateId: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CreateStaffTaskInput = {
+  date: string | Date;
+  title: string;
+  description: string;
+  status?: boolean;
+  file?: string | null;
+};
+
 export type AssociateLoginLog = {
   id: string;
   associateId?: string | null;
@@ -806,6 +838,7 @@ const apiClient = {
   associate: {
     todo: associateTodoApi,
     staff: associateStaffApi,
+    staffTasks: associateStaffTasksApi,
     logs: associateLogsApi,
     notice: associateNoticeApi,
   },

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import apiClient from "@/lib/api";
 import { Associate } from "@/types";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, ClipboardPlus } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -80,7 +80,15 @@ const Page = () => {
                   <TableCell>{associate.username}</TableCell>
                   <TableCell>{associate.email}</TableCell>
                   <TableCell>{associate.role}</TableCell>
-                  <TableCell className="flex gap-2">
+                  <TableCell className="flex">
+                    <Button variant={"link"}>
+                      <Link
+                        href={`/associate/staff/create-task/${associate.id}`}
+                        className="inline-flex items-center"
+                      >
+                        <ClipboardPlus className="h-4 w-4" />
+                      </Link>
+                    </Button>
                     <Button variant={"link"}>
                       <Link
                         href={`/associate/staff/edit-staff/${associate.id}`}
