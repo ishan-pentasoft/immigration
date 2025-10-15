@@ -25,6 +25,52 @@ export const associateStaffTasksApi = {
   },
 };
 
+export const directorUserDetailFieldsApi = {
+  async list(): Promise<{ fields: UserDetailField[] }> {
+    const res = await api.get(`/associate/user-details/fields`);
+    return res.data as { fields: UserDetailField[] };
+  },
+  async create(payload: {
+    label: string;
+    name: string;
+    type: FieldType;
+    required?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    options?: any;
+    active?: boolean;
+  }): Promise<{ field: UserDetailField; message?: string }> {
+    const res = await api.post(`/associate/user-details/fields`, payload);
+    return res.data as { field: UserDetailField; message?: string };
+  },
+  async update(
+    id: string,
+    payload: Partial<{
+      label: string;
+      name: string;
+      type: FieldType;
+      required: boolean;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      options: any;
+      active: boolean;
+      order: number;
+    }>
+  ): Promise<{ field: UserDetailField; message?: string }> {
+    const res = await api.put(`/associate/user-details/fields/${id}`, payload);
+    return res.data as { field: UserDetailField; message?: string };
+  },
+  async remove(id: string): Promise<{ success: boolean; message?: string }> {
+    const res = await api.delete(`/associate/user-details/fields/${id}`);
+    return res.data as { success: boolean; message?: string };
+  },
+  async reorder(
+    order: string[]
+  ): Promise<{ success: boolean; message?: string }> {
+    const res = await api.patch(`/associate/user-details/fields/reorder`, {
+      order,
+    });
+    return res.data as { success: boolean; message?: string };
+  },
+};
 
 export type StaffTask = {
   id: string;
@@ -262,6 +308,8 @@ export type CreateUserDetailsInput = {
   occupation: string;
   appointment: boolean;
   countryPreference: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extra?: Record<string, any>;
 };
 
 export type UserDetails = {
@@ -276,6 +324,29 @@ export type UserDetails = {
   appointment: boolean;
   countryPreference: string;
   associateId: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type FieldType =
+  | "TEXT"
+  | "TEXTAREA"
+  | "NUMBER"
+  | "DATE"
+  | "SELECT"
+  | "RADIO"
+  | "CHECKBOX";
+
+export type UserDetailField = {
+  id: string;
+  label: string;
+  name: string;
+  type: FieldType;
+  required: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options?: any;
+  order: number;
+  active: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -681,6 +752,10 @@ export const publicUserDetailsApi = {
     const res = await api.post(`/associate/user-details/${associateId}`, data);
     return res.data?.data as UserDetails;
   },
+  async listFields(): Promise<{ fields: UserDetailField[] }> {
+    const res = await api.get(`/user-details/fields`);
+    return res.data as { fields: UserDetailField[] };
+  },
   async listByAssociate(
     associateId: string,
     params?: {
@@ -843,6 +918,10 @@ const apiClient = {
     notice: associateNoticeApi,
   },
   userDetails: publicUserDetailsApi,
+  userDetailsFields: {
+    listPublic: publicUserDetailsApi.listFields,
+    director: directorUserDetailFieldsApi,
+  },
 };
 
 export default apiClient;

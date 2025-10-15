@@ -40,6 +40,7 @@ export async function POST(
       occupation,
       appointment,
       countryPreference,
+      extra,
     } = body ?? {};
 
     const errors: string[] = [];
@@ -58,6 +59,24 @@ export async function POST(
       typeof appointment === "boolean" ? appointment : false;
     if (typeof countryPreference !== "string" || !countryPreference.trim())
       errors.push("countryPreference");
+
+    const activeFields = await prisma.userDetailField.findMany({
+      where: { active: true },
+      orderBy: { order: "asc" },
+    });
+    const extraObj: Record<string, unknown> =
+      extra && typeof extra === "object" && !Array.isArray(extra) ? extra : {};
+    for (const f of activeFields) {
+      if (f.required) {
+        const v = (extraObj as Record<string, unknown>)[f.name];
+        const missing =
+          v === undefined ||
+          v === null ||
+          (typeof v === "string" && v.trim().length === 0) ||
+          (Array.isArray(v) && v.length === 0);
+        if (missing) errors.push(`extra.${f.name}`);
+      }
+    }
 
     if (errors.length > 0) {
       return NextResponse.json(
@@ -83,6 +102,27 @@ export async function POST(
         associateId,
       },
     });
+
+    if (activeFields.length > 0 && Object.keys(extraObj).length > 0) {
+      const valuesToCreate: {
+        userDetailsId: string;
+        fieldId: string;
+        value: Prisma.InputJsonValue;
+      }[] = [];
+      for (const f of activeFields) {
+        if (Object.prototype.hasOwnProperty.call(extraObj, f.name)) {
+          const v = (extraObj as Record<string, unknown>)[f.name] as unknown;
+          valuesToCreate.push({
+            userDetailsId: created.id,
+            fieldId: f.id,
+            value: v as Prisma.InputJsonValue,
+          });
+        }
+      }
+      if (valuesToCreate.length > 0) {
+        await prisma.userDetailValue.createMany({ data: valuesToCreate });
+      }
+    }
 
     return NextResponse.json(
       { data: created, message: "Details submitted successfully." },

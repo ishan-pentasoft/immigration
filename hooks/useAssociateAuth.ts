@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 
 interface Associate {
   id: string;
@@ -72,6 +73,9 @@ export function useAssociateAuth() {
           });
           lastAssociate = data.associate;
           lastVerifyResult = true;
+          if (data.associate?.id) {
+            api.defaults.headers.common["x-associate-id"] = data.associate.id;
+          }
           return true;
         } else {
           setAuthState({
@@ -81,6 +85,7 @@ export function useAssociateAuth() {
           });
           lastAssociate = null;
           lastVerifyResult = false;
+          delete api.defaults.headers.common["x-associate-id"];
           return false;
         }
       } catch (error) {
@@ -92,6 +97,7 @@ export function useAssociateAuth() {
         });
         lastAssociate = null;
         lastVerifyResult = false;
+        delete api.defaults.headers.common["x-associate-id"];
         return false;
       } finally {
         lastVerifyAt = Date.now();
@@ -123,6 +129,9 @@ export function useAssociateAuth() {
         lastAssociate = data.associate;
         lastVerifyResult = true;
         lastVerifyAt = Date.now();
+        if (data.associate?.id) {
+          api.defaults.headers.common["x-associate-id"] = data.associate.id;
+        }
 
         try {
           const verifyRes = await fetch("/api/associate/auth/verify", {
@@ -138,6 +147,10 @@ export function useAssociateAuth() {
             lastAssociate = vdata.associate;
             lastVerifyResult = true;
             lastVerifyAt = Date.now();
+            if (vdata.associate?.id) {
+              api.defaults.headers.common["x-associate-id"] =
+                vdata.associate.id;
+            }
           }
         } catch {
           // ignore verify hydration errors
@@ -169,6 +182,7 @@ export function useAssociateAuth() {
         isLoading: false,
         isAuthenticated: false,
       });
+      delete api.defaults.headers.common["x-associate-id"];
     } catch (error) {
       console.error("Logout API call failed:", error);
       toast.error("Logout failed");

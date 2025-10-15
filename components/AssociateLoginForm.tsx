@@ -31,8 +31,8 @@ export function LoginForm({
         router.push("/associate/dashboard");
       } else {
         const message =
-          (result as any)?.error ||
-          (result as any)?.message ||
+          (result as { error: string })?.error ||
+          (result as { message: string })?.message ||
           "Invalid username or password";
         toast.error(message);
         return;

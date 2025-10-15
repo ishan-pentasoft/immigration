@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Page() {
   const [users, setUsers] = useState<UserDetails[]>([]);
@@ -80,6 +81,15 @@ export default function Page() {
         <h1 className="text-primary font-bold text-2xl tracking-wider">
           User Details
         </h1>
+        {associate?.role?.toUpperCase() === "DIRECTOR" && (
+          <div className="mt-3 flex justify-end">
+            <Link href="/associate/user-details/fields" className="inline-flex">
+              <Button type="button" className="cursor-pointer">
+                Manage Fields
+              </Button>
+            </Link>
+          </div>
+        )}
         <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center">
           {associate?.role?.toUpperCase() === "DIRECTOR" && (
             <Select

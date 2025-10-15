@@ -1,9 +1,12 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import apiClient, { CreateUserDetailsInput } from "@/lib/api";
+import apiClient, {
+  CreateUserDetailsInput,
+  type UserDetailField,
+} from "@/lib/api";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +21,7 @@ const Page = () => {
   );
 
   const [loading, setLoading] = useState(false);
+  const [loadingFields, setLoadingFields] = useState(false);
   const [form, setForm] = useState<CreateUserDetailsInput>({
     name: "",
     gender: "",
@@ -29,12 +33,49 @@ const Page = () => {
     appointment: false,
     countryPreference: "",
   });
+  const [fields, setFields] = useState<UserDetailField[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [extra, setExtra] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        setLoadingFields(true);
+        const res = await apiClient.userDetailsFields.listPublic();
+        if (!active) return;
+        const list = Array.isArray(res.fields) ? res.fields : [];
+        setFields(
+          list.filter((f) => f.active).sort((a, b) => a.order - b.order)
+        );
+      } catch {
+        // fail silently – dynamic fields are optional
+      } finally {
+        if (active) setLoadingFields(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type, checked } = e.target as HTMLInputElement;
     setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
+  };
+
+  const handleExtraChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    setExtra((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,6 +90,7 @@ const Page = () => {
       await apiClient.userDetails.submit(associateId, {
         ...form,
         dob: form.dob ? new Date(form.dob) : ("" as unknown as Date),
+        extra: Object.keys(extra).length ? extra : undefined,
       });
       toast.success("Details submitted successfully.");
       setForm({
@@ -62,6 +104,7 @@ const Page = () => {
         appointment: false,
         countryPreference: "",
       });
+      setExtra({});
       router.push("/");
     } catch (error: unknown) {
       console.error("Failed to submit details", error);
@@ -197,13 +240,119 @@ const Page = () => {
               />
             </div>
 
+            {fields.length > 0 && (
+              <div className="space-y-4">
+                <h2 className="text-base font-semibold">
+                  Additional Information
+                </h2>
+                {fields.map((f) => {
+                  const required = f.required === true;
+                  const key = f.name;
+                  const commonProps = {
+                    id: key,
+                    name: key,
+                    required,
+                    onChange: handleExtraChange,
+                  } as const;
+                  const options = Array.isArray(f.options)
+                    ? (f.options as unknown as string[])
+                    : [];
+                  return (
+                    <div key={f.id} className="grid gap-2">
+                      <Label htmlFor={key}>
+                        {f.label}
+                        {required ? " *" : ""}
+                      </Label>
+                      {f.type === "TEXT" && (
+                        <Input {...commonProps} value={extra[key] ?? ""} />
+                      )}
+                      {f.type === "TEXTAREA" && (
+                        <textarea
+                          {...(commonProps as unknown as React.DetailedHTMLProps<
+                            React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+                            HTMLTextAreaElement
+                          >)}
+                          className="min-h-24 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={extra[key] ?? ""}
+                        />
+                      )}
+                      {f.type === "NUMBER" && (
+                        <Input
+                          {...commonProps}
+                          type="number"
+                          value={extra[key] ?? ""}
+                        />
+                      )}
+                      {f.type === "DATE" && (
+                        <Input
+                          {...commonProps}
+                          type="date"
+                          value={extra[key] ?? ""}
+                        />
+                      )}
+                      {f.type === "SELECT" && (
+                        <select
+                          {...(commonProps as unknown as React.DetailedHTMLProps<
+                            React.SelectHTMLAttributes<HTMLSelectElement>,
+                            HTMLSelectElement
+                          >)}
+                          className="h-9 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          value={extra[key] ?? ""}
+                        >
+                          <option value="" disabled>
+                            Select an option
+                          </option>
+                          {options.map((o) => (
+                            <option key={o} value={o}>
+                              {o}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      {f.type === "RADIO" && (
+                        <div className="flex flex-wrap gap-4">
+                          {options.map((o) => (
+                            <label key={o} className="flex items-center gap-2">
+                              <input
+                                type="radio"
+                                name={key}
+                                value={o}
+                                checked={extra[key] === o}
+                                onChange={handleExtraChange}
+                              />
+                              <span>{o}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                      {f.type === "CHECKBOX" && (
+                        <div className="flex items-center gap-2">
+                          <input
+                            id={key}
+                            name={key}
+                            type="checkbox"
+                            checked={Boolean(extra[key])}
+                            onChange={handleExtraChange}
+                            className="h-4 w-4"
+                          />
+                          <Label htmlFor={key} className="m-0">
+                            {f.label}
+                          </Label>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             <div className="pt-2">
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || loadingFields}
                 className="w-full sm:w-auto"
               >
-                {loading ? "Submitting..." : "Submit"}
+                {loading || loadingFields ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>
