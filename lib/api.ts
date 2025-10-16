@@ -499,6 +499,10 @@ export const publicUserDetailsApi = {
       generatedPassword: string;
     };
   },
+  async getById(id: string): Promise<UserDetails> {
+    const res = await api.get(`/associate/user-details/item/${id}`);
+    return res.data?.data as UserDetails;
+  },
   async listByAssociate(
     associateId: string,
     params?: {

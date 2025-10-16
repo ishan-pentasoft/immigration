@@ -31,8 +31,6 @@ const Page = () => {
     fetchAboutUs();
   }, []);
 
-  console.log(aboutUs, whyChooseUs);
-
   return (
     <div className="w-full">
       <PageHeader text="About Us" />

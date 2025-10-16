@@ -21,8 +21,9 @@ import {
   LayoutDashboard,
   ListTodo,
   ChevronsDown,
-  Users,
-  FileText,
+  FileUser,
+  Logs,
+  Flag,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -103,7 +104,7 @@ const AppSidebar = () => {
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Logs">
                     <Link href="/associate/logs">
-                      <FileText />
+                      <Logs />
                       <span className="group-data-[collapsible=icon]:hidden">
                         Logs
                       </span>
@@ -113,7 +114,7 @@ const AppSidebar = () => {
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Notice">
                     <Link href="/associate/notice">
-                      <FileText />
+                      <Flag />
                       <span className="group-data-[collapsible=icon]:hidden">
                         Notice
                       </span>
@@ -124,10 +125,10 @@ const AppSidebar = () => {
             )}
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="User Details">
-                <Link href="/associate/user-details">
-                  <Users />
+                <Link href="/associate/applications">
+                  <FileUser />
                   <span className="group-data-[collapsible=icon]:hidden">
-                    User Details
+                    Applications
                   </span>
                 </Link>
               </SidebarMenuButton>

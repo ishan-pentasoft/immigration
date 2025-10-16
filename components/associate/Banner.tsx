@@ -15,8 +15,6 @@ export default function Banner() {
     fetchNotice();
   }, []);
 
-  console.log(notice);
-
   return (
     <StickyBanner className="flex flex-col items-start justify-center bg-gradient-to-b from-blue-500 to-blue-600">
       <p className="mx-0 max-w-[90%] text-white font-bold drop-shadow-md">

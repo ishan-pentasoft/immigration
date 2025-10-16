@@ -27,7 +27,7 @@ const Page = () => {
         const data = await apiClient.associate.staff.list();
         setStaff(data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -42,7 +42,7 @@ const Page = () => {
       toast.success("Staff deleted successfully");
       setStaff(data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Failed to delete staff");
     }
   };
