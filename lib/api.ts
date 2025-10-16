@@ -324,6 +324,7 @@ export type UserDetails = {
   appointment: boolean;
   countryPreference: string;
   associateId: string;
+  extra?: Record<string, unknown>;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -755,6 +756,10 @@ export const publicUserDetailsApi = {
   async listFields(): Promise<{ fields: UserDetailField[] }> {
     const res = await api.get(`/user-details/fields`);
     return res.data as { fields: UserDetailField[] };
+  },
+  async remove(id: string) {
+    const res = await api.delete(`/associate/user-details/${id}`);
+    return res.data;
   },
   async listByAssociate(
     associateId: string,

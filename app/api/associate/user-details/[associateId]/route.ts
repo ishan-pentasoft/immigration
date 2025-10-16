@@ -124,8 +124,18 @@ export async function POST(
       }
     }
 
+    const extraMap: Record<string, unknown> = {};
+    for (const f of activeFields) {
+      if (Object.prototype.hasOwnProperty.call(extraObj, f.name)) {
+        extraMap[f.name] = (extraObj as Record<string, unknown>)[f.name];
+      }
+    }
+
     return NextResponse.json(
-      { data: created, message: "Details submitted successfully." },
+      {
+        data: { ...created, extra: extraMap },
+        message: "Details submitted successfully.",
+      },
       { status: 201 }
     );
   } catch (error) {
@@ -204,11 +214,27 @@ export async function GET(
       orderBy: { createdAt: "desc" },
       skip,
       take: limit,
+      include: {
+        values: {
+          include: { field: true },
+        },
+      },
+    });
+
+    const data = details.map((d) => {
+      const extra: Record<string, unknown> = {};
+      for (const v of d.values) {
+        const key = v.field?.name;
+        if (key) extra[key] = (v.value as unknown) ?? null;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { values, ...rest } = d as typeof d & { values: typeof d.values };
+      return { ...rest, extra };
     });
 
     return NextResponse.json(
       {
-        data: details,
+        data,
         page: currentPage,
         limit,
         total,
@@ -221,6 +247,29 @@ export async function GET(
     console.error("GET /api/associate/user-details/[associateId] error", error);
     return NextResponse.json(
       { error: "Failed to fetch user details" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ associateId: string }> }
+) {
+  try {
+    const { associateId } = await params;
+    await prisma.userDetails.delete({ where: { id: associateId } });
+    return NextResponse.json(
+      { message: "User details deleted successfully." },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(
+      "DELETE /api/associate/user-details/[associateId] error",
+      error
+    );
+    return NextResponse.json(
+      { error: "Failed to delete user details" },
       { status: 500 }
     );
   }
