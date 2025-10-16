@@ -287,6 +287,8 @@ export type UserDetails = {
   countryPreference: string;
   associateId: string;
   extra?: Record<string, unknown>;
+  approved?: boolean;
+  approvedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
 };

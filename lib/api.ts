@@ -467,6 +467,38 @@ export const publicUserDetailsApi = {
     const res = await api.delete(`/associate/user-details/${id}`);
     return res.data;
   },
+  async approve(id: string): Promise<{
+    message: string;
+    student: {
+      id: string;
+      name: string;
+      email: string;
+      phone: string;
+      gender: string;
+      dob: string;
+      associateId: string;
+      createdAt: string;
+      updatedAt: string;
+    };
+    generatedPassword: string;
+  }> {
+    const res = await api.post(`/associate/user-details/${id}/approve`);
+    return res.data as {
+      message: string;
+      student: {
+        id: string;
+        name: string;
+        email: string;
+        phone: string;
+        gender: string;
+        dob: string;
+        associateId: string;
+        createdAt: string;
+        updatedAt: string;
+      };
+      generatedPassword: string;
+    };
+  },
   async listByAssociate(
     associateId: string,
     params?: {

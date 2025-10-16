@@ -47,6 +47,7 @@ export default function Page() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [fields, setFields] = useState<UserDetailField[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
   const fieldMap = useMemo(() => {
     const m = new Map<string, UserDetailField>();
     fields.forEach((f) => m.set(f.name, f));
@@ -124,6 +125,25 @@ export default function Page() {
     }
   };
 
+  const handleApprove = async (id: string, name: string) => {
+    try {
+      setApprovingId(id);
+      const res = await apiClient.userDetails.approve(id);
+      const pwd = res?.generatedPassword;
+      toast.success(
+        pwd
+          ? `Student approved. Temp password for ${name}: ${pwd}`
+          : `Student approved.`
+      );
+      setRefreshTrigger((t) => t + 1);
+    } catch (e: unknown) {
+      const msg = (e as { message?: string })?.message || "Failed to approve";
+      toast.error(msg);
+    } finally {
+      setApprovingId(null);
+    }
+  };
+
   return (
     <div className="p-4 min-h-screen">
       <div className="h-full w-full bg-muted rounded-lg p-4 border border-border shadow-2xl">
@@ -183,6 +203,7 @@ export default function Page() {
                 <TableHead className="font-bold">Name</TableHead>
                 <TableHead className="font-bold">Email</TableHead>
                 <TableHead className="font-bold">Phone</TableHead>
+                <TableHead className="font-bold">Status</TableHead>
                 <TableHead className="font-bold">Details</TableHead>
               </TableRow>
             </TableHeader>
@@ -193,6 +214,20 @@ export default function Page() {
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
+                  <TableCell>
+                    {user.approved ? (
+                      <div className="text-green-600 text-sm font-medium">
+                        Approved
+                        {user.approvedAt
+                          ? ` · ${new Date(user.approvedAt).toLocaleString()}`
+                          : ""}
+                      </div>
+                    ) : (
+                      <div className="text-amber-600 text-sm font-medium">
+                        Pending
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell className="flex gap-2">
                     <Dialog
                       open={openId === user.id}
@@ -335,11 +370,25 @@ export default function Page() {
                         </div>
                       </DialogContent>
                     </Dialog>
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="cursor-pointer"
+                      disabled={!!user.approved || approvingId === user.id}
+                      onClick={() => handleApprove(user.id, user.name)}
+                    >
+                      {approvingId === user.id
+                        ? "Approving..."
+                        : user.approved
+                        ? "Approved"
+                        : "Approve"}
+                    </Button>
                     <ConfirmDialog
                       title="Delete User Details"
                       description="Are you sure you want to delete this user details?"
                       trigger={
                         <Button
+                          size="sm"
                           variant="destructive"
                           className="cursor-pointer"
                         >

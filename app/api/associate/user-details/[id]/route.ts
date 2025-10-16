@@ -212,6 +212,7 @@ export async function GET(
         values: {
           include: { field: true },
         },
+        associate: true,
       },
     });
 
