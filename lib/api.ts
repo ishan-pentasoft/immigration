@@ -72,6 +72,26 @@ export const associateStudentsApi = {
     const res = await api.get(`/associate/students/${id}`);
     return res.data.student as Student;
   },
+  async update(
+    id: string,
+    data: Partial<
+      Pick<
+        Student,
+        | "name"
+        | "email"
+        | "phone"
+        | "gender"
+        | "dob"
+        | "nationality"
+        | "citizenship"
+        | "countryPreference"
+        | "extra"
+      >
+    > & { password?: string }
+  ): Promise<{ student: Student; message?: string }> {
+    const res = await api.patch(`/associate/students/${id}`, data);
+    return res.data as { student: Student; message?: string };
+  },
   async remove(id: string): Promise<{ success: boolean; message?: string }> {
     const res = await api.delete(`/associate/students/${id}`);
     return res.data as { success: boolean; message?: string };

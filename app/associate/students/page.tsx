@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import Link from "next/link";
-import { View, Trash2 } from "lucide-react";
+import { View, Trash2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import type { Student, ListStudentsResponse } from "@/types";
@@ -137,6 +137,18 @@ export default function Page() {
                               className="cursor-pointer stroke-2"
                             >
                               <View />
+                            </Button>
+                          </Link>
+                        </ToolTip>
+                        <ToolTip content="Edit">
+                          <Link href={`/associate/students/${s.id}/edit`}>
+                            <Button
+                              type="button"
+                              variant="link"
+                              size="sm"
+                              className="cursor-pointer stroke-2"
+                            >
+                              <Pencil />
                             </Button>
                           </Link>
                         </ToolTip>

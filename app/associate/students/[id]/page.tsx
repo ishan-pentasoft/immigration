@@ -5,6 +5,8 @@ import apiClient from "@/lib/api";
 import type { Student, UserDetailField } from "@/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ToolTip } from "@/components/ToolTip";
+import { Pencil } from "lucide-react";
 
 export default function StudentDetailPage() {
   const params = useParams<{ id: string }>();
@@ -109,6 +111,13 @@ export default function StudentDetailPage() {
             Student Details
           </h1>
           <div className="flex items-center gap-2">
+            <ToolTip content="Edit">
+              <Link href={`/associate/students/${id}/edit`}>
+                <Button type="button" variant="link" className="cursor-pointer stroke-2">
+                  <Pencil />
+                </Button>
+              </Link>
+            </ToolTip>
             <Link href={backHref}>
               <Button
                 type="button"
