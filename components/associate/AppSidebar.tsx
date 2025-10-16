@@ -37,7 +37,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAssociateAuth } from "@/hooks/useAssociateAuth";
 import { useEffect, useState } from "react";
-import { IconUserCog } from "@tabler/icons-react";
+import { IconSchool, IconUserCog } from "@tabler/icons-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -129,6 +129,16 @@ const AppSidebar = () => {
                   <FileUser />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Applications
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Students">
+                <Link href="/associate/students">
+                  <IconSchool />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Students
                   </span>
                 </Link>
               </SidebarMenuButton>

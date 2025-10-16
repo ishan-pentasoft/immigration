@@ -37,6 +37,9 @@ import {
   ListContactsParams,
   ListContactsResponse,
   UpdateTeamInput,
+  Student,
+  ListStudentsParams,
+  ListStudentsResponse,
 } from "@/types";
 import api from "./axios";
 
@@ -48,6 +51,30 @@ export const associateStaffTasksApi = {
   ): Promise<StaffTask> {
     const res = await api.post(`/associate/staff-tasks/${associateId}`, data);
     return res.data.task as StaffTask;
+  },
+};
+
+// Associate Students API
+export const associateStudentsApi = {
+  async list(params?: ListStudentsParams): Promise<ListStudentsResponse> {
+    const { page, limit, search, signal } = params || {};
+    const res = await api.get(`/associate/students`, {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+      },
+      signal,
+    });
+    return res.data as ListStudentsResponse;
+  },
+  async getById(id: string): Promise<Student> {
+    const res = await api.get(`/associate/students/${id}`);
+    return res.data.student as Student;
+  },
+  async remove(id: string): Promise<{ success: boolean; message?: string }> {
+    const res = await api.delete(`/associate/students/${id}`);
+    return res.data as { success: boolean; message?: string };
   },
 };
 
@@ -661,6 +688,7 @@ const apiClient = {
     todo: associateTodoApi,
     staff: associateStaffApi,
     staffTasks: associateStaffTasksApi,
+    students: associateStudentsApi,
     logs: associateLogsApi,
     notice: associateNoticeApi,
   },

@@ -354,3 +354,38 @@ export type ListContactsResponse = {
   hasPrevPage: boolean;
   search?: string;
 };
+
+export type Student = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  gender: string;
+  dob: string;
+  nationality: string;
+  citizenship: string;
+  countryPreference: string;
+  extra?: Record<string, unknown> | null;
+  associateId: string;
+  approved?: boolean;
+  approvedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  associate?: Associate;
+  approvedBy?: Associate | null;
+};
+
+export type ListStudentsParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  signal?: AbortSignal;
+};
+
+export type ListStudentsResponse = {
+  data: Student[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};

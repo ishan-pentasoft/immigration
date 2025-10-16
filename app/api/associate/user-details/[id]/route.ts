@@ -84,19 +84,38 @@ export async function POST(
       );
     }
 
-    const created = await prisma.userDetails.create({
-      data: {
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        gender: gender.trim(),
-        dob: parsedDob!,
-        nationality: nationality.trim(),
-        citizenship: citizenship.trim(),
-        countryPreference: countryPreference.trim(),
-        associateId,
-      },
-    });
+    let created;
+    try {
+      created = await prisma.userDetails.create({
+        data: {
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          gender: gender.trim(),
+          dob: parsedDob!,
+          nationality: nationality.trim(),
+          citizenship: citizenship.trim(),
+          countryPreference: countryPreference.trim(),
+          associateId,
+        },
+      });
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+      ) {
+        return NextResponse.json(
+          {
+            message: "A record with the same email or phone already exists.",
+            code: "P2002",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            target: (err as any)?.meta?.target,
+          },
+          { status: 409 }
+        );
+      }
+      throw err;
+    }
 
     if (activeFields.length > 0 && Object.keys(extraObj).length > 0) {
       const valuesToCreate: {
