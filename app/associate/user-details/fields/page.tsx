@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import apiClient, { type FieldType, type UserDetailField } from "@/lib/api";
+import apiClient from "@/lib/api";
+import type { FieldType, UserDetailField } from "@/types";
 import { useAssociateAuth } from "@/hooks/useAssociateAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

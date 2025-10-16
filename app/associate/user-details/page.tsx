@@ -8,7 +8,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAssociateAuth } from "@/hooks/useAssociateAuth";
-import apiClient, { type UserDetails, type UserDetailField } from "@/lib/api";
+import apiClient from "@/lib/api";
+import type { UserDetails, UserDetailField } from "@/types";
 import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {

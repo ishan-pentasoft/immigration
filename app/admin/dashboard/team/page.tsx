@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import apiClient, { Team } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Team } from "@/types";
 import {
   Table,
   TableBody,

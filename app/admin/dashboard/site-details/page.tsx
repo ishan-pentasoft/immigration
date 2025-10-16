@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import apiClient, { SiteDetails, UpdateSiteDetailsInput } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { SiteDetails, UpdateSiteDetailsInput } from "@/types";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

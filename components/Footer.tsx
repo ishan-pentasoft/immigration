@@ -5,7 +5,8 @@ import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import apiClient, { SiteDetails } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { SiteDetails } from "@/types";
 import { Mail, PhoneCall } from "lucide-react";
 
 const WorldMap = dynamic(() => import("./ui/world-map"), {

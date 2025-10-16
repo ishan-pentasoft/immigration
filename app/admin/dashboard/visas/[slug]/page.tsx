@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import apiClient from "@/lib/api";
-import { Visa } from "@/lib/api";
+import { Visa } from "@/types";
 import Image from "next/image";
 
 export default function Page() {

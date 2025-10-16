@@ -9,7 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/stateful-button";
-import apiClient, { College } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { College } from "@/types";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";

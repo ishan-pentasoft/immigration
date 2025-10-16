@@ -3,10 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import apiClient, {
-  CreateUserDetailsInput,
-  type UserDetailField,
-} from "@/lib/api";
+import apiClient from "@/lib/api";
+import { CreateUserDetailsInput, type UserDetailField } from "@/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

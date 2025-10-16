@@ -1,6 +1,7 @@
 "use client";
 
-import apiClient, { SiteDetails } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { SiteDetails } from "@/types";
 import {
   IconBrandFacebook,
   IconBrandX,

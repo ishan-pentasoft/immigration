@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import apiClient, { ListCollegesResponse } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { ListCollegesResponse } from "@/types";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 

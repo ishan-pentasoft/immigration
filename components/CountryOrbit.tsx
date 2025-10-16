@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/stateful-button";
-import apiClient, { Country } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Country } from "@/types";
 import Link from "next/link";
 
 const CircularGallery = dynamic(() => import("./ui/CircularGallery"), {

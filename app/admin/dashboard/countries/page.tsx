@@ -2,7 +2,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CreateCountryDialog from "@/components/admin/CreateCountryDialog";
-import apiClient, { Country, ListCountriesResponse } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Country, ListCountriesResponse } from "@/types";
 import { Input } from "@/components/ui/input";
 import {
   Pagination,

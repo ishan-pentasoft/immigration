@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import apiClient, { Contact, ListContactsResponse } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Contact, ListContactsResponse } from "@/types";
 import { Input } from "@/components/ui/input";
 import {
   Pagination,

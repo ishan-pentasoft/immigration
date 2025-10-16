@@ -2,7 +2,8 @@
 
 import PageHeader from "@/components/PageHeader";
 import { FocusCards } from "@/components/ui/focus-cards";
-import apiClient, { Country } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Country } from "@/types";
 import React, { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 

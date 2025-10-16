@@ -2,7 +2,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CreateCollegeDialog from "@/components/admin/CreateCollegeDialog";
-import apiClient, { College, Country, ListCollegesResponse } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { College, Country, ListCollegesResponse } from "@/types";
 import { Input } from "@/components/ui/input";
 import {
   Pagination,

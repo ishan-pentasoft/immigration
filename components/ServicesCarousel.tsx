@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import EmblaCarousel from "./EmblaCarousel";
-import apiClient, { Visa } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Visa } from "@/types";
 
 const ServicesCarousel = () => {
   const [services, setServices] = useState<Visa[]>([]);

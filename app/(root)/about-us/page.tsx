@@ -5,7 +5,8 @@ import PageHeader from "@/components/PageHeader";
 import Image from "next/image";
 import HoverCard from "@/components/HoverCard";
 import OurTeam from "@/components/OurTeam";
-import apiClient, { AboutUs, WhyChooseUs } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { AboutUs, WhyChooseUs } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Page = () => {

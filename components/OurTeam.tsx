@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import ChromaGrid from "@/components/ui/ChromaGrid";
-import apiClient, { Team } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Team } from "@/types";
 
 const OurTeam = () => {
   const [teamMembers, setTeamMembers] = useState<Team[]>([]);

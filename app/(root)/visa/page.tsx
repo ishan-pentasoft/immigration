@@ -5,7 +5,8 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import apiClient, { Visa } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Visa } from "@/types";
 
 const Page = () => {
   const router = useRouter();

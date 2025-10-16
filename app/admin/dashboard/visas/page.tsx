@@ -2,7 +2,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CreateVisaDialog from "@/components/admin/CreateVisaDialog";
-import apiClient, { ListVisasResponse, Visa } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { ListVisasResponse, Visa } from "@/types";
 import { Input } from "@/components/ui/input";
 import {
   Pagination,

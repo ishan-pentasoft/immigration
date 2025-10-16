@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import apiClient, {
-  AssociateLoginLog,
-  ListAssociateLogsResponse,
-} from "@/lib/api";
+import apiClient from "@/lib/api";
+import { AssociateLoginLog, ListAssociateLogsResponse } from "@/types";
 import { Input } from "@/components/ui/input";
 import {
   Pagination,

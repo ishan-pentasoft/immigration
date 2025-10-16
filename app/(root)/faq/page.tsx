@@ -7,7 +7,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import apiClient, { Faq } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Faq } from "@/types";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {

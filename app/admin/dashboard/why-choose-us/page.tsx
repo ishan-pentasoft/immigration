@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import apiClient, { WhyChooseUs } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { WhyChooseUs } from "@/types";
 import {
   Table,
   TableBody,

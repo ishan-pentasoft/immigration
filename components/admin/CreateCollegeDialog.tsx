@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
 import RichTextEditor from "../ui/rich-text-editor";
-import type { Country } from "@/lib/api";
+import type { Country } from "@/types";
 import Select, {
   components,
   SingleValueProps,

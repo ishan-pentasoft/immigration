@@ -1,4 +1,5 @@
-import apiClient, { Notice } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { Notice } from "@/types";
 import { useEffect, useState } from "react";
 import { StickyBanner } from "../ui/sticky-banner";
 

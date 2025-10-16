@@ -3,7 +3,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { AxiosError } from "axios";
-import apiClient, { AboutUs } from "@/lib/api";
+import apiClient from "@/lib/api";
+import { AboutUs } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from "@/components/ui/rich-text-editor";
