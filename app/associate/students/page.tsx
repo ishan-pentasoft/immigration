@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ToolTip } from "@/components/ToolTip";
 
 export default function Page() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -127,27 +128,31 @@ export default function Page() {
                           : "-"}
                       </TableCell>
                       <TableCell className="flex gap-2">
-                        <Link href={`/associate/students/${s.id}`}>
-                          <Button
-                            type="button"
-                            variant="link"
-                            size="sm"
-                            className="cursor-pointer stroke-2"
-                          >
-                            <View />
-                          </Button>
-                        </Link>
+                        <ToolTip content="View details">
+                          <Link href={`/associate/students/${s.id}`}>
+                            <Button
+                              type="button"
+                              variant="link"
+                              size="sm"
+                              className="cursor-pointer stroke-2"
+                            >
+                              <View />
+                            </Button>
+                          </Link>
+                        </ToolTip>
                         <ConfirmDialog
                           title="Delete Student"
                           description="Are you sure you want to delete this student?"
                           trigger={
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              className="cursor-pointer"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <ToolTip content="Delete">
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                className="cursor-pointer"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </ToolTip>
                           }
                           confirmText="Delete"
                           onConfirm={() => handleDelete(s.id)}

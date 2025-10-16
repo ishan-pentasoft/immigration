@@ -24,6 +24,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { CheckCheck, Trash2, View } from "lucide-react";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import { ToolTip } from "@/components/ToolTip";
 
 export default function Page() {
   const [users, setUsers] = useState<UserDetails[]>([]);
@@ -183,37 +184,50 @@ export default function Page() {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell className="flex gap-2">
-                    <Link href={`/associate/applications/${user.id}`}>
-                      <Button
-                        type="button"
-                        variant="link"
-                        size="sm"
-                        className="cursor-pointer stroke-2"
-                      >
-                        <View />
-                      </Button>
-                    </Link>
-                    <Button
-                      type="button"
-                      variant="link"
-                      size="sm"
-                      className="cursor-pointer stroke-2 text-green-600"
-                      disabled={!!user.approved || approvingId === user.id}
-                      onClick={() => handleApprove(user.id, user.name)}
-                    >
-                      <CheckCheck />
-                    </Button>
+                    <ToolTip content="View details">
+                      <Link href={`/associate/applications/${user.id}`}>
+                        <Button
+                          type="button"
+                          variant="link"
+                          size="sm"
+                          className="cursor-pointer stroke-2"
+                        >
+                          <View />
+                        </Button>
+                      </Link>
+                    </ToolTip>
+                    <ConfirmDialog
+                      title="Approve User"
+                      description="Are you sure you want to approve this user?"
+                      onConfirm={() => handleApprove(user.id, user.name)}
+                      trigger={
+                        <ToolTip content="Approve">
+                          <Button
+                            size="sm"
+                            variant="link"
+                            className="cursor-pointer stroke-2 text-green-600"
+                            disabled={!!user.approved || approvingId === user.id}
+                          >
+                            <CheckCheck />
+                          </Button>
+                        </ToolTip>
+                      }
+                      confirmText="Approve"
+                    />
+
                     <ConfirmDialog
                       title="Delete User Details"
                       description="Are you sure you want to delete this user details?"
                       trigger={
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          className="cursor-pointer"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <ToolTip content="Delete">
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            className="cursor-pointer"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </ToolTip>
                       }
                       confirmText="Delete"
                       onConfirm={() => handleDelete(user.id)}
