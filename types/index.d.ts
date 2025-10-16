@@ -264,13 +264,12 @@ export type Contact = {
 
 export type CreateUserDetailsInput = {
   name: string;
+  email: string;
+  phone: string;
   gender: string;
   dob: string | Date;
-  pob: string;
   nationality: string;
   citizenship: string;
-  occupation: string;
-  appointment: boolean;
   countryPreference: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: Record<string, any>;
@@ -279,13 +278,12 @@ export type CreateUserDetailsInput = {
 export type UserDetails = {
   id: string;
   name: string;
+  email: string;
+  phone: string;
   gender: string;
   dob: string;
-  pob: string;
   nationality: string;
   citizenship: string;
-  occupation: string;
-  appointment: boolean;
   countryPreference: string;
   associateId: string;
   extra?: Record<string, unknown>;

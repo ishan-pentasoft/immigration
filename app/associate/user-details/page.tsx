@@ -165,7 +165,7 @@ export default function Page() {
             </Select>
           )}
           <Input
-            placeholder="Search by name, nationality, citizenship, occupation"
+            placeholder="Search by name, email, phone, nationality, citizenship"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -181,14 +181,8 @@ export default function Page() {
               <TableRow>
                 <TableHead className="font-bold">Id</TableHead>
                 <TableHead className="font-bold">Name</TableHead>
-                <TableHead className="font-bold">Gender</TableHead>
-                <TableHead className="font-bold">DOB</TableHead>
-                <TableHead className="font-bold">POB</TableHead>
-                <TableHead className="font-bold">Nationality</TableHead>
-                <TableHead className="font-bold">Citizenship</TableHead>
-                <TableHead className="font-bold">Occupation</TableHead>
-                <TableHead className="font-bold">Appointment</TableHead>
-                <TableHead className="font-bold">Country Preference</TableHead>
+                <TableHead className="font-bold">Email</TableHead>
+                <TableHead className="font-bold">Phone</TableHead>
                 <TableHead className="font-bold">Details</TableHead>
               </TableRow>
             </TableHeader>
@@ -197,20 +191,8 @@ export default function Page() {
                 <TableRow key={i}>
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.gender}</TableCell>
-                  <TableCell>
-                    {new Date(user.dob).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </TableCell>
-                  <TableCell>{user.pob}</TableCell>
-                  <TableCell>{user.nationality}</TableCell>
-                  <TableCell>{user.citizenship}</TableCell>
-                  <TableCell>{user.occupation}</TableCell>
-                  <TableCell>{user.appointment ? "Yes" : "No"}</TableCell>
-                  <TableCell>{user.countryPreference}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.phone}</TableCell>
                   <TableCell className="flex gap-2">
                     <Dialog
                       open={openId === user.id}
@@ -255,9 +237,15 @@ export default function Page() {
                             </div>
                             <div>
                               <div className="text-xs text-muted-foreground">
-                                POB
+                                Email
                               </div>
-                              <div className="text-sm">{user.pob}</div>
+                              <div className="text-sm">{user.email}</div>
+                            </div>
+                            <div>
+                              <div className="text-xs text-muted-foreground">
+                                Phone
+                              </div>
+                              <div className="text-sm">{user.phone}</div>
                             </div>
                             <div>
                               <div className="text-xs text-muted-foreground">
@@ -270,20 +258,6 @@ export default function Page() {
                                 Citizenship
                               </div>
                               <div className="text-sm">{user.citizenship}</div>
-                            </div>
-                            <div>
-                              <div className="text-xs text-muted-foreground">
-                                Occupation
-                              </div>
-                              <div className="text-sm">{user.occupation}</div>
-                            </div>
-                            <div>
-                              <div className="text-xs text-muted-foreground">
-                                Appointment
-                              </div>
-                              <div className="text-sm">
-                                {user.appointment ? "Yes" : "No"}
-                              </div>
                             </div>
                             <div>
                               <div className="text-xs text-muted-foreground">

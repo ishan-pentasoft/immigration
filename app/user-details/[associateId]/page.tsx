@@ -9,6 +9,14 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Page = () => {
   const params = useParams<{ associateId: string }>();
@@ -22,13 +30,12 @@ const Page = () => {
   const [loadingFields, setLoadingFields] = useState(false);
   const [form, setForm] = useState<CreateUserDetailsInput>({
     name: "",
+    email: "",
+    phone: "",
     gender: "",
     dob: "",
-    pob: "",
     nationality: "",
     citizenship: "",
-    occupation: "",
-    appointment: false,
     countryPreference: "",
   });
   const [fields, setFields] = useState<UserDetailField[]>([]);
@@ -93,13 +100,12 @@ const Page = () => {
       toast.success("Details submitted successfully.");
       setForm({
         name: "",
+        email: "",
+        phone: "",
         gender: "",
         dob: "",
-        pob: "",
         nationality: "",
         citizenship: "",
-        occupation: "",
-        appointment: false,
         countryPreference: "",
       });
       setExtra({});
@@ -120,7 +126,7 @@ const Page = () => {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-2xl">
+    <main className="container mx-auto px-4 py-8 max-w-5xl">
       <Card className="p-4 w-full">
         <CardHeader>
           <h1 className="text-xl font-semibold text-primary">
@@ -145,14 +151,50 @@ const Page = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="gender">Gender</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="gender"
-                  name="gender"
-                  value={form.gender}
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={form.email}
                   onChange={handleChange}
                   required
                 />
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="gender">Gender</Label>
+                <RadioGroup
+                  className="flex gap-2 mt-3"
+                  value={form.gender}
+                  onValueChange={(v) =>
+                    setForm((f) => ({
+                      ...f,
+                      gender: v as CreateUserDetailsInput["gender"],
+                    }))
+                  }
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Male" id="gender-male" />
+                    <Label htmlFor="gender-male">Male</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Female" id="gender-female" />
+                    <Label htmlFor="gender-female">Female</Label>
+                  </div>
+                </RadioGroup>
               </div>
             </div>
 
@@ -169,19 +211,6 @@ const Page = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="pob">Place of Birth</Label>
-                <Input
-                  id="pob"
-                  name="pob"
-                  value={form.pob}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
                 <Label htmlFor="nationality">Nationality</Label>
                 <Input
                   id="nationality"
@@ -191,6 +220,9 @@ const Page = () => {
                   required
                 />
               </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label htmlFor="citizenship">Citizenship</Label>
                 <Input
@@ -201,41 +233,27 @@ const Page = () => {
                   required
                 />
               </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label htmlFor="occupation">Occupation</Label>
-                <Input
-                  id="occupation"
-                  name="occupation"
-                  value={form.occupation}
-                  onChange={handleChange}
-                  required
-                />
+                <Label htmlFor="countryPreference">Preferred Country</Label>
+                <Select
+                  value={form.countryPreference}
+                  onValueChange={(v) =>
+                    setForm((f) => ({ ...f, countryPreference: v }))
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Australia">Australia</SelectItem>
+                    <SelectItem value="Canada">Canada</SelectItem>
+                    <SelectItem value="United Kingdom">
+                      United Kingdom
+                    </SelectItem>
+                    <SelectItem value="United States">United States</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="flex items-center gap-2 pt-6">
-                <input
-                  id="appointment"
-                  name="appointment"
-                  type="checkbox"
-                  checked={form.appointment}
-                  onChange={handleChange}
-                  className="h-4 w-4"
-                />
-                <Label htmlFor="appointment">Request appointment</Label>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="countryPreference">Preferred Country</Label>
-              <Input
-                id="countryPreference"
-                name="countryPreference"
-                value={form.countryPreference}
-                onChange={handleChange}
-                required
-              />
             </div>
 
             {fields.length > 0 && (

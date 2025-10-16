@@ -170,13 +170,12 @@ model StaffTasks {
 model UserDetails {
   id                String   @id @default(uuid())
   name              String
+  email             String   @unique
+  phone             String   @unique
   gender            String
   dob               DateTime
-  pob               String
   nationality       String
   citizenship       String
-  occupation        String
-  appointment       Boolean
   countryPreference String
 
   associateId String

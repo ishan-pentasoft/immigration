@@ -32,31 +32,27 @@ export async function POST(
     const body = await req.json();
     const {
       name,
+      email,
+      phone,
       gender,
       dob,
-      pob,
       nationality,
       citizenship,
-      occupation,
-      appointment,
       countryPreference,
       extra,
     } = body ?? {};
 
     const errors: string[] = [];
     if (typeof name !== "string" || !name.trim()) errors.push("name");
+    if (typeof email !== "string" || !email.trim()) errors.push("email");
+    if (typeof phone !== "string" || !phone.trim()) errors.push("phone");
     if (typeof gender !== "string" || !gender.trim()) errors.push("gender");
     const parsedDob = dob ? new Date(dob) : null;
     if (!parsedDob || isNaN(parsedDob.getTime())) errors.push("dob");
-    if (typeof pob !== "string" || !pob.trim()) errors.push("pob");
     if (typeof nationality !== "string" || !nationality.trim())
       errors.push("nationality");
     if (typeof citizenship !== "string" || !citizenship.trim())
       errors.push("citizenship");
-    if (typeof occupation !== "string" || !occupation.trim())
-      errors.push("occupation");
-    const appointmentBool =
-      typeof appointment === "boolean" ? appointment : false;
     if (typeof countryPreference !== "string" || !countryPreference.trim())
       errors.push("countryPreference");
 
@@ -91,13 +87,12 @@ export async function POST(
     const created = await prisma.userDetails.create({
       data: {
         name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
         gender: gender.trim(),
         dob: parsedDob!,
-        pob: pob.trim(),
         nationality: nationality.trim(),
         citizenship: citizenship.trim(),
-        occupation: occupation.trim(),
-        appointment: appointmentBool,
         countryPreference: countryPreference.trim(),
         associateId,
       },
@@ -196,9 +191,10 @@ export async function GET(
       const q = search;
       where.OR = [
         { name: { contains: q, mode: "insensitive" } },
+        { email: { contains: q, mode: "insensitive" } },
+        { phone: { contains: q, mode: "insensitive" } },
         { nationality: { contains: q, mode: "insensitive" } },
         { citizenship: { contains: q, mode: "insensitive" } },
-        { occupation: { contains: q, mode: "insensitive" } },
       ];
     }
 
