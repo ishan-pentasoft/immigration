@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -7,13 +8,16 @@ import {
 export function ToolTip({
   children,
   content,
+  ...triggerProps
 }: {
-  children: React.ReactNode;
+  children: React.ReactElement;
   content: string;
-}) {
+} & React.HTMLAttributes<HTMLElement>) {
   return (
     <Tooltip>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipTrigger asChild>
+        {React.cloneElement(children, triggerProps)}
+      </TooltipTrigger>
       <TooltipContent>
         <p>{content}</p>
       </TooltipContent>

@@ -20,6 +20,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname.startsWith("/api/student/auth")) {
+    return NextResponse.next();
+  }
+
   if (
     pathname.startsWith("/api/associate/user-details/") &&
     request.method === "POST"
@@ -73,6 +77,39 @@ export function middleware(request: NextRequest) {
     });
   }
 
+  // 🔒 Protect /api/student routes
+  if (pathname.startsWith("/api/student")) {
+    const token =
+      request.cookies.get("studentToken")?.value ||
+      request.headers.get("authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    let studentId: string | undefined;
+    try {
+      const base64Url = token.split(".")[1];
+      if (base64Url) {
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const payloadJson = atob(base64);
+        const payload = JSON.parse(payloadJson);
+        studentId = payload?.studentId as string | undefined;
+      }
+    } catch {}
+
+    const requestHeaders = new Headers(request.headers);
+    if (studentId) {
+      requestHeaders.set("x-student-id", studentId);
+    }
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
+
   // 🔒 Protect /admin dashboard routes
   if (pathname.startsWith("/admin")) {
     const token =
@@ -93,6 +130,30 @@ export function middleware(request: NextRequest) {
 
     if (pathname !== "/admin/login" && !token) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+  }
+  // 🔒 Protect /student dashboard routes (exclude /student-login)
+  if (pathname === "/student" || pathname.startsWith("/student/")) {
+    const token =
+      request.cookies.get("studentToken")?.value ||
+      request.headers.get("authorization")?.replace("Bearer ", "");
+
+    if (pathname === "/student") {
+      if (token) {
+        return NextResponse.redirect(
+          new URL("/student/dashboard", request.url)
+        );
+      } else {
+        return NextResponse.redirect(new URL("/student-login", request.url));
+      }
+    }
+
+    if (pathname === "/student-login" && token) {
+      return NextResponse.redirect(new URL("/student/dashboard", request.url));
+    }
+
+    if (pathname !== "/student-login" && !token) {
+      return NextResponse.redirect(new URL("/student-login", request.url));
     }
   }
 
