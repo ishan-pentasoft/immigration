@@ -24,6 +24,23 @@ enum FieldType {
   CHECKBOX
 }
 
+enum TicketStatus {
+  OPEN
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TicketSenderType {
+  STUDENT
+  ASSOCIATE
+  DIRECTOR
+}
+
 model Admin {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -53,6 +70,9 @@ model Student {
   approvedById String?
   approvedBy   Associate? @relation("ApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
 
+  tickets        Ticket[]        @relation("StudentTickets")
+  ticketMessages TicketMessage[] @relation("StudentTicketMessages")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -70,6 +90,8 @@ model Associate {
   staffTasks       StaffTasks[]
   students         Student[]
   approvedStudents Student[]           @relation("ApprovedBy")
+  tickets          Ticket[]            @relation("AssociateTickets")
+  ticketMessages   TicketMessage[]     @relation("AssociateTicketMessages")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -267,4 +289,46 @@ model Notice {
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Ticket {
+  id          String         @id @default(uuid())
+  title       String
+  description String
+  status      TicketStatus   @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+
+  studentId String
+  student   Student @relation("StudentTickets", fields: [studentId], references: [id], onDelete: Cascade)
+
+  associateId String
+  associate   Associate @relation("AssociateTickets", fields: [associateId], references: [id], onDelete: Cascade)
+
+  messages TicketMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([associateId])
+}
+
+model TicketMessage {
+  id       String @id @default(uuid())
+  ticketId String
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  content  String
+
+  senderType  TicketSenderType
+  studentId   String?
+  associateId String?
+
+  student   Student?   @relation("StudentTicketMessages", fields: [studentId], references: [id], onDelete: SetNull)
+  associate Associate? @relation("AssociateTicketMessages", fields: [associateId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+  @@index([studentId])
+  @@index([associateId])
 }

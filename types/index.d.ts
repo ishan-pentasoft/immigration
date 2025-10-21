@@ -389,3 +389,60 @@ export type ListStudentsResponse = {
   total: number;
   totalPages: number;
 };
+
+export type TicketStatus = "OPEN" | "CLOSED";
+export type TicketPriority = "LOW" | "MEDIUM" | "HIGH";
+export type TicketSenderType = "STUDENT" | "ASSOCIATE" | "DIRECTOR";
+
+export type Ticket = {
+  id: string;
+  title: string;
+  description: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  studentId: string;
+  associateId: string;
+  createdAt?: string;
+  updatedAt?: string;
+  student?: Student;
+  associate?: Associate;
+  messages?: TicketMessage[];
+};
+
+export type TicketMessage = {
+  id: string;
+  ticketId: string;
+  content: string;
+  senderType: TicketSenderType;
+  studentId?: string | null;
+  associateId?: string | null;
+  createdAt?: string;
+  student?: Student | null;
+  associate?: Associate | null;
+};
+
+export type CreateTicketInput = {
+  title: string;
+  description: string;
+  priority?: TicketPriority;
+};
+
+export type CreateTicketMessageInput = {
+  content: string;
+};
+
+export type ListTicketsParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: TicketStatus;
+  signal?: AbortSignal;
+};
+
+export type ListTicketsResponse = {
+  tickets: (Ticket & { latestMessage?: TicketMessage | null })[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};

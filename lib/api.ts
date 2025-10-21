@@ -40,6 +40,12 @@ import {
   Student,
   ListStudentsParams,
   ListStudentsResponse,
+  Ticket,
+  TicketMessage,
+  CreateTicketInput,
+  CreateTicketMessageInput,
+  ListTicketsParams,
+  ListTicketsResponse,
 } from "@/types";
 import api from "./axios";
 
@@ -679,6 +685,70 @@ export const associateNoticeApi = {
   },
 };
 
+// Student Tickets API
+export const studentTicketsApi = {
+  async create(data: CreateTicketInput): Promise<Ticket> {
+    const res = await api.post(`/student/tickets`, data);
+    return res.data.ticket as Ticket;
+  },
+  async list(params?: ListTicketsParams): Promise<ListTicketsResponse> {
+    const { page, limit, search, status, signal } = params || {};
+    const res = await api.get(`/student/tickets`, {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+        status,
+      },
+      signal,
+    });
+    return res.data as ListTicketsResponse;
+  },
+  async getById(id: string): Promise<Ticket> {
+    const res = await api.get(`/student/tickets/${id}`);
+    return res.data.ticket as Ticket;
+  },
+  async addMessage(
+    ticketId: string,
+    data: CreateTicketMessageInput
+  ): Promise<TicketMessage> {
+    const res = await api.post(`/student/tickets/${ticketId}/messages`, data);
+    return res.data.message as TicketMessage;
+  },
+};
+
+// Associate Tickets API
+export const associateTicketsApi = {
+  async list(params?: ListTicketsParams): Promise<ListTicketsResponse> {
+    const { page, limit, search, status, signal } = params || {};
+    const res = await api.get(`/associate/tickets`, {
+      params: {
+        page,
+        limit,
+        search: search?.trim() || undefined,
+        status,
+      },
+      signal,
+    });
+    return res.data as ListTicketsResponse;
+  },
+  async getById(id: string): Promise<Ticket> {
+    const res = await api.get(`/associate/tickets/${id}`);
+    return res.data.ticket as Ticket;
+  },
+  async addMessage(
+    ticketId: string,
+    data: CreateTicketMessageInput
+  ): Promise<TicketMessage> {
+    const res = await api.post(`/associate/tickets/${ticketId}/messages`, data);
+    return res.data.message as TicketMessage;
+  },
+  async close(id: string): Promise<{ success: boolean; message?: string }> {
+    const res = await api.patch(`/associate/tickets/${id}/close`);
+    return res.data as { success: boolean; message?: string };
+  },
+};
+
 // Aggregated export for convenience
 const apiClient = {
   images: imagesApi,
@@ -711,6 +781,10 @@ const apiClient = {
     students: associateStudentsApi,
     logs: associateLogsApi,
     notice: associateNoticeApi,
+    tickets: associateTicketsApi,
+  },
+  student: {
+    tickets: studentTicketsApi,
   },
   userDetails: publicUserDetailsApi,
   userDetailsFields: {
