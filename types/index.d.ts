@@ -400,6 +400,7 @@ export type Ticket = {
   description: string;
   status: TicketStatus;
   priority: TicketPriority;
+  attachmentUrl?: string | null;
   studentId: string;
   associateId: string;
   createdAt?: string;
@@ -413,6 +414,7 @@ export type TicketMessage = {
   id: string;
   ticketId: string;
   content: string;
+  attachmentUrl?: string | null;
   senderType: TicketSenderType;
   studentId?: string | null;
   associateId?: string | null;
@@ -425,10 +427,12 @@ export type CreateTicketInput = {
   title: string;
   description: string;
   priority?: TicketPriority;
+  attachmentUrl?: string | null;
 };
 
 export type CreateTicketMessageInput = {
   content: string;
+  attachmentUrl?: string | null;
 };
 
 export type ListTicketsParams = {

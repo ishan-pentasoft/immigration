@@ -22,7 +22,7 @@ export async function POST(
     }
 
     const body = await req.json();
-    const { content } = body;
+    const { content, attachmentUrl } = body;
 
     if (!content) {
       return NextResponse.json(
@@ -59,6 +59,7 @@ export async function POST(
       data: {
         ticketId: id,
         content,
+        attachmentUrl,
         senderType,
         associateId: requester.id,
       },

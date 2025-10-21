@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -30,11 +32,16 @@ import {
   Crown,
   X,
   MessageSquare,
+  Paperclip,
+  Download,
+  FileText,
+  Image as ImageIcon,
 } from "lucide-react";
-import { associateTicketsApi } from "@/lib/api";
+import { associateTicketsApi, imagesApi } from "@/lib/api";
 import { Ticket, TicketMessage, CreateTicketMessageInput } from "@/types";
 import { toast } from "sonner";
 import Link from "next/link";
+import Image from "next/image";
 import { useAssociateAuth } from "@/hooks/useAssociateAuth";
 
 export default function AssociateTicketDetailPage() {
@@ -48,6 +55,8 @@ export default function AssociateTicketDetailPage() {
   const [messageLoading, setMessageLoading] = useState(false);
   const [closeLoading, setCloseLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
 
   const fetchTicket = useCallback(async () => {
     try {
@@ -82,12 +91,25 @@ export default function AssociateTicketDetailPage() {
 
     try {
       setMessageLoading(true);
+      let attachmentUrl = null;
+
+      if (selectedFile) {
+        const uploadRes = await imagesApi.upload(selectedFile);
+        if (uploadRes?.error) {
+          throw new Error(uploadRes.error || "File upload failed");
+        }
+        attachmentUrl = uploadRes?.url || null;
+      }
+
       const messageData: CreateTicketMessageInput = {
         content: newMessage.trim(),
+        attachmentUrl,
       };
 
       await associateTicketsApi.addMessage(ticketId, messageData);
       setNewMessage("");
+      setSelectedFile(null);
+      setFilePreview(null);
       toast.success("Message sent successfully");
       fetchTicket();
     } catch (error) {
@@ -157,13 +179,89 @@ export default function AssociateTicketDetailPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString("en-US", {
+    return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setFilePreview(URL.createObjectURL(file));
+    } else {
+      setSelectedFile(null);
+      setFilePreview(null);
+    }
+  };
+
+  const removeFile = () => {
+    setSelectedFile(null);
+    setFilePreview(null);
+    const fileInput = document.getElementById(
+      "associate-message-attachment"
+    ) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = "";
+    }
+  };
+
+  const getFileIcon = (url: string) => {
+    const extension = url.split(".").pop()?.toLowerCase();
+    if (
+      ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(extension || "")
+    ) {
+      return <ImageIcon className="h-4 w-4" />;
+    }
+    return <FileText className="h-4 w-4" />;
+  };
+
+  const getFileName = (url: string) => {
+    return url.split("/").pop() || "attachment";
+  };
+
+  const renderAttachment = (attachmentUrl: string, isMessage = false) => {
+    const fileName = getFileName(attachmentUrl);
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    const isImage = ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(
+      extension || ""
+    );
+
+    if (isImage) {
+      return (
+        <div className={`mt-2 ${isMessage ? "max-w-xs" : "max-w-sm"}`}>
+          <Image
+            src={attachmentUrl}
+            alt="Attachment"
+            className="rounded-lg border cursor-pointer hover:opacity-90 transition-opacity"
+            width={isMessage ? 200 : 300}
+            height={isMessage ? 150 : 200}
+            onClick={() => window.open(attachmentUrl, "_blank")}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="mt-2 flex items-center gap-2 p-2 bg-muted/50 rounded-lg border max-w-xs">
+        {getFileIcon(attachmentUrl)}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate">{fileName}</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => window.open(attachmentUrl, "_blank")}
+          className="h-6 w-6 p-0"
+        >
+          <Download className="h-3 w-3" />
+        </Button>
+      </div>
+    );
   };
 
   if (loading) {
@@ -212,7 +310,11 @@ export default function AssociateTicketDetailPage() {
         {ticket.status === "OPEN" && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" disabled={closeLoading} className="cursor-pointer">
+              <Button
+                variant="destructive"
+                disabled={closeLoading}
+                className="cursor-pointer"
+              >
                 <X className="h-4 w-4 mr-2" />
                 Close Ticket
               </Button>
@@ -267,7 +369,9 @@ export default function AssociateTicketDetailPage() {
             <div className="flex flex-row gap-2 lg:flex-col lg:items-end">
               <Badge
                 variant="outline"
-                className={`${getPriorityColor(ticket.priority)} text-xs px-2 py-1`}
+                className={`${getPriorityColor(
+                  ticket.priority
+                )} text-xs px-2 py-1`}
               >
                 {ticket.priority}
               </Badge>
@@ -287,6 +391,15 @@ export default function AssociateTicketDetailPage() {
               <p className="text-muted-foreground whitespace-pre-wrap">
                 {ticket.description}
               </p>
+              {ticket.attachmentUrl && (
+                <div className="mt-3">
+                  <h5 className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Paperclip className="h-4 w-4" />
+                    Attachment
+                  </h5>
+                  {renderAttachment(ticket.attachmentUrl)}
+                </div>
+              )}
             </div>
 
             <Separator />
@@ -324,7 +437,9 @@ export default function AssociateTicketDetailPage() {
                       >
                         <div
                           className={`flex items-center gap-2 mb-1 flex-wrap ${
-                            message.senderType === "STUDENT" ? "justify-start" : "justify-end"
+                            message.senderType === "STUDENT"
+                              ? "justify-start"
+                              : "justify-end"
                           }`}
                         >
                           <span className="text-sm font-medium text-foreground">
@@ -347,6 +462,11 @@ export default function AssociateTicketDetailPage() {
                           <p className="whitespace-pre-wrap text-sm leading-relaxed break-words">
                             {message.content}
                           </p>
+                          {message.attachmentUrl && (
+                            <div className="mt-2">
+                              {renderAttachment(message.attachmentUrl, true)}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -399,6 +519,81 @@ export default function AssociateTicketDetailPage() {
                         className="resize-none border-border/50 focus:border-primary/50 transition-colors"
                       />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="associate-message-attachment">
+                        Attachment (Optional)
+                      </Label>
+                      <Input
+                        id="associate-message-attachment"
+                        type="file"
+                        onChange={handleFileChange}
+                        disabled={messageLoading}
+                        accept="image/*,.pdf,.doc,.docx,.txt"
+                        className="cursor-pointer"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Supported formats: Images, PDF, Word documents, Text
+                        files
+                      </p>
+
+                      {filePreview && selectedFile && (
+                        <div className="mt-2 p-3 border rounded-md bg-muted/20">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium">
+                              Selected file:
+                            </span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={removeFile}
+                              disabled={messageLoading}
+                              className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                            >
+                              ×
+                            </Button>
+                          </div>
+
+                          {selectedFile.type.startsWith("image/") ? (
+                            <div className="flex flex-col items-center gap-2">
+                              <Image
+                                src={filePreview}
+                                alt="File preview"
+                                className="max-h-32 rounded border"
+                                width={200}
+                                height={128}
+                                unoptimized
+                              />
+                              <span className="text-xs text-muted-foreground">
+                                {selectedFile.name} (
+                                {(selectedFile.size / 1024).toFixed(1)} KB)
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 p-2 bg-background rounded border">
+                              <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
+                                <span className="text-xs font-medium text-primary">
+                                  {selectedFile.name
+                                    .split(".")
+                                    .pop()
+                                    ?.toUpperCase()}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">
+                                  {selectedFile.name}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {(selectedFile.size / 1024).toFixed(1)} KB
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
                     <div className="flex justify-end">
                       <Button
                         type="submit"

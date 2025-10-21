@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, description, priority = "MEDIUM" } = body;
+    const { title, description, priority = "MEDIUM", attachmentUrl } = body;
 
     if (!title || !description) {
       return NextResponse.json(
@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
         title,
         description,
         priority,
+        attachmentUrl,
         studentId: student.id,
         associateId: student.associateId,
       },

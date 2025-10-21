@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, MessageSquare, Clock, CheckCircle, User } from "lucide-react";
+import { Search, MessageSquare, Clock, CheckCircle, User, Paperclip } from "lucide-react";
 import { associateTicketsApi } from "@/lib/api";
 import {
   TicketWithLatestMessage,
@@ -184,6 +184,13 @@ export default function AssociateTicketsPage() {
                     <p className="text-muted-foreground line-clamp-2 text-sm sm:text-base break-words">
                       {ticket.description}
                     </p>
+                    
+                    {ticket.attachmentUrl && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Paperclip className="h-3 w-3" />
+                        <span>Has attachment</span>
+                      </div>
+                    )}
 
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">

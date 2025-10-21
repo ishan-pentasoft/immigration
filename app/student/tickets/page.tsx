@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Search, MessageSquare, Clock, CheckCircle } from "lucide-react";
+import { Plus, Search, MessageSquare, Clock, CheckCircle, Paperclip } from "lucide-react";
 import { studentTicketsApi } from "@/lib/api";
 import { TicketWithLatestMessage, ListTicketsParams } from "@/types";
 import { toast } from "sonner";
@@ -171,6 +171,13 @@ export default function StudentTicketsPage() {
                     <p className="text-muted-foreground line-clamp-2 text-sm sm:text-base break-words">
                       {ticket.description}
                     </p>
+                    
+                    {ticket.attachmentUrl && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Paperclip className="h-3 w-3" />
+                        <span>Has attachment</span>
+                      </div>
+                    )}
                     
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">

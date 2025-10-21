@@ -21,7 +21,7 @@ export async function POST(
     }
 
     const body = await req.json();
-    const { content } = body;
+    const { content, attachmentUrl } = body;
     const { id } = await params;
 
     if (!content) {
@@ -56,6 +56,7 @@ export async function POST(
       data: {
         ticketId: id,
         content,
+        attachmentUrl,
         senderType: "STUDENT",
         studentId: student.id,
       },

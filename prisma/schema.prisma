@@ -297,6 +297,7 @@ model Ticket {
   description String
   status      TicketStatus   @default(OPEN)
   priority    TicketPriority @default(MEDIUM)
+  attachmentUrl String?
 
   studentId String
   student   Student @relation("StudentTickets", fields: [studentId], references: [id], onDelete: Cascade)
@@ -318,6 +319,7 @@ model TicketMessage {
   ticketId String
   ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   content  String
+  attachmentUrl String?
 
   senderType  TicketSenderType
   studentId   String?
