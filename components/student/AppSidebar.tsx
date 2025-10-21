@@ -11,7 +11,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { ChevronsUpDown, LogOut, LayoutDashboard } from "lucide-react";
+import {
+  ChevronsUpDown,
+  LogOut,
+  LayoutDashboard,
+  MessageSquare,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +57,16 @@ const AppSidebar = () => {
                   <LayoutDashboard />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Dashboard
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Support Tickets">
+                <Link href="/student/tickets">
+                  <MessageSquare />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Support Tickets
                   </span>
                 </Link>
               </SidebarMenuButton>

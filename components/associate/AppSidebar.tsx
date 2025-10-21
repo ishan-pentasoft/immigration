@@ -24,6 +24,7 @@ import {
   FileUser,
   Logs,
   Flag,
+  MessageSquare,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -95,6 +96,16 @@ const AppSidebar = () => {
                   <ListTodo />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Todos
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Support Tickets">
+                <Link href="/associate/tickets">
+                  <MessageSquare />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Support Tickets
                   </span>
                 </Link>
               </SidebarMenuButton>

@@ -439,8 +439,12 @@ export type ListTicketsParams = {
   signal?: AbortSignal;
 };
 
+export type TicketWithLatestMessage = Ticket & { 
+  latestMessage?: TicketMessage | null;
+};
+
 export type ListTicketsResponse = {
-  tickets: (Ticket & { latestMessage?: TicketMessage | null })[];
+  tickets: TicketWithLatestMessage[];
   page: number;
   limit: number;
   total: number;
