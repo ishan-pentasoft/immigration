@@ -27,6 +27,7 @@ import {
   MessageSquare,
   FileText,
   CheckCircle,
+  Mail,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -254,6 +255,12 @@ const AppSidebar = () => {
                     </div>
                   </div>
                 </DropdownMenuLabel>
+                <Link href="/associate/email-service">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Mail className="stroke-primary" />
+                    Email Service
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="cursor-pointer">
                   <LogOut className="stroke-primary" />

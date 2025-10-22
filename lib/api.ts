@@ -55,6 +55,8 @@ import {
   ListVerificationRequestsResponse,
   ReviewDocumentInput,
   CreateDocumentVerificationRequestInput,
+  EmailService,
+  UpsertEmailServiceInput,
 } from "@/types";
 import api from "./axios";
 
@@ -66,6 +68,23 @@ export const associateStaffTasksApi = {
   ): Promise<StaffTask> {
     const res = await api.post(`/associate/staff-tasks/${associateId}`, data);
     return res.data.task as StaffTask;
+  },
+};
+
+export const associateEmailServiceApi = {
+  async get(): Promise<{ emailService: EmailService | null }> {
+    const res = await api.get(`/associate/email-service`);
+    return res.data as { emailService: EmailService | null };
+  },
+  async upsert(data: UpsertEmailServiceInput): Promise<{
+    emailService: EmailService;
+    message?: string;
+  }> {
+    const res = await api.put(`/associate/email-service`, data);
+    return res.data as {
+      emailService: EmailService;
+      message?: string;
+    };
   },
 };
 
@@ -924,6 +943,7 @@ const apiClient = {
     documentRequirements: associateDocumentRequirementsApi,
     verificationRequests: associateVerificationRequestsApi,
     documents: associateDocumentsApi,
+    emailService: associateEmailServiceApi,
   },
   student: {
     tickets: studentTicketsApi,

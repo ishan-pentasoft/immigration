@@ -10,6 +10,10 @@ interface Associate {
   username: string;
   email: string;
   role: string;
+  emailService: {
+    email: string;
+    password: string;
+  };
 }
 
 interface AuthState {

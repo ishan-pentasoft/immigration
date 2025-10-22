@@ -25,6 +25,12 @@ export async function GET(request: NextRequest) {
         id: true,
         email: true,
         role: true,
+        emailService: {
+          select: {
+            email: true,
+            password: true,
+          },
+        },
       },
     });
 
@@ -41,6 +47,7 @@ export async function GET(request: NextRequest) {
         id: associate.id,
         email: associate.email,
         role: associate.role,
+        emailService: associate.emailService,
       },
     });
   } catch (error) {

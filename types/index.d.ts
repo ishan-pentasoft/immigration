@@ -533,6 +533,20 @@ export type DocumentVerificationRequest = {
   documents?: StudentDocument[];
 };
 
+export type EmailService = {
+  id: string;
+  email: string;
+  password: string;
+  associateId: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UpsertEmailServiceInput = {
+  email: string;
+  password?: string;
+};
+
 export type CreateDocumentRequirementInput = {
   countryId: string;
   documentType: DocumentType;

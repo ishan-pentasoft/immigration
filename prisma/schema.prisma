@@ -123,6 +123,7 @@ model Associate {
   loginLogs        AssociateLoginLog[]
   staffTasks       StaffTasks[]
   students         Student[]
+  emailService     EmailService[]
   approvedStudents Student[]           @relation("ApprovedBy")
   tickets          Ticket[]            @relation("AssociateTickets")
   ticketMessages   TicketMessage[]     @relation("AssociateTicketMessages")
@@ -136,6 +137,18 @@ model Associate {
   updatedAt DateTime @updatedAt
 }
 
+model EmailService {
+  id       String @id @default(uuid())
+  email    String
+  password String
+
+  associateId String
+  associate   Associate @relation(fields: [associateId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+  
 model Visa {
   id          String   @id @default(uuid())
   title       String
