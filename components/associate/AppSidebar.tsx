@@ -28,6 +28,7 @@ import {
   FileText,
   CheckCircle,
   Mail,
+  MailOpen,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -99,6 +100,16 @@ const AppSidebar = () => {
                   <ListTodo />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Todos
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Emails">
+                <Link href="/associate/emails">
+                  <MailOpen />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Emails
                   </span>
                 </Link>
               </SidebarMenuButton>

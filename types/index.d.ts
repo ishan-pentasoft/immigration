@@ -547,6 +547,13 @@ export type UpsertEmailServiceInput = {
   password?: string;
 };
 
+export type ImapMessage = {
+  subject: string;
+  from: string;
+  date: string;
+  body: string;
+};
+
 export type CreateDocumentRequirementInput = {
   countryId: string;
   documentType: DocumentType;
