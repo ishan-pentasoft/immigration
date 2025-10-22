@@ -443,12 +443,148 @@ export type ListTicketsParams = {
   signal?: AbortSignal;
 };
 
-export type TicketWithLatestMessage = Ticket & { 
+export type TicketWithLatestMessage = Ticket & {
   latestMessage?: TicketMessage | null;
 };
 
 export type ListTicketsResponse = {
   tickets: TicketWithLatestMessage[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
+export type DocumentType =
+  | "PASSPORT"
+  | "VISA"
+  | "ACADEMIC_TRANSCRIPT"
+  | "DEGREE_CERTIFICATE"
+  | "LANGUAGE_TEST"
+  | "FINANCIAL_STATEMENT"
+  | "MEDICAL_CERTIFICATE"
+  | "POLICE_CLEARANCE"
+  | "BIRTH_CERTIFICATE"
+  | "MARRIAGE_CERTIFICATE"
+  | "WORK_EXPERIENCE"
+  | "RECOMMENDATION_LETTER"
+  | "STATEMENT_OF_PURPOSE"
+  | "OTHER";
+
+export type DocumentStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "RESUBMISSION_REQUIRED";
+
+export type VerificationStatus =
+  | "PENDING"
+  | "IN_REVIEW"
+  | "COMPLETED"
+  | "REJECTED";
+
+export type DocumentRequirement = {
+  id: string;
+  countryId: string;
+  documentType: DocumentType;
+  title: string;
+  description?: string | null;
+  required: boolean;
+  maxFileSize: number;
+  allowedTypes: string[];
+  order: number;
+  active: boolean;
+  createdById: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type StudentDocument = {
+  id: string;
+  requirementId: string;
+  verificationRequestId: string;
+  studentId: string;
+  fileName: string;
+  originalName: string;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  status: DocumentStatus;
+  reviewedById?: string | null;
+  reviewedAt?: string | null;
+  reviewNotes?: string | null;
+  rejectionReason?: string | null;
+  parentDocumentId?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type DocumentVerificationRequest = {
+  id: string;
+  studentId: string;
+  countryId: string;
+  status: VerificationStatus;
+  assignedToId?: string | null;
+  reviewedById?: string | null;
+  reviewedAt?: string | null;
+  reviewNotes?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  documents?: StudentDocument[];
+};
+
+export type CreateDocumentRequirementInput = {
+  countryId: string;
+  documentType: DocumentType;
+  title: string;
+  description?: string;
+  required?: boolean;
+  maxFileSize?: number;
+  allowedTypes?: string[];
+  order?: number;
+  active?: boolean;
+};
+
+export type ReviewDocumentInput = {
+  status: DocumentStatus;
+  reviewNotes?: string;
+  rejectionReason?: string;
+};
+
+export type CreateDocumentVerificationRequestInput = {
+  countryId: string;
+  documents: {
+    requirementId: string;
+    fileUrl: string;
+    originalName: string;
+    fileName: string;
+    fileSize: number;
+    mimeType: string;
+  }[];
+};
+
+export type ListDocumentRequirementsParams = {
+  countryId?: string;
+  active?: boolean;
+  signal?: AbortSignal;
+};
+
+export type ListDocumentRequirementsResponse = {
+  requirements: DocumentRequirement[];
+};
+
+export type ListVerificationRequestsParams = {
+  page?: number;
+  limit?: number;
+  status?: VerificationStatus;
+  assignedToId?: string;
+  countryId?: string;
+  studentId?: string;
+  signal?: AbortSignal;
+};
+
+export type ListVerificationRequestsResponse = {
+  requests: DocumentVerificationRequest[];
   page: number;
   limit: number;
   total: number;

@@ -46,6 +46,15 @@ import {
   CreateTicketMessageInput,
   ListTicketsParams,
   ListTicketsResponse,
+  DocumentRequirement,
+  ListDocumentRequirementsParams,
+  ListDocumentRequirementsResponse,
+  CreateDocumentRequirementInput,
+  DocumentVerificationRequest,
+  ListVerificationRequestsParams,
+  ListVerificationRequestsResponse,
+  ReviewDocumentInput,
+  CreateDocumentVerificationRequestInput,
 } from "@/types";
 import api from "./axios";
 
@@ -60,7 +69,137 @@ export const associateStaffTasksApi = {
   },
 };
 
-// Associate Students API
+export const associateDocumentRequirementsApi = {
+  async list(
+    params?: ListDocumentRequirementsParams
+  ): Promise<ListDocumentRequirementsResponse> {
+    const { countryId, active, signal } = params || {};
+    const res = await api.get(`/associate/document-requirements`, {
+      params: {
+        countryId,
+        active,
+      },
+      signal,
+    });
+    return res.data as ListDocumentRequirementsResponse;
+  },
+  async getById(id: string): Promise<{ requirement: DocumentRequirement }> {
+    const res = await api.get(`/associate/document-requirements/${id}`);
+    return res.data as { requirement: DocumentRequirement };
+  },
+  async create(
+    data: CreateDocumentRequirementInput
+  ): Promise<{ requirement: DocumentRequirement }> {
+    const res = await api.post(`/associate/document-requirements`, data);
+    return res.data as { requirement: DocumentRequirement };
+  },
+  async update(
+    id: string,
+    data: Partial<CreateDocumentRequirementInput>
+  ): Promise<{ requirement: DocumentRequirement }> {
+    const res = await api.put(`/associate/document-requirements/${id}`, data);
+    return res.data as { requirement: DocumentRequirement };
+  },
+  async remove(id: string): Promise<{ success: boolean }> {
+    const res = await api.delete(`/associate/document-requirements/${id}`);
+    return res.data as { success: boolean };
+  },
+};
+
+export const studentDocumentRequirementsApi = {
+  async listByCountry(
+    countryId: string
+  ): Promise<{ country: Country; requirements: DocumentRequirement[] }> {
+    const res = await api.get(`/student/document-requirements/${countryId}`);
+    return res.data as {
+      country: Country;
+      requirements: DocumentRequirement[];
+    };
+  },
+};
+
+export const studentVerificationRequestsApi = {
+  async list(params?: {
+    page?: number;
+    limit?: number;
+    signal?: AbortSignal;
+  }): Promise<ListVerificationRequestsResponse> {
+    const { page, limit, signal } = params || {};
+    const res = await api.get(`/student/verification-requests`, {
+      params: { page, limit },
+      signal,
+    });
+    return res.data as ListVerificationRequestsResponse;
+  },
+  async getById(id: string): Promise<{ request: DocumentVerificationRequest }> {
+    const res = await api.get(`/student/verification-requests/${id}`);
+    return res.data as { request: DocumentVerificationRequest };
+  },
+  async create(
+    data: CreateDocumentVerificationRequestInput
+  ): Promise<{ request: DocumentVerificationRequest }> {
+    const res = await api.post(`/student/verification-requests`, data);
+    return res.data as { request: DocumentVerificationRequest };
+  },
+  async addDocument(
+    requestId: string,
+    payload: {
+      requirementId: string;
+      fileUrl: string;
+      originalName: string;
+      fileName: string;
+      fileSize: number;
+      mimeType: string;
+      parentDocumentId?: string;
+    }
+  ): Promise<{ document: import("@/types").StudentDocument }> {
+    const res = await api.post(
+      `/student/verification-requests/${requestId}/documents`,
+      payload
+    );
+    return res.data as { document: import("@/types").StudentDocument };
+  },
+};
+
+export const associateVerificationRequestsApi = {
+  async list(
+    params?: ListVerificationRequestsParams
+  ): Promise<ListVerificationRequestsResponse> {
+    const { page, limit, status, assignedToId, countryId, studentId, signal } =
+      params || {};
+    const res = await api.get(`/associate/verification-requests`, {
+      params: { page, limit, status, assignedToId, countryId, studentId },
+      signal,
+    });
+    return res.data as ListVerificationRequestsResponse;
+  },
+  async getById(id: string): Promise<{ request: DocumentVerificationRequest }> {
+    const res = await api.get(`/associate/verification-requests/${id}`);
+    return res.data as { request: DocumentVerificationRequest };
+  },
+  async update(
+    id: string,
+    data: Partial<
+      Pick<DocumentVerificationRequest, "status" | "reviewNotes">
+    > & {
+      assignedToId?: string | null;
+    }
+  ): Promise<{ request: DocumentVerificationRequest }> {
+    const res = await api.put(`/associate/verification-requests/${id}`, data);
+    return res.data as { request: DocumentVerificationRequest };
+  },
+};
+
+export const associateDocumentsApi = {
+  async review(
+    id: string,
+    data: ReviewDocumentInput
+  ): Promise<{ document: import("@/types").StudentDocument }> {
+    const res = await api.put(`/associate/documents/${id}/review`, data);
+    return res.data as { document: import("@/types").StudentDocument };
+  },
+};
+
 export const associateStudentsApi = {
   async list(params?: ListStudentsParams): Promise<ListStudentsResponse> {
     const { page, limit, search, signal } = params || {};
@@ -782,9 +921,14 @@ const apiClient = {
     logs: associateLogsApi,
     notice: associateNoticeApi,
     tickets: associateTicketsApi,
+    documentRequirements: associateDocumentRequirementsApi,
+    verificationRequests: associateVerificationRequestsApi,
+    documents: associateDocumentsApi,
   },
   student: {
     tickets: studentTicketsApi,
+    documentRequirements: studentDocumentRequirementsApi,
+    verificationRequests: studentVerificationRequestsApi,
   },
   userDetails: publicUserDetailsApi,
   userDetailsFields: {

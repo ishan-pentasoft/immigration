@@ -16,6 +16,7 @@ import {
   LogOut,
   LayoutDashboard,
   MessageSquare,
+  CheckCircle,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -67,6 +68,16 @@ const AppSidebar = () => {
                   <MessageSquare />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Support Tickets
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Document Verification">
+                <Link href="/student/document-verification">
+                  <CheckCircle />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Document Verification
                   </span>
                 </Link>
               </SidebarMenuButton>

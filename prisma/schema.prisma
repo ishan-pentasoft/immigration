@@ -41,6 +41,37 @@ enum TicketSenderType {
   DIRECTOR
 }
 
+enum DocumentType {
+  PASSPORT
+  VISA
+  ACADEMIC_TRANSCRIPT
+  DEGREE_CERTIFICATE
+  LANGUAGE_TEST
+  FINANCIAL_STATEMENT
+  MEDICAL_CERTIFICATE
+  POLICE_CLEARANCE
+  BIRTH_CERTIFICATE
+  MARRIAGE_CERTIFICATE
+  WORK_EXPERIENCE
+  RECOMMENDATION_LETTER
+  STATEMENT_OF_PURPOSE
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  RESUBMISSION_REQUIRED
+}
+
+enum VerificationStatus {
+  PENDING
+  IN_REVIEW
+  COMPLETED
+  REJECTED
+}
+
 model Admin {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -73,6 +104,9 @@ model Student {
   tickets        Ticket[]        @relation("StudentTickets")
   ticketMessages TicketMessage[] @relation("StudentTicketMessages")
 
+  verificationRequests DocumentVerificationRequest[]
+  documents            StudentDocument[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -92,6 +126,11 @@ model Associate {
   approvedStudents Student[]           @relation("ApprovedBy")
   tickets          Ticket[]            @relation("AssociateTickets")
   ticketMessages   TicketMessage[]     @relation("AssociateTicketMessages")
+
+  createdDocumentRequirements DocumentRequirement[]         @relation("DocumentRequirementCreatedBy")
+  assignedVerifications       DocumentVerificationRequest[] @relation("AssignedVerifications")
+  reviewedVerifications       DocumentVerificationRequest[] @relation("ReviewedVerifications")
+  reviewedDocuments           StudentDocument[]             @relation("DocumentReviewer")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -134,6 +173,9 @@ model Country {
   updatedAt   DateTime @updatedAt
 
   colleges College[]
+
+  documentRequirements DocumentRequirement[]
+  verificationRequests DocumentVerificationRequest[] @relation("VerificationRequests")
 }
 
 model College {
@@ -292,11 +334,11 @@ model Notice {
 }
 
 model Ticket {
-  id          String         @id @default(uuid())
-  title       String
-  description String
-  status      TicketStatus   @default(OPEN)
-  priority    TicketPriority @default(MEDIUM)
+  id            String         @id @default(uuid())
+  title         String
+  description   String
+  status        TicketStatus   @default(OPEN)
+  priority      TicketPriority @default(MEDIUM)
   attachmentUrl String?
 
   studentId String
@@ -315,10 +357,10 @@ model Ticket {
 }
 
 model TicketMessage {
-  id       String @id @default(uuid())
-  ticketId String
-  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  content  String
+  id            String  @id @default(uuid())
+  ticketId      String
+  ticket        Ticket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  content       String
   attachmentUrl String?
 
   senderType  TicketSenderType
@@ -333,4 +375,101 @@ model TicketMessage {
   @@index([ticketId])
   @@index([studentId])
   @@index([associateId])
+}
+
+model DocumentRequirement {
+  id        String  @id @default(uuid())
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  documentType DocumentType
+  title        String
+  description  String?
+  required     Boolean      @default(true)
+  maxFileSize  Int          @default(5242880)
+  allowedTypes String[]     @default(["pdf", "jpg", "jpeg", "png", "doc", "docx"])
+  order        Int          @default(0)
+  active       Boolean      @default(true)
+
+  createdById String
+  createdBy   Associate @relation("DocumentRequirementCreatedBy", fields: [createdById], references: [id])
+
+  documents StudentDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([countryId, documentType, title])
+  @@index([countryId])
+}
+
+model DocumentVerificationRequest {
+  id        String  @id @default(uuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  countryId String
+  country   Country @relation("VerificationRequests", fields: [countryId], references: [id])
+
+  status VerificationStatus @default(PENDING)
+
+  assignedToId String?
+  assignedTo   Associate? @relation("AssignedVerifications", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  reviewedById String?
+  reviewedBy   Associate? @relation("ReviewedVerifications", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  reviewedAt  DateTime?
+  reviewNotes String?
+
+  documents StudentDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([countryId])
+  @@index([status])
+  @@index([assignedToId])
+}
+
+model StudentDocument {
+  id String @id @default(uuid())
+
+  requirementId String
+  requirement   DocumentRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  verificationRequestId String
+  verificationRequest   DocumentVerificationRequest @relation(fields: [verificationRequestId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  fileName     String
+  originalName String
+  fileUrl      String
+  fileSize     Int
+  mimeType     String
+
+  status DocumentStatus @default(PENDING)
+
+  reviewedById String?
+  reviewedBy   Associate? @relation("DocumentReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  reviewedAt      DateTime?
+  reviewNotes     String?
+  rejectionReason String?
+
+  // For resubmissions
+  parentDocumentId String?
+  parentDocument   StudentDocument?  @relation("DocumentResubmission", fields: [parentDocumentId], references: [id])
+  resubmissions    StudentDocument[] @relation("DocumentResubmission")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([requirementId])
+  @@index([verificationRequestId])
+  @@index([studentId])
+  @@index([status])
 }

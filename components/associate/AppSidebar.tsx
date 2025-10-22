@@ -25,6 +25,8 @@ import {
   Logs,
   Flag,
   MessageSquare,
+  FileText,
+  CheckCircle,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -110,8 +112,28 @@ const AppSidebar = () => {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Document Verification">
+                <Link href="/associate/document-verification">
+                  <CheckCircle />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Document Verification
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             {associate?.role === "DIRECTOR" && (
               <>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Document Requirements">
+                    <Link href="/associate/document-requirements">
+                      <FileText />
+                      <span className="group-data-[collapsible=icon]:hidden">
+                        Document Requirements
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Logs">
                     <Link href="/associate/logs">
