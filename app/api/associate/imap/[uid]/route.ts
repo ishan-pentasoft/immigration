@@ -4,7 +4,7 @@ import { simpleParser } from "mailparser";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ uid: string }> }
+  { params }: { params: Promise<{ uid: number }> }
 ) {
   const { uid } = await params;
   const { searchParams } = new URL(req.url);
@@ -32,10 +32,14 @@ export async function GET(
     });
 
     imap.once("ready", () => {
-      imap.openBox("INBOX", true, (err) => {
+      imap.openBox("INBOX", false, (err) => {
         if (err) return reject(err);
 
-        const f = imap.fetch([Number(uid)], { bodies: "", struct: true });
+        const f = imap.fetch([uid], {
+          bodies: "",
+          struct: true,
+          markSeen: true,
+        });
 
         let buffer = "";
         let messageFound = false;
@@ -71,7 +75,7 @@ export async function GET(
 
               resolve(
                 NextResponse.json({
-                  uid: Number(uid),
+                  uid,
                   subject: parsed.subject ?? "(No Subject)",
                   from,
                   to,
@@ -79,6 +83,7 @@ export async function GET(
                   bodyText: parsed.text ?? "",
                   bodyHtml: parsed.html ?? "",
                   attachments: attachments || [],
+                  seen: true,
                 })
               );
             } catch (parseErr) {
