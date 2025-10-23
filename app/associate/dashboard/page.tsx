@@ -16,14 +16,27 @@ import apiClient from "@/lib/api";
 import { Todo } from "@/types";
 import { IconCancel } from "@tabler/icons-react";
 import { format } from "date-fns";
-import { CheckCheck } from "lucide-react";
+import {
+  CheckCheck,
+  MailOpen,
+  MessageSquare,
+  CheckCircle,
+  Users,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useUnreadEmails } from "@/hooks/useUnreadEmails";
 
 const Page = () => {
   const { associate } = useAssociateAuth();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [copied, setCopied] = useState(false);
+  const { count: unreadEmails } = useUnreadEmails();
+
+  const [studentsTotal, setStudentsTotal] = useState(0);
+  const [ticketsOpenTotal, setTicketsOpenTotal] = useState(0);
+  const [verificationsPendingTotal, setVerificationsPendingTotal] = useState(0);
+  const [loadingStats, setLoadingStats] = useState(true);
 
   const shareUrl = React.useMemo(() => {
     if (!associate?.id) return "";
@@ -61,6 +74,42 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [associate?.id]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    (async () => {
+      try {
+        setLoadingStats(true);
+        const [studentsRes, ticketsRes, verifRes] = await Promise.all([
+          apiClient.associate.students.list({
+            page: 1,
+            limit: 1,
+            signal: controller.signal,
+          }),
+          apiClient.associate.tickets.list({
+            page: 1,
+            limit: 1,
+            status: "OPEN",
+            signal: controller.signal,
+          }),
+          apiClient.associate.verificationRequests.list({
+            page: 1,
+            limit: 1,
+            status: "PENDING",
+            signal: controller.signal,
+          }),
+        ]);
+        setStudentsTotal(Number(studentsRes.total) || 0);
+        setTicketsOpenTotal(Number(ticketsRes.total) || 0);
+        setVerificationsPendingTotal(Number(verifRes.total) || 0);
+      } catch (e) {
+        if ((e as Error)?.name === "CanceledError") return;
+      } finally {
+        setLoadingStats(false);
+      }
+    })();
+    return () => controller.abort();
+  }, []);
+
   const handleToggle = async (id: string) => {
     const prev = todos;
     setTodos((t) =>
@@ -77,7 +126,53 @@ const Page = () => {
   };
 
   return (
-    <main className="px-4 pt-8 pb-4">
+    <main className="px-4 pt-8 pb-4 space-y-6">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <div className="text-sm text-muted-foreground">Unread Emails</div>
+              <div className="text-2xl font-bold">{unreadEmails}</div>
+            </div>
+            <MailOpen className="opacity-70" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <div className="text-sm text-muted-foreground">Open Tickets</div>
+              <div className="text-2xl font-bold">
+                {loadingStats ? "-" : ticketsOpenTotal}
+              </div>
+            </div>
+            <MessageSquare className="opacity-70" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <div className="text-sm text-muted-foreground">
+                Pending Verifications
+              </div>
+              <div className="text-2xl font-bold">
+                {loadingStats ? "-" : verificationsPendingTotal}
+              </div>
+            </div>
+            <CheckCircle className="opacity-70" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <div className="text-sm text-muted-foreground">Students</div>
+              <div className="text-2xl font-bold">
+                {loadingStats ? "-" : studentsTotal}
+              </div>
+            </div>
+            <Users className="opacity-70" />
+          </CardContent>
+        </Card>
+      </div>
       <Card className="p-4 w-full mb-6">
         <CardHeader>
           <h1 className="text-lg font-semibold text-primary">

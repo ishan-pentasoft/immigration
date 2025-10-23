@@ -55,6 +55,7 @@ import {
   ListVerificationRequestsResponse,
   ReviewDocumentInput,
   CreateDocumentVerificationRequestInput,
+  VerificationStatus,
   EmailService,
   UpsertEmailServiceInput,
   ImapMessage,
@@ -224,11 +225,12 @@ export const studentVerificationRequestsApi = {
   async list(params?: {
     page?: number;
     limit?: number;
+    status?: VerificationStatus;
     signal?: AbortSignal;
   }): Promise<ListVerificationRequestsResponse> {
-    const { page, limit, signal } = params || {};
+    const { page, limit, status, signal } = params || {};
     const res = await api.get(`/student/verification-requests`, {
-      params: { page, limit },
+      params: { page, limit, status },
       signal,
     });
     return res.data as ListVerificationRequestsResponse;
