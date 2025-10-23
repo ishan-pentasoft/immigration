@@ -20,6 +20,13 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialogSmall";
 
 const schema = z.object({
   phone: z.string().optional().nullable(),
@@ -37,6 +44,12 @@ type FormValues = z.infer<typeof schema>;
 export default function SiteDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [mpinOpen, setMpinOpen] = useState(false);
+  const [pendingMaintenance, setPendingMaintenance] = useState<boolean | null>(
+    null
+  );
+  const [mpin, setMpin] = useState("");
+  const [verifying, setVerifying] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -100,6 +113,35 @@ export default function SiteDetailsPage() {
       toast.error("Failed to update site details");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleMaintenance = (nextValue: boolean) => {
+    setPendingMaintenance(nextValue);
+    setMpin("");
+    setMpinOpen(true);
+  };
+
+  const confirmMpin = async () => {
+    if (!mpin.trim()) {
+      toast.error("Enter MPIN");
+      return;
+    }
+    try {
+      setVerifying(true);
+      await apiClient.admin.mpin.verify(mpin.trim());
+      if (pendingMaintenance !== null) {
+        form.setValue("maintenanceMode", pendingMaintenance);
+      }
+      setMpinOpen(false);
+      setPendingMaintenance(null);
+      setMpin("");
+      toast.success("MPIN verified");
+    } catch (err) {
+      console.error(err);
+      toast.error("Invalid MPIN");
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -252,7 +294,9 @@ export default function SiteDetailsPage() {
               <div className="pt-4">
                 <Card>
                   <CardHeader className="py-4">
-                    <CardTitle className="text-base">Maintenance Mode</CardTitle>
+                    <CardTitle className="text-base">
+                      Maintenance Mode
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <FormField
@@ -263,13 +307,16 @@ export default function SiteDetailsPage() {
                           <div className="space-y-0.5">
                             <FormLabel>Enable Maintenance Mode</FormLabel>
                             <p className="text-sm text-muted-foreground">
-                              When enabled, non-admin users are redirected to the maintenance page.
+                              When enabled, non-admin users are redirected to
+                              the maintenance page.
                             </p>
                           </div>
                           <FormControl>
                             <Switch
                               checked={!!field.value}
-                              onCheckedChange={(v) => field.onChange(v)}
+                              onCheckedChange={(v) =>
+                                handleToggleMaintenance(v)
+                              }
                               aria-label="Maintenance mode"
                             />
                           </FormControl>
@@ -314,6 +361,49 @@ export default function SiteDetailsPage() {
           </Form>
         </CardContent>
       </Card>
+
+      <Dialog open={mpinOpen} onOpenChange={(o) => setMpinOpen(o)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm with MPIN</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Enter your admin MPIN to confirm changing maintenance mode.
+            </p>
+            <Input
+              type="password"
+              inputMode="numeric"
+              pattern="\\d*"
+              maxLength={8}
+              placeholder="Enter MPIN"
+              value={mpin}
+              onChange={(e) => setMpin(e.target.value.replace(/[^0-9]/g, ""))}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setMpinOpen(false);
+                setPendingMaintenance(null);
+                setMpin("");
+              }}
+              disabled={verifying}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={confirmMpin}
+              disabled={verifying || !mpin}
+            >
+              {verifying ? "Verifying..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

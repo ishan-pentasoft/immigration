@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
+  const adminMpin = process.env.ADMIN_MPIN;
 
   const associateUsername = process.env.DIRECTOR_USERNAME;
   const associateEmail = process.env.DIRECTOR_EMAIL;
@@ -25,10 +26,15 @@ async function main() {
   const passwordHash = await bcrypt.hash(password, 12);
   const associatePasswordHash = await bcrypt.hash(associatePassword, 12);
 
+  let mpinHash = null;
+  if (adminMpin && String(adminMpin).trim()) {
+    mpinHash = await bcrypt.hash(String(adminMpin).trim(), 12);
+  }
+
   await prisma.admin.upsert({
     where: { email },
-    update: { passwordHash },
-    create: { email, passwordHash },
+    update: { passwordHash, mpinHash },
+    create: { email, passwordHash, mpinHash },
   });
 
   await prisma.associate.upsert({

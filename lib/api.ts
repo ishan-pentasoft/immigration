@@ -672,6 +672,21 @@ export const adminSiteDetailsApi = {
   },
 };
 
+// Admin MPIN API
+export const adminMpinApi = {
+  async verify(mpin: string): Promise<{ ok: boolean }> {
+    const res = await api.post(`/admin/mpin/verify`, { mpin });
+    return res.data as { ok: boolean };
+  },
+  async update(payload: {
+    oldMpin?: string;
+    newMpin: string;
+  }): Promise<{ ok: boolean }> {
+    const res = await api.put(`/admin/mpin/update`, payload);
+    return res.data as { ok: boolean };
+  },
+};
+
 //User Site Details API
 export const userSiteDetailsApi = {
   async get(): Promise<SiteDetails> {
@@ -1005,6 +1020,7 @@ const apiClient = {
     siteDetails: adminSiteDetailsApi,
     team: adminTeamApi,
     contacts: adminContactsApi,
+    mpin: adminMpinApi,
   },
   contact: contactApi,
   user: {
