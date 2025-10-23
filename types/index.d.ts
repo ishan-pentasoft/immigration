@@ -554,6 +554,7 @@ export type ImapMessage = {
   date: string;
   body: string;
   seen: boolean;
+  totalUnread: number;
 };
 
 export type CreateDocumentRequirementInput = {

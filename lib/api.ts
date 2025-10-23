@@ -84,6 +84,7 @@ export const associateImapApi = {
     page: number;
     limit: number;
     total: number;
+    totalUnread: number;
     totalPages: number;
   }> {
     const { email, password, page, limit, signal } = params;
@@ -97,6 +98,7 @@ export const associateImapApi = {
       page: number;
       limit: number;
       total: number;
+      totalUnread: number;
       totalPages: number;
     };
   },

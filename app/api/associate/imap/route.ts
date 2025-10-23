@@ -31,95 +31,103 @@ async function handleImap({
 
   const messages: Message[] = [];
   let totalCount = 0;
+  let totalUnread = 0;
   const safeLimit = Math.max(1, Number(limit) || 10);
   const safePage = Math.max(1, Number(page) || 1);
 
   return new Promise<NextResponse>((resolve, reject) => {
     const imap = new Imap({
       user: email,
-      password: password,
+      password,
       host: process.env.IMAP_HOST,
       port: Number(process.env.IMAP_PORT) || 993,
       tls: true,
     });
 
     imap.once("ready", () => {
-      imap.openBox("INBOX", true, (err, box) => {
+      imap.openBox("INBOX", false, (err, box) => {
         if (err) return reject(err);
         totalCount = box?.messages?.total ?? 0;
 
-        if (totalCount === 0) {
-          imap.end();
-          return resolve(
-            NextResponse.json({
-              messages: [],
-              page: safePage,
-              limit: safeLimit,
-              total: 0,
-              totalPages: 0,
-            })
-          );
-        }
+        imap.search(["UNSEEN"], (err, unseenResults) => {
+          if (err) return reject(err);
+          totalUnread = unseenResults.length;
 
-        const startIndex = (safePage - 1) * safeLimit;
-        if (startIndex >= totalCount) {
-          imap.end();
-          return resolve(
-            NextResponse.json({
-              messages: [],
-              page: safePage,
-              limit: safeLimit,
-              total: totalCount,
-              totalPages: Math.max(1, Math.ceil(totalCount / safeLimit)),
-            })
-          );
-        }
+          if (totalCount === 0) {
+            imap.end();
+            return resolve(
+              NextResponse.json({
+                messages: [],
+                page: safePage,
+                limit: safeLimit,
+                total: 0,
+                totalUnread: 0,
+                totalPages: 0,
+              })
+            );
+          }
 
-        const endSeq = totalCount - startIndex;
-        const startSeq = Math.max(1, endSeq - safeLimit + 1);
+          const startIndex = (safePage - 1) * safeLimit;
+          if (startIndex >= totalCount) {
+            imap.end();
+            return resolve(
+              NextResponse.json({
+                messages: [],
+                page: safePage,
+                limit: safeLimit,
+                total: totalCount,
+                totalUnread,
+                totalPages: Math.max(1, Math.ceil(totalCount / safeLimit)),
+              })
+            );
+          }
 
-        const f = imap.seq.fetch(`${startSeq}:${endSeq}`, {
-          bodies: "",
-          struct: true,
-        });
+          const endSeq = totalCount - startIndex;
+          const startSeq = Math.max(1, endSeq - safeLimit + 1);
 
-        f.on("message", (msg) => {
-          let buffer = "";
-          let uid = 0;
-          let seen = false;
-
-          msg.on("attributes", (attrs) => {
-            uid = attrs.uid;
-            seen = attrs.flags?.includes("\\Seen") ?? false;
+          const f = imap.seq.fetch(`${startSeq}:${endSeq}`, {
+            bodies: "",
+            struct: true,
           });
 
-          msg.on("body", (stream) => {
-            stream.on("data", (chunk) => {
-              buffer += chunk.toString("utf8");
+          f.on("message", (msg) => {
+            let buffer = "";
+            let uid = 0;
+            let seen = false;
+
+            msg.on("attributes", (attrs) => {
+              uid = attrs.uid;
+              seen = attrs.flags?.includes("\\Seen") ?? false;
+            });
+
+            msg.on("body", (stream) => {
+              stream.on("data", (chunk) => {
+                buffer += chunk.toString("utf8");
+              });
+            });
+
+            msg.once("end", async () => {
+              try {
+                const parsed = await simpleParser(buffer);
+                messages.push({
+                  uid,
+                  subject: parsed.subject ?? "(No Subject)",
+                  from: parsed.from?.text ?? "(Unknown Sender)",
+                  date: parsed.date?.toISOString() ?? "",
+                  body: parsed.text || parsed.html || "(No content found)",
+                  seen,
+                });
+              } catch (parseErr) {
+                console.error("Mail parse error:", parseErr);
+              }
             });
           });
 
-          msg.once("end", async () => {
-            try {
-              const parsed = await simpleParser(buffer);
-              messages.push({
-                uid,
-                subject: parsed.subject ?? "(No Subject)",
-                from: parsed.from?.text ?? "(Unknown Sender)",
-                date: parsed.date?.toISOString() ?? "",
-                body: parsed.text || parsed.html || "(No content found)",
-                seen,
-              });
-            } catch (parseErr) {
-              console.error("Mail parse error:", parseErr);
-            }
+          f.once("error", (fetchErr) => reject(fetchErr));
+
+          f.once("end", () => {
+            imap.end();
           });
-        });
-
-        f.once("error", (fetchErr) => reject(fetchErr));
-
-        f.once("end", () => {
-          imap.end();
         });
       });
     });
@@ -139,6 +147,7 @@ async function handleImap({
           page: safePage,
           limit: safeLimit,
           total: totalCount,
+          totalUnread,
           totalPages: Math.max(1, Math.ceil(totalCount / safeLimit)),
         })
       );

@@ -48,11 +48,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
+import { useUnreadEmails } from "@/hooks/useUnreadEmails";
+import { Badge } from "@/components/ui/badge";
 
 const AppSidebar = () => {
   const isMobile = useIsMobile();
   const { associate, logout } = useAssociateAuth();
   const [mounted, setMounted] = useState(false);
+  const { count: unreadEmails } = useUnreadEmails();
 
   useEffect(() => {
     setMounted(true);
@@ -108,8 +111,11 @@ const AppSidebar = () => {
               <SidebarMenuButton asChild tooltip="Emails">
                 <Link href="/associate/emails">
                   <MailOpen />
-                  <span className="group-data-[collapsible=icon]:hidden">
+                  <span className="group-data-[collapsible=icon]:hidden flex items-center gap-2">
                     Emails
+                    {unreadEmails > 0 && (
+                      <Badge variant="destructive">{unreadEmails}</Badge>
+                    )}
                   </span>
                 </Link>
               </SidebarMenuButton>

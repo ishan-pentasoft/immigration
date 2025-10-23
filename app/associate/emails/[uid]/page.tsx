@@ -6,6 +6,7 @@ import apiClient from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { AxiosError } from "axios";
+import { useUnreadEmails } from "@/hooks/useUnreadEmails";
 
 type MessageDetail = {
   uid: number;
@@ -27,6 +28,7 @@ const EmailDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<MessageDetail | null>(null);
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const { refresh: refreshUnreadEmails } = useUnreadEmails();
 
   useEffect(() => {
     if (!uid) return;
@@ -48,6 +50,7 @@ const EmailDetailPage: React.FC = () => {
         });
         setMessage(res);
         setIframeLoaded(false);
+        refreshUnreadEmails();
       } catch (e: unknown) {
         if ((e as Error)?.name === "CanceledError") return;
         console.error(e);
@@ -64,7 +67,7 @@ const EmailDetailPage: React.FC = () => {
       }
     })();
     return () => controller.abort();
-  }, [uid]);
+  }, [uid, refreshUnreadEmails]);
 
   useEffect(() => {
     setIframeLoaded(false);

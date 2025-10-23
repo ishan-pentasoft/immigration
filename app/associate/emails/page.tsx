@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import { IconTrash, IconLoader2 } from "@tabler/icons-react";
 import { toast } from "sonner";
+import { useUnreadEmails } from "@/hooks/useUnreadEmails";
 
 const EmailsPage = () => {
   const searchParams = useSearchParams();
@@ -33,6 +34,7 @@ const EmailsPage = () => {
   const [total, setTotal] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [deletingUid, setDeletingUid] = useState<number | null>(null);
+  const { refresh: refreshUnreadEmails } = useUnreadEmails();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -99,6 +101,7 @@ const EmailsPage = () => {
 
     try {
       await promise;
+      refreshUnreadEmails();
     } catch (e) {
       setMessages(prevMessages);
       setTotal((t) => t + 1);
