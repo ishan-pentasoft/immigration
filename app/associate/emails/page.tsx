@@ -5,6 +5,9 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import { IconTrash, IconLoader2 } from "@tabler/icons-react";
+import { toast } from "sonner";
 
 const EmailsPage = () => {
   const searchParams = useSearchParams();
@@ -15,15 +18,21 @@ const EmailsPage = () => {
 
   const [loading, setLoading] = useState(true);
   const [hasService, setHasService] = useState<boolean | null>(null);
+  const [emailCreds, setEmailCreds] = useState<{
+    email: string;
+    password: string;
+  } | null>(null);
   const [messages, setMessages] = useState<Array<{
     uid: number;
     subject: string;
     from: string;
     date: string;
+    seen: boolean;
     body: string;
   }> | null>(null);
   const [total, setTotal] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [deletingUid, setDeletingUid] = useState<number | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -40,6 +49,10 @@ const EmailsPage = () => {
           return;
         }
         setHasService(true);
+        setEmailCreds({
+          email: emailService.email,
+          password: emailService.password,
+        });
         const res = await apiClient.associate.imap.list({
           email: emailService.email,
           password: emailService.password,
@@ -64,6 +77,36 @@ const EmailsPage = () => {
     })();
     return () => controller.abort();
   }, [page, limit, router, searchParams]);
+
+  const handleDelete = async (uid: number) => {
+    if (!emailCreds || !messages) return;
+    const prevMessages = messages;
+    setDeletingUid(uid);
+    setMessages((msgs) => (msgs ? msgs.filter((m) => m.uid !== uid) : msgs));
+    setTotal((t) => Math.max(0, t - 1));
+
+    const promise = apiClient.associate.imap.remove({
+      uid,
+      email: emailCreds.email,
+      password: emailCreds.password,
+    });
+
+    toast.promise(promise, {
+      loading: "Deleting email...",
+      success: "Email moved to Trash",
+      error: "Failed to delete email",
+    });
+
+    try {
+      await promise;
+    } catch (e) {
+      setMessages(prevMessages);
+      setTotal((t) => t + 1);
+      console.error("Failed to delete email", e);
+    } finally {
+      setDeletingUid(null);
+    }
+  };
 
   const setPage = (p: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -130,23 +173,51 @@ const EmailsPage = () => {
           messages.map((m, idx) => (
             <Card
               key={`${m.date}-${idx}`}
-              className="hover:shadow-md transition-shadow cursor-pointer"
+              className={`${m.seen ? "bg-muted/50" : ""}`}
               role="button"
               tabIndex={0}
-              onClick={() => router.push(`/associate/emails/${m.uid}`)}
             >
               <CardContent className="p-4">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="min-w-0">
-                    <div className="text-base sm:text-lg font-semibold break-words line-clamp-1">
+                  <div
+                    className="min-w-0 cursor-pointer"
+                    onClick={() => router.push(`/associate/emails/${m.uid}`)}
+                  >
+                    <div
+                      className={`sm:text-lg font-semibold break-words ${
+                        m.seen ? "text-muted-foreground line-clamp-2" : ""
+                      }`}
+                    >
                       {m.subject || "(No Subject)"}
                     </div>
                     <div className="text-sm text-muted-foreground break-words line-clamp-1">
                       {m.from}
                     </div>
                   </div>
-                  <div className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
-                    {formatDate(m.date)}
+                  <div className="flex items-center gap-3">
+                    <div className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
+                      {formatDate(m.date)}
+                    </div>
+                    <ConfirmDialog
+                      title="Move to Trash?"
+                      description="This email will be moved to Trash."
+                      confirmText="Delete"
+                      onConfirm={() => handleDelete(m.uid)}
+                      trigger={
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="cursor-pointer"
+                          disabled={deletingUid === m.uid}
+                        >
+                          {deletingUid === m.uid ? (
+                            <IconLoader2 className="animate-spin" />
+                          ) : (
+                            <IconTrash />
+                          )}
+                        </Button>
+                      }
+                    />
                   </div>
                 </div>
               </CardContent>

@@ -136,6 +136,20 @@ export const associateImapApi = {
       }[];
     };
   },
+  async remove(params: {
+    uid: number | string;
+    email: string;
+    password: string;
+    signal?: AbortSignal;
+  }): Promise<{ success: boolean; movedTo: string; uid: number }> {
+    const { uid, email, password, signal } = params;
+    const res = await api.delete(`/associate/imap/${uid}`, {
+      data: { email, password },
+      signal,
+      timeout: 60000,
+    });
+    return res.data as { success: boolean; movedTo: string; uid: number };
+  },
 };
 
 export const associateEmailServiceApi = {

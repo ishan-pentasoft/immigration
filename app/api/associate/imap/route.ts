@@ -8,6 +8,7 @@ type Message = {
   from: string;
   date: string;
   body: string;
+  seen: boolean;
 };
 
 async function handleImap({
@@ -77,14 +78,19 @@ async function handleImap({
         const endSeq = totalCount - startIndex;
         const startSeq = Math.max(1, endSeq - safeLimit + 1);
 
-        const f = imap.seq.fetch(`${startSeq}:${endSeq}`, { bodies: "" });
+        const f = imap.seq.fetch(`${startSeq}:${endSeq}`, {
+          bodies: "",
+          struct: true,
+        });
 
         f.on("message", (msg) => {
           let buffer = "";
           let uid = 0;
+          let seen = false;
 
           msg.on("attributes", (attrs) => {
             uid = attrs.uid;
+            seen = attrs.flags?.includes("\\Seen") ?? false;
           });
 
           msg.on("body", (stream) => {
@@ -102,6 +108,7 @@ async function handleImap({
                 from: parsed.from?.text ?? "(Unknown Sender)",
                 date: parsed.date?.toISOString() ?? "",
                 body: parsed.text || parsed.html || "(No content found)",
+                seen,
               });
             } catch (parseErr) {
               console.error("Mail parse error:", parseErr);

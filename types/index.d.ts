@@ -553,6 +553,7 @@ export type ImapMessage = {
   from: string;
   date: string;
   body: string;
+  seen: boolean;
 };
 
 export type CreateDocumentRequirementInput = {

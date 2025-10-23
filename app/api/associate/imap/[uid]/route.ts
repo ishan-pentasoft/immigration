@@ -112,3 +112,58 @@ export async function GET(
     imap.connect();
   });
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ uid: number }> }
+) {
+  const { uid } = await params;
+  const { email, password } = (await req.json().catch(() => ({}))) as {
+    email?: string;
+    password?: string;
+  };
+
+  if (!email || !password) {
+    return NextResponse.json(
+      { error: "Missing email or password." },
+      { status: 400 }
+    );
+  }
+
+  return new Promise<NextResponse>((resolve, reject) => {
+    const imap = new Imap({
+      user: email,
+      password: password,
+      host: process.env.IMAP_HOST,
+      port: Number(process.env.IMAP_PORT) || 993,
+      tls: true,
+    });
+
+    imap.once("ready", () => {
+      imap.openBox("INBOX", false, (err) => {
+        if (err) {
+          imap.end();
+          return reject(err);
+        }
+
+        imap.move(uid, "[Gmail]/Trash", (err) => {
+          imap.end();
+          if (err) {
+            return reject(err);
+          } else {
+            return resolve(
+              NextResponse.json({ success: true, movedTo: "Trash", uid })
+            );
+          }
+        });
+      });
+    });
+
+    imap.once("error", (err) => {
+      console.error("IMAP error:", err);
+      reject(err);
+    });
+
+    imap.connect();
+  });
+}
