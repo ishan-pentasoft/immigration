@@ -17,6 +17,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 const schema = z.object({
@@ -26,6 +28,8 @@ const schema = z.object({
   twitter: z.string().optional().nullable(),
   youtube: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
+  maintenanceMode: z.boolean().optional(),
+  maintenanceMessage: z.string().optional().nullable(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -43,6 +47,8 @@ export default function SiteDetailsPage() {
       twitter: "",
       youtube: "",
       address: "",
+      maintenanceMode: false,
+      maintenanceMessage: "",
     },
   });
 
@@ -59,6 +65,8 @@ export default function SiteDetailsPage() {
           twitter: details.twitter ?? "",
           youtube: details.youtube ?? "",
           address: details.address ?? "",
+          maintenanceMode: Boolean(details.maintenanceMode),
+          maintenanceMessage: details.maintenanceMessage ?? "",
         });
       } catch (e) {
         console.error(e);
@@ -82,6 +90,8 @@ export default function SiteDetailsPage() {
         twitter: values.twitter || undefined,
         youtube: values.youtube || undefined,
         address: values.address || undefined,
+        maintenanceMode: values.maintenanceMode,
+        maintenanceMessage: values.maintenanceMessage || undefined,
       };
       await apiClient.admin.siteDetails.update(payload);
       toast.success("Site details updated");
@@ -238,6 +248,58 @@ export default function SiteDetailsPage() {
                   </FormItem>
                 )}
               />
+
+              <div className="pt-4">
+                <Card>
+                  <CardHeader className="py-4">
+                    <CardTitle className="text-base">Maintenance Mode</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="maintenanceMode"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel>Enable Maintenance Mode</FormLabel>
+                            <p className="text-sm text-muted-foreground">
+                              When enabled, non-admin users are redirected to the maintenance page.
+                            </p>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={!!field.value}
+                              onCheckedChange={(v) => field.onChange(v)}
+                              aria-label="Maintenance mode"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="maintenanceMessage"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Maintenance Message</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="We'll be back soon. We're performing scheduled maintenance."
+                              value={field.value ?? ""}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              name={field.name}
+                              ref={field.ref}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
 
               <div className="pt-2">
                 <Button

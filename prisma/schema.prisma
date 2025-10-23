@@ -148,7 +148,7 @@ model EmailService {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-  
+
 model Visa {
   id          String   @id @default(uuid())
   title       String
@@ -213,15 +213,17 @@ model Faq {
 }
 
 model SiteDetails {
-  id        String   @id @default("site")
-  phone     String?
-  email     String?
-  facebook  String?
-  twitter   String?
-  youtube   String?
-  address   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 String   @id @default("site")
+  phone              String?
+  email              String?
+  facebook           String?
+  twitter            String?
+  youtube            String?
+  address            String?
+  maintenanceMode    Boolean  @default(false)
+  maintenanceMessage String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
 
 model Team {

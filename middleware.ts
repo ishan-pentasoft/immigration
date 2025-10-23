@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/static") ||
-    pathname === "/favicon.ico" ||
-    pathname === "/"
+    pathname === "/favicon.ico"
   ) {
     return NextResponse.next();
   }
@@ -30,6 +29,36 @@ export function middleware(request: NextRequest) {
   ) {
     return NextResponse.next();
   }
+
+  // 🛠️ Global Maintenance Mode Gate (bypass for admin and maintenance page)
+  try {
+    const isAdminPath = pathname.startsWith("/admin");
+    const isMaintenancePage = pathname === "/maintenance";
+    const isApiPath = pathname.startsWith("/api");
+    const isSiteDetailsApi = pathname === "/api/user/site-details";
+    const hasAdminToken = Boolean(
+      request.cookies.get("adminToken")?.value ||
+        request.headers.get("authorization")?.replace("Bearer ", "")
+    );
+
+    if (!isAdminPath && !isMaintenancePage && !isSiteDetailsApi) {
+      const res = await fetch(new URL("/api/user/site-details", request.url), {
+        headers: { "x-from-middleware": "1" },
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const maintenance = Boolean(data?.siteDetails?.maintenanceMode);
+        if (maintenance && !hasAdminToken) {
+          if (isApiPath) {
+            return NextResponse.next();
+          }
+          const url = new URL("/maintenance", request.url);
+          return NextResponse.redirect(url);
+        }
+      }
+    }
+  } catch {}
 
   // 🔒 Protect /api/admin routes
   if (pathname.startsWith("/api/admin")) {

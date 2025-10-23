@@ -21,7 +21,16 @@ export async function GET() {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { phone, email, facebook, twitter, youtube, address } = body ?? {};
+    const {
+      phone,
+      email,
+      facebook,
+      twitter,
+      youtube,
+      address,
+      maintenanceMode,
+      maintenanceMessage,
+    } = body ?? {};
 
     const updated = await prisma.siteDetails.update({
       where: { id: "site" },
@@ -32,6 +41,8 @@ export async function PUT(req: NextRequest) {
         twitter: twitter ?? null,
         youtube: youtube ?? null,
         address: address ?? null,
+        maintenanceMode: typeof maintenanceMode === "boolean" ? maintenanceMode : undefined,
+        maintenanceMessage: maintenanceMessage ?? undefined,
       },
     });
 
@@ -41,8 +52,16 @@ export async function PUT(req: NextRequest) {
     if (err?.code === "P2025") {
       try {
         const body = await req.json();
-        const { phone, email, facebook, twitter, youtube, address } =
-          body ?? {};
+        const {
+          phone,
+          email,
+          facebook,
+          twitter,
+          youtube,
+          address,
+          maintenanceMode,
+          maintenanceMessage,
+        } = body ?? {};
         const created = await prisma.siteDetails.create({
           data: {
             id: "site",
@@ -52,6 +71,8 @@ export async function PUT(req: NextRequest) {
             twitter: twitter ?? null,
             youtube: youtube ?? null,
             address: address ?? null,
+            maintenanceMode: typeof maintenanceMode === "boolean" ? maintenanceMode : false,
+            maintenanceMessage: maintenanceMessage ?? null,
           },
         });
         return NextResponse.json({ siteDetails: created });

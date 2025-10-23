@@ -118,6 +118,8 @@ export type SiteDetails = {
   twitter?: string | null;
   youtube?: string | null;
   address?: string | null;
+  maintenanceMode?: boolean;
+  maintenanceMessage?: string | null;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -125,7 +127,14 @@ export type SiteDetails = {
 export type UpdateSiteDetailsInput = Partial<
   Pick<
     SiteDetails,
-    "phone" | "email" | "facebook" | "twitter" | "youtube" | "address"
+    | "phone"
+    | "email"
+    | "facebook"
+    | "twitter"
+    | "youtube"
+    | "address"
+    | "maintenanceMode"
+    | "maintenanceMessage"
   >
 >;
 
