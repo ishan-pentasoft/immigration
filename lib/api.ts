@@ -100,6 +100,42 @@ export const associateImapApi = {
       totalPages: number;
     };
   },
+  async getByUid(params: {
+    uid: number | string;
+    email: string;
+    password: string;
+    signal?: AbortSignal;
+  }): Promise<{
+    uid: number;
+    subject: string;
+    from: string;
+    to: string;
+    date: string;
+    bodyText: string;
+    bodyHtml: string;
+    attachments: { filename?: string; contentType?: string; size?: number }[];
+  }> {
+    const { uid, email, password, signal } = params;
+    const res = await api.get(`/associate/imap/${uid}`, {
+      params: { email, password },
+      signal,
+      timeout: 60000,
+    });
+    return res.data as {
+      uid: number;
+      subject: string;
+      from: string;
+      to: string;
+      date: string;
+      bodyText: string;
+      bodyHtml: string;
+      attachments: {
+        filename?: string;
+        contentType?: string;
+        size?: number;
+      }[];
+    };
+  },
 };
 
 export const associateEmailServiceApi = {

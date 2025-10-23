@@ -16,6 +16,7 @@ const EmailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [hasService, setHasService] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<Array<{
+    uid: number;
     subject: string;
     from: string;
     date: string;
@@ -82,22 +83,6 @@ const EmailsPage = () => {
         })
       : "";
 
-  const openEmail = (m: {
-    subject: string;
-    from: string;
-    date: string;
-    body: string;
-  }) => {
-    try {
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("selectedEmail", JSON.stringify(m));
-      }
-    } catch (e) {
-      console.warn("Failed to cache selected email", e);
-    }
-    router.push("/associate/emails/view");
-  };
-
   if (hasService === false) {
     return (
       <div className="flex flex-col gap-5 items-center justify-center min-h-[50vh]">
@@ -148,10 +133,7 @@ const EmailsPage = () => {
               className="hover:shadow-md transition-shadow cursor-pointer"
               role="button"
               tabIndex={0}
-              onClick={() => openEmail(m)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") openEmail(m);
-              }}
+              onClick={() => router.push(`/associate/emails/${m.uid}`)}
             >
               <CardContent className="p-4">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">

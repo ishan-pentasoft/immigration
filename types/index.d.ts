@@ -548,6 +548,7 @@ export type UpsertEmailServiceInput = {
 };
 
 export type ImapMessage = {
+  uid: number;
   subject: string;
   from: string;
   date: string;

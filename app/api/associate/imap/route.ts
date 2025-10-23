@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import Imap from "node-imap";
 import { simpleParser } from "mailparser";
 
-type Message = { subject: string; from: string; date: string; body: string };
+type Message = {
+  uid: number;
+  subject: string;
+  from: string;
+  date: string;
+  body: string;
+};
 
 async function handleImap({
   email,
@@ -75,6 +81,11 @@ async function handleImap({
 
         f.on("message", (msg) => {
           let buffer = "";
+          let uid = 0;
+
+          msg.on("attributes", (attrs) => {
+            uid = attrs.uid;
+          });
 
           msg.on("body", (stream) => {
             stream.on("data", (chunk) => {
@@ -86,6 +97,7 @@ async function handleImap({
             try {
               const parsed = await simpleParser(buffer);
               messages.push({
+                uid,
                 subject: parsed.subject ?? "(No Subject)",
                 from: parsed.from?.text ?? "(Unknown Sender)",
                 date: parsed.date?.toISOString() ?? "",
