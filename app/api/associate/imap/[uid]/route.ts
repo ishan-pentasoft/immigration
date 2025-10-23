@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Imap from "node-imap";
 import { simpleParser } from "mailparser";
 
 export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ uid: number }> }
+  req: NextRequest,
+  { params }: { params: Promise<{ uid: string }> }
 ) {
-  const { uid } = await params;
+  const { uid: uidStr } = await params;
+  const uid = Number(uidStr);
   const { searchParams } = new URL(req.url);
   const email = searchParams.get("email");
   const password = searchParams.get("password");
@@ -18,7 +19,7 @@ export async function GET(
     );
   }
 
-  if (!uid) {
+  if (!Number.isFinite(uid)) {
     return NextResponse.json({ error: "Missing UID" }, { status: 400 });
   }
 
@@ -119,10 +120,11 @@ export async function GET(
 }
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ uid: number }> }
+  req: NextRequest,
+  { params }: { params: Promise<{ uid: string }> }
 ) {
-  const { uid } = await params;
+  const { uid: uidStr } = await params;
+  const uid = Number(uidStr);
   const { email, password } = (await req.json().catch(() => ({}))) as {
     email?: string;
     password?: string;
@@ -133,6 +135,10 @@ export async function DELETE(
       { error: "Missing email or password." },
       { status: 400 }
     );
+  }
+
+  if (!Number.isFinite(uid)) {
+    return NextResponse.json({ error: "Missing UID" }, { status: 400 });
   }
 
   return new Promise<NextResponse>((resolve, reject) => {
